@@ -1,11 +1,14 @@
 import argparse
+import os
 import time
 from translate import translate_subtitles
 from logger import logger
+import chardet
 
 def get_output_filename(input_filename):
     token = int(time.time())
-    return f"{input_filename.split('.')[0]}_{token}_translated.srt"
+    directory, filename = os.path.split(input_filename)
+    return os.path.join(directory, f"{filename.split('.')[0]}_{token}_translated.srt")
 
 def main():
     parser = argparse.ArgumentParser(description='Translate a transcript file.')
@@ -14,7 +17,10 @@ def main():
 
     args = parser.parse_args()
 
-    with open(args.file, 'r', encoding='utf-8') as f:
+    with open(args.file, 'rb') as f:
+        encoding = chardet.detect(f.read())['encoding']
+
+    with open(args.file, 'r', encoding=encoding) as f:
         transcript = f.read()
 
     filename = get_output_filename(args.file)

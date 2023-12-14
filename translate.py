@@ -72,10 +72,10 @@ def check_response(response: str, chunk: str, chunk_number):
         )
 
 def translate_subtitles(srt_data: str, num_threads: int = 1):
-    text = preprocess(srt_data)
+    parsed_srt = parse_srt(srt_data)
+    text = preprocess(parsed_srt)
     chunks = make_chunks(text, max_tokens_per_chunk=TOKENS_PER_CHUNK)
     logger.info(f"Split into {len(chunks)} chunks.")
-    assert "<1>" in chunks[0], "First chunk does not contain subtitle id. Please check your input."
 
     translations = [""] * len(chunks)
     futures = []
@@ -101,7 +101,7 @@ def translate_subtitles(srt_data: str, num_threads: int = 1):
                 break
 
     joined_text = "\n\n".join(translations)
-    return post_process_text(joined_text, srt_data)
+    return post_process_text(joined_text, parsed_srt)
 
 def make_chunks(text, max_tokens_per_chunk) -> list[str]:
     lines = text.split("\n")
@@ -123,16 +123,19 @@ def parse_srt(srt_content):
     lines = srt_content.strip().split('\n')
     subtitles = {}
     i = 0
-    while i < len(lines):
-        subtitle_id = int(lines[i])
-        timestamp = lines[i + 1]
-        text_lines = []
-        i += 2
-        while i < len(lines) and lines[i].strip() != "":
-            text_lines.append(lines[i])
+    try:
+        while i < len(lines):
+            subtitle_id = int(lines[i])
+            timestamp = lines[i + 1]
+            text_lines = []
+            i += 2
+            while i < len(lines) and lines[i].strip() != "":
+                text_lines.append(lines[i])
+                i += 1
+            subtitles[subtitle_id] = {"timestamp": timestamp, "text": " ".join(text_lines)}
             i += 1
-        subtitles[subtitle_id] = {"timestamp": timestamp, "text": " ".join(text_lines)}
-        i += 1
+    except Exception as e:
+        raise Exception("Invalid SRT file. Please check your input. " + str(e))
 
     return subtitles
 
@@ -144,10 +147,7 @@ def insert_timestamps(parsed_subtitles, content):
 
     return re.sub(r'^<(\d+)>([^\n]+?)</\d+>$', replacement, content, flags=re.MULTILINE)
 
-def post_process_text(text: str, original_text: str) -> str:
-    if original_text == "":
-        return text
-    original_subtitles = parse_srt(original_text)
+def post_process_text(text: str, original_subtitles: dict) -> str:
     output_string = insert_timestamps(original_subtitles, text)
     output_string = re.sub(r'\n{3,}', "\n\n", output_string)
     output_string = output_string.strip()
@@ -166,11 +166,11 @@ def get_missing_subtitles(translated: str, original_text: str):
 
     return {key: value for key, value in entries.items() if key not in translated_ids}
 
-def preprocess(text: str) -> str:
-    subtitle_pattern = r"(\d+)\s+\d+:\d{2}:\d{2},\d{3} --> \d+:\d{2}:\d{2},\d{3}\s*([^\n]+)\s+"
-    output_string = re.sub(r'\r', "", text)
-    output_string = re.sub(subtitle_pattern, r"<\1>\2</\1>\n", output_string)
-    return output_string
+def preprocess(srt_data: dict) -> str:
+    result = ""
+    for key, value in srt_data.items():
+        result += f"<{key}>{value['text']}</{key}>\n"
+    return result
 
 class ResponseTooLongError(Exception):
     """Exception raised when the response exceeds the maximum token limit."""
