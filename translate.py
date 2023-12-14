@@ -46,13 +46,11 @@ def translate_chunk(chunk_idx, chunk, stop_flag):
     ).choices[0].message.content
 
     if stop_flag.is_set():
-        return chunk_idx, ""
+        return chunk_idx, "", error_message
 
     token_count = num_tokens_from_string(response)
     if token_count >= MAX_OUTPUT_TOKENS:
-        print(f"{response[:200]}...")
-        raise Exception(
-            f"Response too long. Might be missing tokens. {token_count} tokens, max is {MAX_OUTPUT_TOKENS} tokens. Try a smaller chunk size.")
+        error_message = f"Response too long. Might be missing tokens. {token_count} tokens, max is {MAX_OUTPUT_TOKENS} tokens. Try a smaller chunk size."
 
     print(f"got chunk, {chunk_number}! length is {token_count} tokens. Max is {MAX_OUTPUT_TOKENS} tokens.")
 
@@ -60,7 +58,7 @@ def translate_chunk(chunk_idx, chunk, stop_flag):
     if len(missing_subtitles) > 0:
         # happens when some subtitles are skipped or merged
         # when input is too long, the model is more prone to merging subtitles
-        error_message = f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size, to avoid this error."
+        error_message = f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
 
     return chunk_idx, response, error_message
 
@@ -87,7 +85,7 @@ def translate_subtitles(srt_data: str, num_threads: int = 1):
                     raise Exception(err)
             except Exception as e:
                 print(e)
-                print("Stopping translation.")
+                print("Stopping translation early.")
                 stop_flag.set()
                 for fut in futures:
                     fut.cancel()

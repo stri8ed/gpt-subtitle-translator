@@ -22,7 +22,7 @@ def main():
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(result)
 
-    print(f"Translated transcript written to {filename}")
+    print(f"Translated subtitles written to {filename}")
 
 if __name__ == '__main__':
     main()
