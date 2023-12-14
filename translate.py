@@ -2,6 +2,7 @@ import threading
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
+from logger import logger
 
 import os
 import openai
@@ -16,6 +17,7 @@ assert openai.api_key is not None, "OpenAI API key not found. Please set it in t
 MODEL = "gpt-4-1106-preview"
 TOKENS_PER_CHUNK = 2_000 # Safe value, might be able to increase depending on the language
 MAX_OUTPUT_TOKENS = 4095 # Fixed by OpenAI
+MAX_RETRIES = 1 # Despite instructions, model sometimes skips/merges subtitles. Retrying helps.
 
 with open("./prompt.txt", encoding="utf-8") as f:
     prompt_template = f.read().replace("{target_language}", os.getenv("TARGET_LANGUAGE"))
@@ -25,18 +27,30 @@ def num_tokens_from_string(string: str) -> int:
     num_tokens = len(encoding.encode(string))
     return num_tokens
 
-def translate_chunk(chunk_idx, chunk, stop_flag):
+def translate_chunk(chunk_idx, chunk, stop_flag, attempt=0):
+    if stop_flag.is_set():
+        return chunk_idx, "", ""
+
     chunk_number = chunk_idx + 1
-    prompt = prompt_template.replace("{subtitles}", chunk.strip())
-    messages = [{"role": "system", "content": prompt}]
-    input_token_count = num_tokens_from_string(chunk)
+    response = get_translation(chunk_number, chunk)
     error_message = ""
 
-    if stop_flag.is_set():
-        return chunk_idx, "", error_message
+    try:
+        check_response(response, chunk, chunk_number)
+    except Exception as e:
+        if attempt < MAX_RETRIES and isinstance(e, MissingSubtitlesError):
+            logger.info(f"Retrying chunk {chunk_number}, after error: {e}")
+            return translate_chunk(chunk_idx, chunk, stop_flag, attempt + 1)
+        else:
+            error_message = str(e)
 
-    print(f"Processing chunk {chunk_number}, with {input_token_count} tokens.")
-    response = openai.chat.completions.create(
+    return chunk_idx, response, error_message
+
+def get_translation(chunk_number:int, chunk:str) -> str:
+    prompt = prompt_template.replace("{subtitles}", chunk.strip())
+    messages = [{"role": "system", "content": prompt}]
+    logger.info(f"Processing chunk {chunk_number}, with {num_tokens_from_string(chunk)} tokens.")
+    return openai.chat.completions.create(
         model=MODEL,
         messages=messages,
         max_tokens=MAX_OUTPUT_TOKENS,
@@ -45,27 +59,22 @@ def translate_chunk(chunk_idx, chunk, stop_flag):
         stop=None,
     ).choices[0].message.content
 
-    if stop_flag.is_set():
-        return chunk_idx, "", error_message
-
+def check_response(response: str, chunk: str, chunk_number):
     token_count = num_tokens_from_string(response)
     if token_count >= MAX_OUTPUT_TOKENS:
-        error_message = f"Response too long. Might be missing tokens. {token_count} tokens, max is {MAX_OUTPUT_TOKENS} tokens. Try a smaller chunk size."
-
-    print(f"got chunk, {chunk_number}! length is {token_count} tokens. Max is {MAX_OUTPUT_TOKENS} tokens.")
-
+        raise ResponseTooLongError(
+            f"Response too long. Might be missing tokens. {token_count} tokens, max is {MAX_OUTPUT_TOKENS} tokens. Try a smaller chunk size."
+        )
     missing_subtitles = get_missing_subtitles(response, chunk)
-    if len(missing_subtitles) > 0:
-        # happens when some subtitles are skipped or merged
-        # when input is too long, the model is more prone to merging subtitles
-        error_message = f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
-
-    return chunk_idx, response, error_message
+    if missing_subtitles:
+        raise MissingSubtitlesError(
+            f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
+        )
 
 def translate_subtitles(srt_data: str, num_threads: int = 1):
     text = preprocess(srt_data)
     chunks = make_chunks(text, max_tokens_per_chunk=TOKENS_PER_CHUNK)
-    print(f"Split into {len(chunks)} chunks.")
+    logger.info(f"Split into {len(chunks)} chunks.")
     assert "<1>" in chunks[0], "First chunk does not contain subtitle id. Please check your input."
 
     translations = [""] * len(chunks)
@@ -84,8 +93,8 @@ def translate_subtitles(srt_data: str, num_threads: int = 1):
                 if err != "":
                     raise Exception(err)
             except Exception as e:
-                print(e)
-                print("Stopping translation early.")
+                logger.error(e)
+                logger.info("Stopping translation early.")
                 stop_flag.set()
                 for fut in futures:
                     fut.cancel()
@@ -165,3 +174,9 @@ def preprocess(text: str) -> str:
     output_string = re.sub(r'\r', "", text)
     output_string = re.sub(subtitle_pattern, r"<\1>\2</\1>\n", output_string)
     return output_string
+
+class ResponseTooLongError(Exception):
+    """Exception raised when the response exceeds the maximum token limit."""
+
+class MissingSubtitlesError(Exception):
+    """Exception raised when subtitles are missing in the response."""

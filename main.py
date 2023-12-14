@@ -1,6 +1,7 @@
 import argparse
 import time
 from translate import translate_subtitles
+from logger import logger
 
 def get_output_filename(input_filename):
     token = int(time.time())
@@ -22,7 +23,7 @@ def main():
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(result)
 
-    print(f"Translated subtitles written to {filename}")
+    logger.info(f"Translated subtitles written to {filename}")
 
 if __name__ == '__main__':
     main()
