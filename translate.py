@@ -124,21 +124,18 @@ def parse_srt(srt_content):
     subtitles = {}
     i = 0
     while i < len(lines):
-        try:
-            subtitle_id = int(lines[i])
-            timestamp = lines[i + 1]
-            text = lines[i + 2]
-            subtitles[subtitle_id] = { "timestamp": timestamp, "text": text }
-            i += 3
-            while i < len(lines) and lines[i].strip() != "":
-                i += 1
-        except ValueError:
-            break
-        except IndexError:
-            break
+        subtitle_id = int(lines[i])
+        timestamp = lines[i + 1]
+        text_lines = []
+        i += 2
+        while i < len(lines) and lines[i].strip() != "":
+            text_lines.append(lines[i])
+            i += 1
+        subtitles[subtitle_id] = {"timestamp": timestamp, "text": " ".join(text_lines)}
         i += 1
 
     return subtitles
+
 
 def insert_timestamps(parsed_subtitles, content):
     def replacement(match):
