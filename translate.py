@@ -1,3 +1,4 @@
+import random
 import threading
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
@@ -15,9 +16,10 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 assert openai.api_key is not None, "OpenAI API key not found. Please set it in the .env file."
 
 MODEL = "gpt-4-1106-preview"
-TOKENS_PER_CHUNK = 2_000 # Safe value, might be able to increase depending on the language
-MAX_OUTPUT_TOKENS = 4095 # Fixed by OpenAI
+TOKENS_PER_CHUNK = 2_500 # Safe value, might be able to increase depending on the language
+MAX_OUTPUT_TOKENS = 4_095 # Fixed by OpenAI
 MAX_RETRIES = 1 # Despite instructions, model sometimes skips/merges subtitles. Retrying helps.
+TEMPERATURE = 0.4
 
 with open("./prompt.txt", encoding="utf-8") as f:
     prompt_template = f.read().replace("{target_language}", os.getenv("TARGET_LANGUAGE"))
@@ -32,11 +34,13 @@ def translate_chunk(chunk_idx, chunk, stop_flag, attempt=0):
         return chunk_idx, "", ""
 
     chunk_number = chunk_idx + 1
-    response = get_translation(chunk_number, chunk)
+    subtitles, mapping = randomize_ids(chunk)
+    response = get_translation(chunk_number, subtitles)
+    response = revert_id_randomization(response, mapping)
     error_message = ""
 
     try:
-        check_response(response, chunk, chunk_number)
+        validate_response(response, chunk, chunk_number)
     except Exception as e:
         if attempt < MAX_RETRIES and isinstance(e, MissingSubtitlesError):
             logger.info(f"Retrying chunk {chunk_number}, after error: {e}")
@@ -54,12 +58,12 @@ def get_translation(chunk_number:int, chunk:str) -> str:
         model=MODEL,
         messages=messages,
         max_tokens=MAX_OUTPUT_TOKENS,
-        temperature=0.5,
+        temperature=TEMPERATURE,
         n=1,
         stop=None,
     ).choices[0].message.content
 
-def check_response(response: str, chunk: str, chunk_number):
+def validate_response(response: str, chunk: str, chunk_number):
     token_count = num_tokens_from_string(response)
     if token_count >= MAX_OUTPUT_TOKENS:
         raise ResponseTooLongError(
@@ -70,6 +74,8 @@ def check_response(response: str, chunk: str, chunk_number):
         raise MissingSubtitlesError(
             f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
         )
+
+    print(f"got chunk {chunk_number}, length is {token_count} tokens.")
 
 def translate_subtitles(srt_data: str, num_threads: int = 1):
     parsed_srt = parse_srt(srt_data)
@@ -139,6 +145,40 @@ def parse_srt(srt_content):
 
     return subtitles
 
+def randomize_ids(subtitles: str) -> (str, dict):
+    """
+    Randomize subtitle IDs to avoid GPT skipping/merging subtitles.
+
+    Valid subtitles have consecutive numeric IDs, which seems to make GPT more likely to skip/merge neighboring subtitles.
+    By assigning new IDs randomly, while preserving the order, we can help GPT avoid this behavior.
+    """
+    items = subtitles.strip().split("\n")
+    pattern = re.compile(r"<(\d+)>(.*?)</\d+>")
+
+    tag_count = len(items)
+    new_ids = random.sample(range(1, tag_count * 10), tag_count)
+
+    mapping = {}
+    updated = []
+
+    for index, string in enumerate(items):
+        original_id = pattern.search(string).group(1)
+        new_id = new_ids[index]
+        mapping[new_id] = original_id
+        updated_string = re.sub(pattern, f"<{new_id}>\\2</{new_id}>", string)
+        updated.append(updated_string)
+
+    return "\n".join(updated), mapping
+
+def revert_id_randomization(subtitles: str, mapping: dict) -> str:
+    pattern = re.compile(r"<(\d+)>(.*?)</\d+>")
+
+    def replace_with_original(match):
+        original_id = mapping[int(match.group(1))]
+        return f"<{original_id}>{match.group(2)}</{original_id}>"
+
+    reverted_chunk = re.sub(pattern, replace_with_original, subtitles)
+    return reverted_chunk
 
 def insert_timestamps(parsed_subtitles, content):
     def replacement(match):

@@ -1,11 +1,10 @@
 # GPT Subtitle Translator
 
-This tool is designed to translate noisy subtitles that are extracted via audio transcription (like Whisper) or OCR (from burned-in subtitles). It's optimized for use with the "gpt-4-1106-preview" model, and using this model is highly recommended for best results.
+This tool is designed to translate subtitles with GPT model(s). It's optimized for use with the "gpt-4-1106-preview" model, and using this model is highly recommended for best results.
 ### Features
 - Strips the timestamps from the subtitles before translating, to reduce input tokens.
-- Chunks the subtitles into smaller pieces to fit the context window.
 - Runs multiple chunks in parallel to speed up the translation process.
-- Tries to ensure model does not skip or merge lines.
+- Tries to ensure model does not skip or merge subtitles while translating.
 
 ## Installation
 

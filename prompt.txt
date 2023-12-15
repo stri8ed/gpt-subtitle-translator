@@ -3,7 +3,7 @@ Task: Translate movie subtitles to {target_language}. The original transcription
 Input Format:
 
     - Subtitles are presented between START and END markers.
-    - Each subtitle consists of a unique #subtitle_id and subtitle_text.
+    - Each subtitle consists of a unique subtitle_id and subtitle_text.
 
 Instructions:
 
@@ -60,14 +60,6 @@ START
 <140>Wastes 715 billion dollars,</140>
 
 END
-
-Notes:
-
-    - Ensure accuracy in translation while being mindful of the context and the original meaning.
-    - For every input subtitle, there MUST be exactly one corresponding output subtitle.
-    - Even if a subtitle is short or repeated, it MUST be translated and repeated in the output.
-    - Verify that the output maintains the format specified, with each subtitle id followed by its translated text.
-    - The correct subtitle_id must be retained for each subtitle.
 
 Subtitles to Translate:
 -----------------------
