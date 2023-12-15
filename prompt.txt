@@ -3,7 +3,7 @@ Task: Translate movie subtitles to {target_language}. The original transcription
 Input Format:
 
     - Subtitles are presented between START and END markers.
-    - Each subtitle consists of a unique subtitle_id and subtitle_text.
+    - Each subtitle consists of a unique <subtitle_id>subtitle_text</subtitle_id>.
 
 Instructions:
 
@@ -23,20 +23,16 @@ Input:
 
 START
 
-<127>// איך עשית את המדגם? מה הייתה השאלה?</127>
-<128>< איך עשית את המדגם? מה הייתה</128>
-<129>"השאלה? האם כשאתה 1</129>
-<130> /במכולת, אתה קונה חלב?"י</130>
-<131>< ברור שיגידו "כן". -למה? -אבל זה לא אומר שיקנו את המוצר 1<</131>
-<132>יאללה.</132>
-<133>א כ.ךא בדר..יל</133>
-<134>הרי כל האנושות כולה</134>
-<135>,הולכת להירתם עכשיו ליצירה של כלכלה ירוקה וטובה יותר</135>
-<136>כשבעצם במצב רגיל,</136>
-<137>חס וחלילה, כשאין שרפה או אירוע</137>
-<138>כזה קיצוני,</138>
-<139>צבא ארצות הברית בשנה</139>
-<140>מבזבז 715 מיליארד דולר,</140>
+<90>// איך עשית את המדגם? מה הייתה השאלה?</90>
+<95>< איך עשית את המדגם? מה הייתה</95>
+<9>"השאלה? האם כשאתה 1</9>
+<44> /במכולת, אתה קונה חלב?"י</44>
+<10>< ברור שיגידו "כן". -למה? -אבל זה לא אומר שיקנו את המוצר 1<</10>
+<56>יאללה.</56>
+<67>א כ.ךא בדר..יל</67>
+<60>הרי כל האנושות כולה</60>
+<47>,הולכת להירתם עכשיו ליצירה של כלכלה ירוקה וטובה יותר</47>
+<54>כשבעצם במצב רגיל,</54>
 
 END
 
@@ -44,20 +40,16 @@ Output:
 
 START
 
-<127>How did you conduct the sample? What was the question?</127>
-<128>How did you conduct the sample? What was</128>
-<129>the question? When you're</129>
-<130>in the grocery store, do you buy milk?</130>
-<131>Of course they'll say "yes". -Why? But that doesn't mean they'll buy the product.</131>
-<132>Come on.</132>
-<133> </133>
-<134>After all, all of humanity</134>
-<135>Is now going to be harnessed for the creation of a greener and better economy</135>
-<136>When actually in a normal situation,</136>
-<137>God forbid, when there's no fire or event</137>
-<138>of such an extreme nature,</138>
-<139>The US army in a year</139>
-<140>Wastes 715 billion dollars,</140>
+<90>How did you conduct the sample? What was the question?</90>
+<95>How did you conduct the sample? What was</95>
+<9>the question? When you're</9>
+<44>in the grocery store, do you buy milk?</44>
+<10>Of course they'll say "yes". -Why? But that doesn't mean they'll buy the product.</10>
+<56>Come on.</56>
+<67> </67>
+<60>After all, all of humanity</60>
+<47>Is now going to be harnessed for the creation of a greener and better economy</47>
+<54>When actually in a normal situation,</54>
 
 END
 
