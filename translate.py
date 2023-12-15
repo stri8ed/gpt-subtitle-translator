@@ -75,7 +75,7 @@ def validate_response(response: str, chunk: str, chunk_number):
             f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
         )
 
-    print(f"got chunk {chunk_number}, length is {token_count} tokens.")
+    logger.info(f"got chunk {chunk_number}, length is {token_count} tokens.")
 
 def translate_subtitles(srt_data: str, num_threads: int = 1):
     parsed_srt = parse_srt(srt_data)
