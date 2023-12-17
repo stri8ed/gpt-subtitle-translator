@@ -185,7 +185,7 @@ def insert_timestamps(parsed_subtitles, content):
         subtitle_id = int(match.group(1))
         return f'\n{subtitle_id}\n{parsed_subtitles[subtitle_id]["timestamp"]}\n{match.group(2)}'
 
-    return re.sub(r'^<(\d+)>([^\n]+?)</\d+>$', replacement, content, flags=re.MULTILINE)
+    return re.sub(r'^<(\d+)>([^\n]*?)</\d+>$', replacement, content, flags=re.MULTILINE)
 
 def post_process_text(text: str, original_subtitles: dict) -> str:
     output_string = insert_timestamps(original_subtitles, text)
