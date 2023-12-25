@@ -16,7 +16,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 assert openai.api_key is not None, "OpenAI API key not found. Please set it in the .env file."
 
 MODEL = "gpt-4-1106-preview"
-TOKENS_PER_CHUNK = 2_500 # Safe value, might be able to increase depending on the language
+TOKENS_PER_CHUNK = 3_000 # Safe value, might be able to increase depending on the language
 MAX_OUTPUT_TOKENS = 4_095 # Fixed by OpenAI
 MAX_RETRIES = 1 # Despite instructions, model sometimes skips/merges subtitles. Retrying helps.
 TEMPERATURE = 0.4
