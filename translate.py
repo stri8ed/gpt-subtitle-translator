@@ -10,16 +10,12 @@ import openai
 import tiktoken
 import re
 
+from constants import MAX_OUTPUT_TOKENS, TEMPERATURE, MAX_RETRIES, MODEL
+
 load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 assert openai.api_key is not None, "OpenAI API key not found. Please set it in the .env file."
-
-MODEL = "gpt-4-1106-preview"
-TOKENS_PER_CHUNK = 3_000 # Safe value, might be able to increase depending on the language
-MAX_OUTPUT_TOKENS = 4_095 # Fixed by OpenAI
-MAX_RETRIES = 1 # Despite instructions, model sometimes skips/merges subtitles. Retrying helps.
-TEMPERATURE = 0.4
 
 with open("./prompt.txt", encoding="utf-8") as f:
     prompt_template = f.read().replace("{target_language}", os.getenv("TARGET_LANGUAGE"))
@@ -77,10 +73,14 @@ def validate_response(response: str, chunk: str, chunk_number):
 
     logger.info(f"got chunk {chunk_number}, length is {token_count} tokens.")
 
-def translate_subtitles(srt_data: str, num_threads: int = 1):
+def translate_subtitles(
+    srt_data: str,
+    tokens_per_chunk: int,
+    num_threads: int = 1
+):
     parsed_srt = parse_srt(srt_data)
     text = preprocess(parsed_srt)
-    chunks = make_chunks(text, max_tokens_per_chunk=TOKENS_PER_CHUNK)
+    chunks = make_chunks(text, max_tokens_per_chunk=tokens_per_chunk)
     logger.info(f"Split into {len(chunks)} chunks.")
 
     translations = [""] * len(chunks)

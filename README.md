@@ -27,5 +27,6 @@ python main.py path/to/subtitles.srt -t 2
 ## Options
 
 ```
--t  Number of threads to use (default: 1)                      
+-t  Number of threads to use (default: 1)  
+-s  Number of tokens per chunk (default: 2500)                    
 ```
