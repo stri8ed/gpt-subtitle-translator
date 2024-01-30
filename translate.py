@@ -3,11 +3,11 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
 from logger import logger
-from openai_utils import num_tokens_from_string, CompletionGenerator
+from openai_utils import CompletionGenerator
 import re
-from constants import MAX_RETRIES, MAX_OUTPUT_TOKENS
+from constants import MAX_RETRIES, MODEL
 
-generator = CompletionGenerator()
+generator = CompletionGenerator(model=MODEL)
 
 with open("./prompt.txt", encoding="utf-8") as f:
     prompt_template = f.read()
@@ -36,14 +36,14 @@ def translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt=0):
 def get_translation(chunk_number:int, chunk:str, lang:str) -> str:
     prompt = prompt_template.replace("{subtitles}", chunk.strip()) \
         .replace("{target_language}", lang)
-    logger.info(f"Processing chunk {chunk_number}, with {num_tokens_from_string(chunk)} tokens.")
+    logger.info(f"Processing chunk {chunk_number}, with {generator.num_tokens_from_string(chunk)} tokens.")
     return generator.generate_completion(prompt)
 
 def validate_response(response: str, chunk: str, chunk_number):
-    token_count = num_tokens_from_string(response)
-    if token_count >= MAX_OUTPUT_TOKENS:
+    token_count = generator.num_tokens_from_string(response)
+    if token_count >= generator.max_output_tokens:
         raise ResponseTooLongError(
-            f"Response too long. Might be missing tokens. {token_count} tokens, max is {MAX_OUTPUT_TOKENS} tokens. Try a smaller chunk size."
+            f"Response too long. Might be missing tokens. {token_count} tokens, max is {generator.max_output_tokens} tokens. Try a smaller chunk size."
         )
     missing_subtitles = get_missing_subtitles(response, chunk)
     if missing_subtitles:
@@ -96,7 +96,7 @@ def make_chunks(text, max_tokens_per_chunk) -> list[str]:
     pieces = []
     current_piece = ""
     for ln in lines:
-        candidate_length = num_tokens_from_string(current_piece) + num_tokens_from_string(ln) + 1
+        candidate_length = generator.num_tokens_from_string(current_piece) + generator.num_tokens_from_string(ln) + 1
         if candidate_length <= max_tokens_per_chunk:
             current_piece += ("\n" + ln)
         else:
