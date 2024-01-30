@@ -31,18 +31,11 @@ model_params = {
     }
 }
 
-def calculate_cost(
-    model: str,
-    num_tokens: int, token_type: Literal["input", "output"] = "input"
-) -> float:
-    cost_per_1k = model_params[model][f"price_{token_type}"]
-    return (num_tokens / 1000) * cost_per_1k
-
 class CompletionGenerator:
     def __init__(self, model: str):
         assert model in model_params, f"Model {model} info not found."
         self.model = model
-        self.max_output_tokens = model_params[model]["max_output_tokens"]
+        self.params = model_params[model]
         self.total_input_tokens = 0
         self.total_output_tokens = 0
 
@@ -51,7 +44,7 @@ class CompletionGenerator:
         response = openai.chat.completions.create(
             model=self.model,
             messages=messages,
-            max_tokens=self.max_output_tokens,
+            max_tokens=self.params["max_output_tokens"],
             temperature=TEMPERATURE,
             n=1,
             stop=None,
@@ -61,8 +54,8 @@ class CompletionGenerator:
         return response.choices[0].message.content
 
     def get_total_cost(self) -> float:
-        input_cost = calculate_cost(self.model, self.total_input_tokens, "input")
-        output_cost = calculate_cost(self.model, self.total_output_tokens, "output")
+        input_cost =  (self.total_input_tokens / 1000) * self.params["price_input"]
+        output_cost = (self.total_output_tokens / 1000) * self.params["price_output"]
         return input_cost + output_cost
 
     def num_tokens_from_string(self, string: str) -> int:
