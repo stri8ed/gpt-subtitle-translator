@@ -16,17 +16,18 @@ pip install -r requirements.txt
 
 Create an environment file:
 1. Rename the `.env.example` at the root of your project to `.env`
-2. In the new `.env` file, replace `YOUR_OPENAI_API_KEY`, and `TARGET_LANGUAGE` with the correct values.
+2. In the new `.env` file, replace `YOUR_OPENAI_API_KEY` with the correct value.
 
 ## Usage
 
 ```
-python main.py path/to/subtitles.srt -t 2
+python main.py path/to/subtitles.srt -l english -t 2
 ```
 
 ## Options
 
 ```
+-l  Language to translate to (default: English)
 -t  Number of threads to use (default: 1)  
 -s  Number of tokens per chunk (default: 2500)                    
 ```

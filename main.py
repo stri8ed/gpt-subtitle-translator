@@ -15,6 +15,7 @@ def get_output_filename(input_filename):
 def main():
     parser = argparse.ArgumentParser(description='Translate a transcript file.')
     parser.add_argument('file', help='The transcript file to translate.', nargs='?', default='')
+    parser.add_argument('-l', '--language', type=str, default="English", help='Language to translate to.')
     parser.add_argument('-t', '--threads', type=int, default=1, help='Number of threads to use.')
     parser.add_argument('-s', '--chunk_size', type=int, default=TOKENS_PER_CHUNK, help='Number of tokens per chunk.')
 
@@ -28,6 +29,7 @@ def main():
 
     filename = get_output_filename(args.file)
     result = translate_subtitles(
+        lang=args.language,
         srt_data = srt_data,
         num_threads = args.threads,
         tokens_per_chunk=args.chunk_size

@@ -18,20 +18,20 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 assert openai.api_key is not None, "OpenAI API key not found. Please set it in the .env file."
 
 with open("./prompt.txt", encoding="utf-8") as f:
-    prompt_template = f.read().replace("{target_language}", os.getenv("TARGET_LANGUAGE"))
+    prompt_template = f.read()
 
 def num_tokens_from_string(string: str) -> int:
     encoding = tiktoken.get_encoding("cl100k_base")
     num_tokens = len(encoding.encode(string))
     return num_tokens
 
-def translate_chunk(chunk_idx, chunk, stop_flag, attempt=0):
+def translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt=0):
     if stop_flag.is_set():
         return chunk_idx, "", ""
 
     chunk_number = chunk_idx + 1
     subtitles, mapping = randomize_ids(chunk)
-    response = get_translation(chunk_number, subtitles)
+    response = get_translation(chunk_number, subtitles, lang)
     response = revert_id_randomization(response, mapping)
     error_message = ""
 
@@ -40,14 +40,15 @@ def translate_chunk(chunk_idx, chunk, stop_flag, attempt=0):
     except Exception as e:
         if attempt < MAX_RETRIES and isinstance(e, MissingSubtitlesError):
             logger.info(f"Retrying chunk {chunk_number}, after error: {e}")
-            return translate_chunk(chunk_idx, chunk, stop_flag, attempt + 1)
+            return translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt + 1)
         else:
             error_message = str(e)
 
     return chunk_idx, response, error_message
 
-def get_translation(chunk_number:int, chunk:str) -> str:
-    prompt = prompt_template.replace("{subtitles}", chunk.strip())
+def get_translation(chunk_number:int, chunk:str, lang:str) -> str:
+    prompt = prompt_template.replace("{subtitles}", chunk.strip()) \
+        .replace("{target_language}", lang)
     messages = [{"role": "system", "content": prompt}]
     logger.info(f"Processing chunk {chunk_number}, with {num_tokens_from_string(chunk)} tokens.")
     return openai.chat.completions.create(
@@ -75,6 +76,7 @@ def validate_response(response: str, chunk: str, chunk_number):
 
 def translate_subtitles(
     srt_data: str,
+    lang: str,
     tokens_per_chunk: int,
     num_threads: int = 1
 ):
@@ -89,7 +91,7 @@ def translate_subtitles(
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
         for i, chunk in enumerate(chunks):
-            future = executor.submit(translate_chunk, i, chunk, stop_flag)
+            future = executor.submit(translate_chunk, i, chunk, stop_flag, lang, 0)
             futures.append(future)
 
         for future in concurrent.futures.as_completed(futures):
