@@ -1,29 +1,16 @@
 import random
 import threading
-from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
 from logger import logger
-
-import os
-import openai
-import tiktoken
+from openai_utils import num_tokens_from_string, CompletionGenerator
 import re
+from constants import MAX_RETRIES, MAX_OUTPUT_TOKENS
 
-from constants import MAX_OUTPUT_TOKENS, TEMPERATURE, MAX_RETRIES, MODEL
-
-load_dotenv()
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
-assert openai.api_key is not None, "OpenAI API key not found. Please set it in the .env file."
+generator = CompletionGenerator()
 
 with open("./prompt.txt", encoding="utf-8") as f:
     prompt_template = f.read()
-
-def num_tokens_from_string(string: str) -> int:
-    encoding = tiktoken.get_encoding("cl100k_base")
-    num_tokens = len(encoding.encode(string))
-    return num_tokens
 
 def translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt=0):
     if stop_flag.is_set():
@@ -44,21 +31,13 @@ def translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt=0):
         else:
             error_message = str(e)
 
-    return chunk_idx, response, error_message
+    return chunk_idx, response, error_message, attempt + 1
 
 def get_translation(chunk_number:int, chunk:str, lang:str) -> str:
     prompt = prompt_template.replace("{subtitles}", chunk.strip()) \
         .replace("{target_language}", lang)
-    messages = [{"role": "system", "content": prompt}]
     logger.info(f"Processing chunk {chunk_number}, with {num_tokens_from_string(chunk)} tokens.")
-    return openai.chat.completions.create(
-        model=MODEL,
-        messages=messages,
-        max_tokens=MAX_OUTPUT_TOKENS,
-        temperature=TEMPERATURE,
-        n=1,
-        stop=None,
-    ).choices[0].message.content
+    return generator.generate_completion(prompt)
 
 def validate_response(response: str, chunk: str, chunk_number):
     token_count = num_tokens_from_string(response)
@@ -96,7 +75,7 @@ def translate_subtitles(
 
         for future in concurrent.futures.as_completed(futures):
             try:
-                index, response, err = future.result()
+                index, response, err, attempts = future.result()
                 translations[index] = response
                 if err != "":
                     raise Exception(err)
@@ -108,6 +87,7 @@ def translate_subtitles(
                     fut.cancel()
                 break
 
+    print(f"Total API cost: ${generator.get_total_cost():.5f}")
     joined_text = "\n\n".join(translations)
     return post_process_text(joined_text, parsed_srt)
 
