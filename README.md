@@ -29,5 +29,5 @@ python main.py path/to/subtitles.srt -l english -t 2
 ```
 -l  Language to translate to (default: English)
 -t  Number of threads to use (default: 1)  
--s  Number of tokens per chunk (default: 4000)                    
+-s  Number of tokens per chunk (default: 2500)                    
 ```
