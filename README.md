@@ -1,6 +1,6 @@
 # GPT Subtitle Translator
 
-This tool is designed to translate subtitles with GPT model(s). It's optimized for use with the "gpt-4-1106-preview" model, and using this model is highly recommended for best results.
+This tool is designed to translate subtitles with GPT model(s). It's optimized for use with the "gpt-4-turbo" model, and using this model is highly recommended for best results.
 ### Features
 - Strips the timestamps from the subtitles before translating, to reduce input tokens.
 - Runs multiple chunks in parallel to speed up the translation process.
