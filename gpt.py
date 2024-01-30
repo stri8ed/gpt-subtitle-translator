@@ -1,5 +1,4 @@
 import os
-from typing import Literal
 import openai
 import tiktoken
 from constants import TEMPERATURE
@@ -31,11 +30,11 @@ model_params = {
     }
 }
 
-class CompletionGenerator:
-    def __init__(self, model: str):
-        assert model in model_params, f"Model {model} info not found."
-        self.model = model
-        self.params = model_params[model]
+class GPT:
+    def __init__(self, model_name: str):
+        assert model_name in model_params, f"Model {model_name} info not found."
+        self.model = model_name
+        self.params = model_params[model_name]
         self.total_input_tokens = 0
         self.total_output_tokens = 0
 
@@ -62,3 +61,6 @@ class CompletionGenerator:
         encoding = tiktoken.encoding_for_model(self.model)
         num_tokens = len(encoding.encode(string))
         return num_tokens
+
+    def max_output_tokens(self) -> int:
+        return self.params["max_output_tokens"]

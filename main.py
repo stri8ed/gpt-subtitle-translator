@@ -1,7 +1,6 @@
 import argparse
 import os
 import time
-
 from constants import TOKENS_PER_CHUNK
 from translate import translate_subtitles
 from logger import logger
