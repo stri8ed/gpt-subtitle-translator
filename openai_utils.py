@@ -13,6 +13,7 @@ assert (
     openai.api_key is not None
 ), "OpenAI API key not found. Please set it in the .env file."
 
+# as of 01/30/2024
 openai_pricing_per_1k = {
     "gpt-4-turbo-preview": {
         "input": 0.01,
