@@ -29,10 +29,8 @@ START
 <44> /במכולת, אתה קונה חלב?"י</44>
 <10>< ברור שיגידו "כן". -למה? -אבל זה לא אומר שיקנו את המוצר 1<</10>
 <56>יאללה.</56>
-<67>א כ.ךא בדר..יל</67>
 <60>הרי כל האנושות כולה</60>
 <47>,הולכת להירתם עכשיו ליצירה של כלכלה ירוקה וטובה יותר</47>
-<54>כשבעצם במצב רגיל,</54>
 
 END
 
@@ -46,10 +44,8 @@ START
 <44>in the grocery store, do you buy milk?</44>
 <10>Of course they'll say "yes". -Why? But that doesn't mean they'll buy the product.</10>
 <56>Come on.</56>
-<67> </67>
 <60>After all, all of humanity</60>
 <47>Is now going to be harnessed for the creation of a greener and better economy</47>
-<54>When actually in a normal situation,</54>
 
 END
 

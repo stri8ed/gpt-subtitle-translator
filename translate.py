@@ -27,6 +27,7 @@ def translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt=0):
     except Exception as e:
         if attempt < MAX_RETRIES and isinstance(e, MissingSubtitlesError):
             logger.info(f"Retrying chunk {chunk_number}, after error: {e}")
+            # todo split chunk in half
             return translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt + 1)
         else:
             error_message = str(e)
