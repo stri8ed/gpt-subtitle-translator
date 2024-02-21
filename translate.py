@@ -93,10 +93,10 @@ def translate_subtitles(
     return post_process_text(joined_text, parsed_srt)
 
 def make_chunks(text, max_tokens_per_chunk) -> list[str]:
-    lines = text.split("\n")
+    items = split_on_tags(text)
     pieces = []
     current_piece = ""
-    for ln in lines:
+    for ln in items:
         candidate_length = model.num_tokens_from_string(current_piece) + model.num_tokens_from_string(ln) + 1
         if candidate_length <= max_tokens_per_chunk:
             current_piece += ("\n" + ln)
@@ -114,6 +114,11 @@ def parse_srt(srt_content):
     i = 0
     try:
         while i < len(lines):
+
+            if lines[i].strip() == "":
+                i += 1
+                continue
+
             subtitle_id = int(lines[i])
             timestamp = lines[i + 1]
             text_lines = []
@@ -121,12 +126,16 @@ def parse_srt(srt_content):
             while i < len(lines) and lines[i].strip() != "":
                 text_lines.append(lines[i])
                 i += 1
-            subtitles[subtitle_id] = {"timestamp": timestamp, "text": " ".join(text_lines)}
+            subtitles[subtitle_id] = {"timestamp": timestamp, "text": "\n".join(text_lines)}
             i += 1
     except Exception as e:
         raise Exception("Invalid SRT file. Please check your input. " + str(e))
 
     return subtitles
+
+def split_on_tags(s: str) -> list[str]:
+    pattern = r'^<\d+>.*?</\d+>$'
+    return re.findall(pattern, s, re.DOTALL | re.MULTILINE)
 
 def randomize_ids(subtitles: str) -> (str, dict):
     """
@@ -135,8 +144,9 @@ def randomize_ids(subtitles: str) -> (str, dict):
     Valid subtitles have consecutive numeric IDs, which seems to make GPT more likely to skip/merge neighboring subtitles.
     By assigning new IDs randomly, while preserving the order, we can help GPT avoid this behavior.
     """
-    items = subtitles.strip().split("\n")
-    pattern = re.compile(r"<(\d+)>(.*?)</\d+>")
+
+    pattern = re.compile(r"<(\d+)>(.*?)</\d+>", re.DOTALL | re.MULTILINE)
+    items = re.findall(pattern, subtitles)
 
     tag_count = len(items)
     new_ids = random.sample(range(1, tag_count * 10), tag_count)
@@ -144,17 +154,16 @@ def randomize_ids(subtitles: str) -> (str, dict):
     mapping = {}
     updated = []
 
-    for index, string in enumerate(items):
-        original_id = pattern.search(string).group(1)
+    for index, (original_id, text) in enumerate(items):
         new_id = new_ids[index]
         mapping[new_id] = original_id
-        updated_string = re.sub(pattern, f"<{new_id}>\\2</{new_id}>", string)
+        updated_string = f"<{new_id}>{text}</{new_id}>"
         updated.append(updated_string)
 
     return "\n".join(updated), mapping
 
 def revert_id_randomization(subtitles: str, mapping: dict) -> str:
-    pattern = re.compile(r"<(\d+)>(.*?)</\d+>")
+    pattern = re.compile(r"<(\d+)>(.*?)</\d+>", re.DOTALL | re.MULTILINE)
 
     def replace_with_original(match):
         original_id = mapping[int(match.group(1))]
@@ -168,7 +177,7 @@ def insert_timestamps(parsed_subtitles, content):
         subtitle_id = int(match.group(1))
         return f'\n{subtitle_id}\n{parsed_subtitles[subtitle_id]["timestamp"]}\n{match.group(2)}'
 
-    return re.sub(r'^<(\d+)>([^\n]*?)</\d+>$', replacement, content, flags=re.MULTILINE)
+    return re.sub(r'^<(\d+)>(.*?)</\d+>$', replacement, content, flags=re.MULTILINE | re.DOTALL)
 
 def post_process_text(text: str, original_subtitles: dict) -> str:
     output_string = insert_timestamps(original_subtitles, text)

@@ -25,7 +25,8 @@ START
 
 <90>// איך עשית את המדגם? מה הייתה השאלה?</90>
 <95>< איך עשית את המדגם? מה הייתה</95>
-<9>"השאלה? האם כשאתה 1</9>
+<9>"השאלה?
+ האם כשאתה</9>
 <44> /במכולת, אתה קונה חלב?"י</44>
 <10>< ברור שיגידו "כן". -למה? -אבל זה לא אומר שיקנו את המוצר 1<</10>
 <56>יאללה.</56>
@@ -40,7 +41,8 @@ START
 
 <90>How did you conduct the sample? What was the question?</90>
 <95>How did you conduct the sample? What was</95>
-<9>the question? When you're</9>
+<9>the question?
+When you're</9>
 <44>in the grocery store, do you buy milk?</44>
 <10>Of course they'll say "yes". -Why? But that doesn't mean they'll buy the product.</10>
 <56>Come on.</56>
