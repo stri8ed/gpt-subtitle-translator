@@ -5,21 +5,19 @@ import concurrent
 from logger import logger
 from gpt import GPT
 import re
-from constants import MAX_RETRIES, MODEL
+from constants import MAX_RETRIES, MODEL, DELIMITER
 
 model = GPT(model_name=MODEL)
 
 with open("./prompt.txt", encoding="utf-8") as f:
-    prompt_template = f.read()
+    prompt_template = f.read().replace("{delimiter}", DELIMITER)
 
 def translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt=0):
     if stop_flag.is_set():
         return chunk_idx, "", ""
 
     chunk_number = chunk_idx + 1
-    subtitles, mapping = randomize_ids(chunk)
-    response = get_translation(chunk_number, subtitles, lang)
-    response = revert_id_randomization(response, mapping)
+    response = get_translation(chunk_number, chunk, lang)
     error_message = ""
 
     try:
@@ -46,10 +44,10 @@ def validate_response(response: str, chunk: str, chunk_number):
         raise ResponseTooLongError(
             f"Response too long. Might be missing tokens. {token_count} tokens, max is {model.max_output_tokens()} tokens. Try a smaller chunk size."
         )
-    missing_subtitles = get_missing_subtitles(response, chunk)
-    if missing_subtitles:
+    missing_subtitles = get_total_missing_subtitles(response, chunk)
+    if missing_subtitles > 0:
         raise MissingSubtitlesError(
-            f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
+            f"Chunk {chunk_number} is missing {missing_subtitles} subtitles. Try a smaller chunk size."
         )
 
     logger.info(f"got chunk {chunk_number}, length is {token_count} tokens.")
@@ -93,13 +91,13 @@ def translate_subtitles(
     return post_process_text(joined_text, parsed_srt)
 
 def make_chunks(text, max_tokens_per_chunk) -> list[str]:
-    items = split_on_tags(text)
+    items = text.split(f"{DELIMITER}\n")
     pieces = []
     current_piece = ""
     for ln in items:
         candidate_length = model.num_tokens_from_string(current_piece) + model.num_tokens_from_string(ln) + 1
         if candidate_length <= max_tokens_per_chunk:
-            current_piece += ("\n" + ln)
+            current_piece += ("\n" + ln + DELIMITER)
         else:
             pieces.append(current_piece)
             current_piece = ln
@@ -133,51 +131,14 @@ def parse_srt(srt_content):
 
     return subtitles
 
-def split_on_tags(s: str) -> list[str]:
-    pattern = r'^<\d+>.*?</\d+>$'
-    return re.findall(pattern, s, re.DOTALL | re.MULTILINE)
-
-def randomize_ids(subtitles: str) -> (str, dict):
-    """
-    Randomize subtitle IDs to avoid GPT skipping/merging subtitles.
-
-    Valid subtitles have consecutive numeric IDs, which seems to make GPT more likely to skip/merge neighboring subtitles.
-    By assigning new IDs randomly, while preserving the order, we can help GPT avoid this behavior.
-    """
-
-    pattern = re.compile(r"<(\d+)>(.*?)</\d+>", re.DOTALL | re.MULTILINE)
-    items = re.findall(pattern, subtitles)
-
-    tag_count = len(items)
-    new_ids = random.sample(range(1, tag_count * 10), tag_count)
-
-    mapping = {}
-    updated = []
-
-    for index, (original_id, text) in enumerate(items):
-        new_id = new_ids[index]
-        mapping[new_id] = original_id
-        updated_string = f"<{new_id}>{text}</{new_id}>"
-        updated.append(updated_string)
-
-    return "\n".join(updated), mapping
-
-def revert_id_randomization(subtitles: str, mapping: dict) -> str:
-    pattern = re.compile(r"<(\d+)>(.*?)</\d+>", re.DOTALL | re.MULTILINE)
-
-    def replace_with_original(match):
-        original_id = mapping[int(match.group(1))]
-        return f"<{original_id}>{match.group(2)}</{original_id}>"
-
-    reverted_chunk = re.sub(pattern, replace_with_original, subtitles)
-    return reverted_chunk
-
 def insert_timestamps(parsed_subtitles, content):
-    def replacement(match):
-        subtitle_id = int(match.group(1))
-        return f'\n{subtitle_id}\n{parsed_subtitles[subtitle_id]["timestamp"]}\n{match.group(2)}'
+    result = ''
+    items = content.split(DELIMITER)
+    for i in range(len(items)):
+        subtitle = parsed_subtitles[i+1]
+        result += f'\n{i+1}\n{subtitle["timestamp"]}\n{items[i].strip()}\n'
 
-    return re.sub(r'^<(\d+)>(.*?)</\d+>$', replacement, content, flags=re.MULTILINE | re.DOTALL)
+    return result
 
 def post_process_text(text: str, original_subtitles: dict) -> str:
     output_string = insert_timestamps(original_subtitles, text)
@@ -191,17 +152,13 @@ def clean_text(text: str) -> str:
     output_string = re.sub(r'\n\nEND', "", output_string, flags=re.MULTILINE)
     return output_string
 
-def get_missing_subtitles(translated: str, original_text: str):
-    translated_ids = re.findall(r'^<(\d+)>', translated.strip(), flags=re.MULTILINE)
-    lines = re.findall(r"<(\d+)>(.*?)</\1>", original_text.strip(), flags=re.MULTILINE)
-    entries = {id_: text for id_, text in lines}
-
-    return {key: value for key, value in entries.items() if key not in translated_ids}
+def get_total_missing_subtitles(translated: str, original_text: str):
+    return abs(original_text.count(DELIMITER) - translated.count(DELIMITER))
 
 def preprocess(srt_data: dict) -> str:
     result = ""
     for key, value in srt_data.items():
-        result += f"<{key}>{value['text']}</{key}>\n"
+        result += f"{value['text']}{DELIMITER}\n"
     return result
 
 class ResponseTooLongError(Exception):

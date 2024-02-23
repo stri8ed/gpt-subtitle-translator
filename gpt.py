@@ -23,9 +23,9 @@ model_params = {
         "price_output": 0.06,
         "max_output_tokens": 8192,
     },
-    "gpt-3.5-turbo-1106": {
-        "price_input": 0.0010,
-        "price_output": 0.0020,
+    "gpt-3.5-turbo-0125": {
+        "price_input": 0.0005,
+        "price_output": 0.0015,
         "max_output_tokens": 4096,
     }
 }
