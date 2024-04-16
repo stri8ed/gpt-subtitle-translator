@@ -2,45 +2,44 @@ import random
 import threading
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
-from logger import logger
-from gpt import GPT
-import re
-from constants import MAX_RETRIES, MODEL
 
-model = GPT(model_name=MODEL)
+from models.base_model import BaseModel
+from logger import logger
+import re
+from constants import MAX_RETRIES
 
 with open("./prompt.txt", encoding="utf-8") as f:
     prompt_template = f.read()
 
-def translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt=0):
+def translate_chunk(model, chunk_idx, chunk, stop_flag, lang, attempt=0):
     if stop_flag.is_set():
         return chunk_idx, "", ""
 
     chunk_number = chunk_idx + 1
     subtitles, mapping = randomize_ids(chunk)
-    response = get_translation(chunk_number, subtitles, lang)
+    response = get_translation(model, chunk_number, subtitles, lang)
     response = revert_id_randomization(response, mapping)
     error_message = ""
 
     try:
-        validate_response(response, chunk, chunk_number)
+        validate_response(model, response, chunk, chunk_number)
     except Exception as e:
         if attempt < MAX_RETRIES and isinstance(e, MissingSubtitlesError):
             logger.info(f"Retrying chunk {chunk_number}, after error: {e}")
             # todo split chunk in half
-            return translate_chunk(chunk_idx, chunk, stop_flag, lang, attempt + 1)
+            return translate_chunk(model, chunk_idx, chunk, stop_flag, lang, attempt + 1)
         else:
             error_message = str(e)
 
     return chunk_idx, response, error_message, attempt + 1
 
-def get_translation(chunk_number:int, chunk:str, lang:str) -> str:
+def get_translation(model: BaseModel, chunk_number:int, chunk:str, lang:str) -> str:
     prompt = prompt_template.replace("{subtitles}", chunk.strip()) \
         .replace("{target_language}", lang)
     logger.info(f"Processing chunk {chunk_number}, with {model.num_tokens_from_string(chunk)} tokens.")
     return model.generate_completion(prompt)
 
-def validate_response(response: str, chunk: str, chunk_number):
+def validate_response(model: BaseModel, response: str, chunk: str, chunk_number):
     token_count = model.num_tokens_from_string(response)
     if token_count >= model.max_output_tokens():
         raise ResponseTooLongError(
@@ -57,12 +56,13 @@ def validate_response(response: str, chunk: str, chunk_number):
 def translate_subtitles(
     srt_data: str,
     lang: str,
+    model: BaseModel,
     tokens_per_chunk: int,
     num_threads: int = 1
 ):
     parsed_srt = parse_srt(srt_data)
     text = preprocess(parsed_srt)
-    chunks = make_chunks(text, max_tokens_per_chunk=tokens_per_chunk)
+    chunks = make_chunks(model, text, max_tokens_per_chunk=tokens_per_chunk)
     logger.info(f"Split into {len(chunks)} chunks.")
 
     translations = [""] * len(chunks)
@@ -71,7 +71,7 @@ def translate_subtitles(
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
         for i, chunk in enumerate(chunks):
-            future = executor.submit(translate_chunk, i, chunk, stop_flag, lang, 0)
+            future = executor.submit(translate_chunk, model, i, chunk, stop_flag, lang, 0)
             futures.append(future)
 
         for future in concurrent.futures.as_completed(futures):
@@ -92,7 +92,7 @@ def translate_subtitles(
     joined_text = "\n\n".join(translations)
     return post_process_text(joined_text, parsed_srt)
 
-def make_chunks(text, max_tokens_per_chunk) -> list[str]:
+def make_chunks(model, text, max_tokens_per_chunk) -> list[str]:
     items = split_on_tags(text)
     pieces = []
     current_piece = ""

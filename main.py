@@ -1,7 +1,9 @@
 import argparse
 import os
 import time
-from constants import TOKENS_PER_CHUNK
+from constants import TOKENS_PER_CHUNK, DEFAULT_MODEL
+from models.claude import Claude
+from models.gpt import GPT
 from translate import translate_subtitles
 from logger import logger
 import chardet
@@ -17,6 +19,7 @@ def main():
     parser.add_argument('-l', '--language', type=str, default="English", help='Language to translate to.')
     parser.add_argument('-t', '--threads', type=int, default=1, help='Number of threads to use.')
     parser.add_argument('-s', '--chunk_size', type=int, default=TOKENS_PER_CHUNK, help='Number of tokens per chunk.')
+    parser.add_argument('-m', '--model', type=str, default=DEFAULT_MODEL, help='Model to use.')
 
     args = parser.parse_args()
 
@@ -27,8 +30,11 @@ def main():
         srt_data = f.read()
 
     filename = get_output_filename(args.file)
+    model = GPT(args.model) if args.model.startswith("gpt") else Claude(args.model)
+
     result = translate_subtitles(
         lang=args.language,
+        model = model,
         srt_data = srt_data,
         num_threads = args.threads,
         tokens_per_chunk=args.chunk_size
@@ -37,7 +43,7 @@ def main():
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(result)
 
-    logger.info(f"Translated subtitles written to {filename}")
+    logger.info(f"Translated subtitles with {args.model}, file written to {filename}")
 
 if __name__ == '__main__':
     main()

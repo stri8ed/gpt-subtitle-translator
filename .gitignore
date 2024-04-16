@@ -1,6 +1,7 @@
 Lib
 Scripts
 venv
+.venv
 .env
 .idea
 __pycache__

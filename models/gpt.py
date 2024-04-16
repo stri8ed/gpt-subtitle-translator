@@ -4,6 +4,8 @@ import tiktoken
 from constants import TEMPERATURE
 from dotenv import load_dotenv
 
+from models.base_model import BaseModel
+
 load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -23,17 +25,17 @@ model_params = {
         "price_output": 0.06,
         "max_output_tokens": 8192,
     },
-    "gpt-3.5-turbo-1106": {
+    "gpt-3.5-turbo-0125": {
         "price_input": 0.0010,
         "price_output": 0.0020,
         "max_output_tokens": 4096,
     }
 }
 
-class GPT:
+class GPT(BaseModel):
     def __init__(self, model_name: str):
         assert model_name in model_params, f"Model {model_name} info not found."
-        self.model = model_name
+        super().__init__(model_name)
         self.params = model_params[model_name]
         self.total_input_tokens = 0
         self.total_output_tokens = 0
@@ -41,7 +43,7 @@ class GPT:
     def generate_completion(self, prompt: str) -> str:
         messages = [{"role": "system", "content": prompt}]
         response = openai.chat.completions.create(
-            model=self.model,
+            model=self.model_name,
             messages=messages,
             max_tokens=self.params["max_output_tokens"],
             temperature=TEMPERATURE,
@@ -58,7 +60,7 @@ class GPT:
         return input_cost + output_cost
 
     def num_tokens_from_string(self, string: str) -> int:
-        encoding = tiktoken.encoding_for_model(self.model)
+        encoding = tiktoken.encoding_for_model(self.model_name)
         num_tokens = len(encoding.encode(string))
         return num_tokens
 
