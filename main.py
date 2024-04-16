@@ -38,6 +38,7 @@ def main():
         tokens_per_chunk=args.chunk_size
     )
     result = translator.translate_subtitles(srt_data)
+    logger.info(f"Total API cost: ${model.get_total_cost():.5f}")
 
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(result)
