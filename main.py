@@ -4,7 +4,7 @@ import time
 from src.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL
 from src.models.claude import Claude
 from src.models.gpt import GPT
-from src.translate import translate_subtitles
+from src.subtitle_translator import SubtitleTranslator
 from src.logger import logger
 import chardet
 
@@ -31,14 +31,13 @@ def main():
 
     filename = get_output_filename(args.file)
     model = GPT(args.model) if args.model.startswith("gpt") else Claude(args.model)
-
-    result = translate_subtitles(
+    translator = SubtitleTranslator(
+        model=model,
         lang=args.language,
-        model = model,
-        srt_data = srt_data,
-        num_threads = args.threads,
+        num_threads=args.threads,
         tokens_per_chunk=args.chunk_size
     )
+    result = translator.translate_subtitles(srt_data)
 
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(result)
