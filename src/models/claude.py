@@ -5,8 +5,8 @@ import tiktoken
 from anthropic import AnthropicBedrock
 from dotenv import load_dotenv
 
-from constants import TEMPERATURE
-from models.base_model import BaseModel
+from src.constants import TEMPERATURE
+from src.models.base_model import BaseModel
 
 load_dotenv()
 

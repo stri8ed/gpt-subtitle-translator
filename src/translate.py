@@ -3,12 +3,12 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
 
-from models.base_model import BaseModel
-from logger import logger
+from src.models.base_model import BaseModel
+from src.logger import logger
 import re
-from constants import MAX_RETRIES
+from src.constants import MAX_RETRIES
 
-with open("./prompt.txt", encoding="utf-8") as f:
+with open("../prompt.txt", encoding="utf-8") as f:
     prompt_template = f.read()
 
 def translate_chunk(model, chunk_idx, chunk, stop_flag, lang, attempt=0):

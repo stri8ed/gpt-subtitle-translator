@@ -1,10 +1,10 @@
 import os
 import openai
 import tiktoken
-from constants import TEMPERATURE
+from src.constants import TEMPERATURE
 from dotenv import load_dotenv
 
-from models.base_model import BaseModel
+from src.models.base_model import BaseModel
 
 load_dotenv()
 
