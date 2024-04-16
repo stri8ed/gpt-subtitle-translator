@@ -54,6 +54,12 @@ class SubtitleProcessor:
         return [match.group(0) for match in self.TAG_PATTERN.finditer(text)]
 
     def randomize_ids(self, subtitles):
+        """
+        Randomize subtitle IDs to avoid skipping/merging subtitles.
+
+        Valid subtitles have consecutive numeric IDs, which seems to make GPT more likely to skip/merge neighboring subtitles.
+        By assigning new IDs randomly, while preserving the order, we can help GPT avoid this behavior.
+        """
         items = self.TAG_PATTERN.findall(subtitles)
         tag_count = len(items)
         new_ids = random.sample(range(1, tag_count * 10), tag_count)
