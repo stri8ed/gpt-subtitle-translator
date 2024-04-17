@@ -4,7 +4,7 @@ import time
 from src.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL
 from src.models.claude import Claude
 from src.models.gpt import GPT
-from src.subtitle_translator import SubtitleTranslator
+from src.subtitle_translator import SubtitleTranslator, TranslationError
 from src.logger import logger
 import chardet
 
@@ -37,8 +37,13 @@ def main():
         num_threads=args.threads,
         tokens_per_chunk=args.chunk_size
     )
-    result = translator.translate_subtitles(srt_data)
-    logger.info(f"Total API cost: ${model.get_total_cost():.5f}")
+
+    try:
+        result = translator.translate_subtitles(srt_data)
+    except TranslationError as e:
+        return logger.error(f"Translation failed: {e}")
+    finally:
+        logger.info(f"Total API cost: ${model.get_total_cost():.5f}")
 
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(result)
