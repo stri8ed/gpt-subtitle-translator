@@ -41,7 +41,7 @@ def main():
     try:
         result = translator.translate_subtitles(srt_data)
     except TranslationError as e:
-        return logger.error(f"Translation failed: {e}")
+        return logger.error(e)
     finally:
         logger.info(f"Total API cost: ${model.get_total_cost():.5f}")
 
