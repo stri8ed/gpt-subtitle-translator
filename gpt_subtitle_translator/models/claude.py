@@ -1,4 +1,5 @@
 import os
+from typing import Union
 
 import anthropic
 import tiktoken
@@ -24,15 +25,16 @@ model_params = {
 }
 
 class Claude(BaseModel):
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, params: Union[None, dict] = None):
         super().__init__(model_name)
+        params = params or {}
         if model_name.startswith("anthropic."):
-            self.client = AnthropicBedrock()
+            self.client = AnthropicBedrock(**params)
             model_name = next(key for key in model_params if key in model_name)
         else:
             assert (os.getenv("ANTHROPIC_API_KEY") is not None),\
                 "Anthropic API key not found. Please set it in the .env file."
-            self.client = anthropic.Anthropic()
+            self.client = anthropic.Anthropic(**params)
         self.total_input_tokens = 0
         self.total_output_tokens = 0
         self.params = model_params[model_name]
