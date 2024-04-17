@@ -62,18 +62,18 @@ class SubtitleTranslator:
 
         return result_text
 
-    def translate_chunk(self, chunk_idx, chunk, stop_flag, attempt):
+    def translate_chunk(self, chunk_idx: int, chunk: str, stop_flag, attempt: int):
         if stop_flag.is_set():
             return chunk_idx, "", ""
 
         chunk_number = chunk_idx + 1
         subtitles, mapping = self.processor.randomize_ids(chunk)
-        response = self.get_translation(chunk_number, subtitles)
-        response = response.strip()
+        raw_response = self.get_translation(chunk_number, subtitles)
+        response = raw_response.strip()
         response = self.processor.revert_id_randomization(response, mapping)
 
         try:
-            self.validate_response(response, chunk, chunk_number)
+            self.validate_response(response, chunk, chunk_number, raw_response)
         except Exception as e:
             if attempt < self.max_retries and isinstance(e, MissingSubtitlesError):
                 logger.info(f"Retrying chunk {chunk_number}, after error: {e}")
@@ -89,7 +89,7 @@ class SubtitleTranslator:
         logger.info(f"Processing chunk {chunk_number}, with {self.model.num_tokens_from_string(chunk)} tokens.")
         return self.model.generate_completion(prompt)
 
-    def validate_response(self, response, chunk, chunk_number):
+    def validate_response(self, response: str, chunk: str, chunk_number: int, raw_response: str):
         token_count = self.model.num_tokens_from_string(response)
         if token_count >= self.model.max_output_tokens():
             raise ResponseTooLongError(
@@ -99,7 +99,7 @@ class SubtitleTranslator:
         missing_subtitles = self.processor.get_missing_subtitles(response, chunk)
         if missing_subtitles:
             if len(missing_subtitles) == len(self.processor.split_on_tags(chunk)):
-                raise RefuseToTranslateError(f"Response: {response}")
+                raise RefuseToTranslateError(f"Response: {raw_response}")
             else:
                 raise MissingSubtitlesError(
                     f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
@@ -129,5 +129,5 @@ class TranslationError(Exception):
     def __str__(self):
         return "".join([
             f"An error occurred ({type(self.original_exception).__name__}): {str(self.original_exception)}\n",
-            f"Partial translation: {self.partial_translation}" if self.partial_translation else ""
+            f"Partial translation\n: {self.partial_translation}" if self.partial_translation else ""
         ])
