@@ -6,15 +6,15 @@ from typing import Callable, Optional
 
 from gpt_subtitle_translator.models.base_model import BaseModel
 from gpt_subtitle_translator.logger import logger
-from gpt_subtitle_translator.constants import MAX_RETRIES
 from gpt_subtitle_translator.subtitle_processor import SubtitleProcessor
 
 class SubtitleTranslator:
-    def __init__(self, model: BaseModel, lang: str, num_threads: int = 1, tokens_per_chunk: int = 500):
+    def __init__(self, model: BaseModel, lang: str, num_threads: int = 1, tokens_per_chunk: int = 500, max_retries: int = 1):
         self.model = model
         self.lang = lang
         self.num_threads = num_threads
         self.tokens_per_chunk = tokens_per_chunk
+        self.max_retries = max_retries
         self.processor = SubtitleProcessor(model)
         self.prompt_template = self.load_prompt()
 
@@ -75,7 +75,7 @@ class SubtitleTranslator:
         try:
             self.validate_response(response, chunk, chunk_number)
         except Exception as e:
-            if attempt < MAX_RETRIES and isinstance(e, MissingSubtitlesError):
+            if attempt < self.max_retries and isinstance(e, MissingSubtitlesError):
                 logger.info(f"Retrying chunk {chunk_number}, after error: {e}")
                 return self.translate_chunk(chunk_idx, chunk, stop_flag, attempt + 1)
             else:

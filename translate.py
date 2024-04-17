@@ -1,7 +1,7 @@
 import argparse
 import os
 import time
-from gpt_subtitle_translator.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL
+from gpt_subtitle_translator.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL, MAX_RETRIES
 from gpt_subtitle_translator.models.claude import Claude
 from gpt_subtitle_translator.models.gpt import GPT
 from gpt_subtitle_translator.subtitle_translator import SubtitleTranslator, TranslationError
@@ -20,6 +20,7 @@ def main():
     parser.add_argument('-t', '--threads', type=int, default=1, help='Number of threads to use.')
     parser.add_argument('-s', '--chunk_size', type=int, default=TOKENS_PER_CHUNK, help='Number of tokens per chunk.')
     parser.add_argument('-m', '--model', type=str, default=DEFAULT_MODEL, help='Model to use.')
+    parser.add_argument('-r', '--retries', type=int, default=MAX_RETRIES, help='Number of retries.')
 
     args = parser.parse_args()
 
@@ -35,7 +36,8 @@ def main():
         model=model,
         lang=args.language,
         num_threads=args.threads,
-        tokens_per_chunk=args.chunk_size
+        tokens_per_chunk=args.chunk_size,
+        max_retries=args.retries
     )
 
     try:
