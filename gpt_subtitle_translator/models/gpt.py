@@ -1,10 +1,10 @@
 import os
 import openai
 import tiktoken
-from src.constants import TEMPERATURE
+from gpt_subtitle_translator.constants import TEMPERATURE
 from dotenv import load_dotenv
 
-from src.models.base_model import BaseModel
+from gpt_subtitle_translator.models.base_model import BaseModel
 
 load_dotenv()
 

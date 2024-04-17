@@ -1,7 +1,7 @@
 import random
 import re
 
-from src.models.base_model import BaseModel
+from gpt_subtitle_translator.models.base_model import BaseModel
 
 
 class SubtitleProcessor:

@@ -2,7 +2,7 @@ import unittest
 import re
 from unittest.mock import MagicMock
 
-from src.subtitle_processor import SubtitleProcessor
+from gpt_subtitle_translator.subtitle_processor import SubtitleProcessor
 
 
 class TestSubtitleProcessor(unittest.TestCase):

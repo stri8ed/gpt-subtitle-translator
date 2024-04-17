@@ -1,11 +1,11 @@
 import argparse
 import os
 import time
-from src.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL
-from src.models.claude import Claude
-from src.models.gpt import GPT
-from src.subtitle_translator import SubtitleTranslator, TranslationError
-from src.logger import logger
+from gpt_subtitle_translator.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL
+from gpt_subtitle_translator.models.claude import Claude
+from gpt_subtitle_translator.models.gpt import GPT
+from gpt_subtitle_translator.subtitle_translator import SubtitleTranslator, TranslationError
+from gpt_subtitle_translator.logger import logger
 import chardet
 
 def get_output_filename(input_filename):

@@ -23,7 +23,7 @@ Create an environment file:
 ## Usage
 
 ```
-python main.py path/to/subtitles.srt -l english -t 2
+python translate.py path/to/subtitles.srt -l english -t 2
 ```
 
 ## Options

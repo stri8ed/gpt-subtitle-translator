@@ -1,13 +1,13 @@
-
+import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
 from typing import Callable, Optional
 
-from src.models.base_model import BaseModel
-from src.logger import logger
-from src.constants import MAX_RETRIES
-from src.subtitle_processor import SubtitleProcessor
+from gpt_subtitle_translator.models.base_model import BaseModel
+from gpt_subtitle_translator.logger import logger
+from gpt_subtitle_translator.constants import MAX_RETRIES
+from gpt_subtitle_translator.subtitle_processor import SubtitleProcessor
 
 class SubtitleTranslator:
     def __init__(self, model: BaseModel, lang: str, num_threads: int = 1, tokens_per_chunk: int = 500):
@@ -16,8 +16,15 @@ class SubtitleTranslator:
         self.num_threads = num_threads
         self.tokens_per_chunk = tokens_per_chunk
         self.processor = SubtitleProcessor(model)
-        with open("./prompt.txt", encoding="utf-8") as f:
-            self.prompt_template = f.read()
+        self.prompt_template = self.load_prompt()
+
+    @staticmethod
+    def load_prompt():
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        prompt_file = os.path.join(script_dir, '.', 'prompt.txt')
+        with open(prompt_file, encoding="utf-8") as f:
+            prompt = f.read()
+        return prompt
 
     def translate_subtitles(self, srt_data: str, progress_callback: Optional[Callable[[float], None]] = None) -> str:
         parsed_srt = self.processor.parse_srt(srt_data)
