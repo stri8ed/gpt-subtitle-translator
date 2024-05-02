@@ -6,10 +6,13 @@ class BaseModel(ABC):
         self.model_name = model_name
 
     @abstractmethod
-    def generate_completion(self, prompt: str) -> str:
+    def generate_completion(self, prompt: str, temperature: float) -> (str, int):
         pass
 
     def num_tokens_from_string(self, string: str) -> int:
+        pass
+
+    def init_vocab(self, text: str):
         pass
 
     def max_output_tokens(self) -> int:

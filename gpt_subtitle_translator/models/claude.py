@@ -6,7 +6,6 @@ import tiktoken
 from anthropic import AnthropicBedrock
 from dotenv import load_dotenv
 
-from gpt_subtitle_translator.constants import TEMPERATURE
 from gpt_subtitle_translator.models.base_model import BaseModel
 
 load_dotenv()
@@ -40,18 +39,18 @@ class Claude(BaseModel):
         self.params = model_params[model_name]
 
 
-    def generate_completion(self, prompt: str) -> str:
+    def generate_completion(self, prompt: str, temperature: float) -> (str, int):
         message = self.client.messages.create(
             model=self.model_name,
             max_tokens=self.params["max_output_tokens"],
-            temperature=TEMPERATURE,
+            temperature=temperature,
             messages=[
                 {"role": "user", "content": prompt}
             ]
         )
         self.total_input_tokens += message.usage.input_tokens
         self.total_output_tokens += message.usage.output_tokens
-        return message.content[0].text
+        return message.content[0].text, message.usage.output_tokens
 
     def get_total_cost(self) -> float:
         input_cost = (self.total_input_tokens / 1000) * self.params["price_input"]

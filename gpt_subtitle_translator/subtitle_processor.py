@@ -1,8 +1,13 @@
 import random
 import re
+from typing import NamedTuple
 
 from gpt_subtitle_translator.models.base_model import BaseModel
 
+class Chunk(NamedTuple):
+    text: str
+    num_tokens: int
+    idx: int
 
 class SubtitleProcessor:
     TAG_PATTERN = re.compile(r"^<(\d+)>(.*?)</\1>$", re.DOTALL | re.MULTILINE)
@@ -36,18 +41,28 @@ class SubtitleProcessor:
     def preprocess(self, srt_data):
         return "\n".join(f"<{key}>{value['text']}</{key}>" for key, value in srt_data.items())
 
-    def make_chunks(self, text, max_tokens_per_chunk):
+    def make_chunks(self, text: str, max_tokens_per_chunk: int) -> list[Chunk]:
         items = self.split_on_tags(text)
         chunks = []
         current_piece = ""
+        current_token_count = 0
+
+        self.model.init_vocab(text)
+
         for text in items:
-            candidate_length = self.model.num_tokens_from_string(current_piece) + self.model.num_tokens_from_string(text) + 1
+            text_token_count = self.model.num_tokens_from_string(text)
+            candidate_length = current_token_count + text_token_count + 1
             if candidate_length <= max_tokens_per_chunk:
                 current_piece += ("\n" + text)
+                current_token_count = candidate_length
             else:
-                chunks.append(current_piece)
+                chunks.append(
+                    Chunk(text=current_piece, num_tokens=current_token_count, idx=len(chunks))
+                )
                 current_piece = text
-        chunks.append(current_piece)
+                current_token_count = text_token_count
+
+        chunks.append(Chunk(text=current_piece, num_tokens=current_token_count, idx=len(chunks)))
         return chunks
 
     def split_on_tags(self, text):
@@ -69,7 +84,13 @@ class SubtitleProcessor:
             new_id = new_ids[index]
             mapping[original_id] = new_id
             updated.append(f"<{new_id}>{text}</{new_id}>")
+
         return "\n".join(updated), {v: k for k, v in mapping.items()}
+
+    def shuffle_order(self, subtitles):
+        items = self.TAG_PATTERN.findall(subtitles)
+        random.shuffle(items)
+        return "\n".join([f"<{id_}>{text}</{id_}>" for id_, text in items])
 
     def revert_id_randomization(self, subtitles, mapping):
         def replace_with_original(match):
@@ -77,7 +98,9 @@ class SubtitleProcessor:
             return f"<{original_id}>{match.group(2)}</{original_id}>"
 
         tagged_texts = re.finditer(self.TAG_PATTERN, subtitles)
-        return "\n".join([replace_with_original(match) for match in tagged_texts])
+        reverted = [replace_with_original(match) for match in tagged_texts]
+        reverted.sort(key=lambda x: int(self.TAG_PATTERN.match(x).group(1)))
+        return "\n".join(reverted)
 
     def post_process_text(self, text, original_subtitles):
         text = self.insert_timestamps(original_subtitles, text)
