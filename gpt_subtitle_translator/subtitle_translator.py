@@ -8,10 +8,20 @@ from gpt_subtitle_translator.models.base_model import BaseModel
 from gpt_subtitle_translator.logger import logger
 from gpt_subtitle_translator.subtitle_processor import SubtitleProcessor
 
+
 class SubtitleTranslator:
-    def __init__(self, model: BaseModel, lang: str, num_threads: int = 1, tokens_per_chunk: int = 500, max_retries: int = 1):
+    def __init__(
+        self,
+        model: BaseModel,
+        lang: str,
+        num_threads: int = 1,
+        tokens_per_chunk: int = 500,
+        max_retries: int = 1,
+        temperature: float = 0.5
+    ):
         self.model = model
         self.lang = lang
+        self.temperature = temperature
         self.num_threads = num_threads
         self.tokens_per_chunk = tokens_per_chunk
         self.max_retries = max_retries
@@ -87,7 +97,7 @@ class SubtitleTranslator:
         prompt = self.prompt_template.replace("{subtitles}", chunk.strip()) \
             .replace("{target_language}", self.lang)
         logger.info(f"Processing chunk {chunk_number}, with {self.model.num_tokens_from_string(chunk)} tokens.")
-        return self.model.generate_completion(prompt)
+        return self.model.generate_completion(prompt, self.temperature)
 
     def validate_response(self, response: str, chunk: str, chunk_number: int, raw_response: str):
         token_count = self.model.num_tokens_from_string(response)
@@ -107,21 +117,26 @@ class SubtitleTranslator:
 
         logger.info(f"Got chunk {chunk_number}, length is {token_count} tokens.")
 
+
 class ResponseTooLongError(Exception):
     """Exception raised when the response exceeds the maximum token limit."""
+
 
 class MissingSubtitlesError(Exception):
     """Exception raised when subtitles are missing in the response."""
 
+
 class RefuseToTranslateError(Exception):
     """Exception raised when the model refuses to translate the text."""
+
 
 class TranslationError(Exception):
     """
     Exception raised when an error occurs during the translation process.
     Stores the error type, partial translation.
     """
-    def __init__(self, original_exception, partial_translation = None):
+
+    def __init__(self, original_exception, partial_translation=None):
         super().__init__(str(original_exception))
         self.original_exception = original_exception
         self.partial_translation = partial_translation

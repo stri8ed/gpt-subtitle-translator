@@ -1,7 +1,6 @@
 import os
 import openai
 import tiktoken
-from gpt_subtitle_translator.constants import TEMPERATURE
 from dotenv import load_dotenv
 
 from gpt_subtitle_translator.models.base_model import BaseModel
@@ -40,13 +39,13 @@ class GPT(BaseModel):
         self.total_input_tokens = 0
         self.total_output_tokens = 0
 
-    def generate_completion(self, prompt: str) -> str:
+    def generate_completion(self, prompt: str, temperature: float) -> str:
         messages = [{"role": "system", "content": prompt}]
         response = openai.chat.completions.create(
             model=self.model_name,
             messages=messages,
             max_tokens=self.params["max_output_tokens"],
-            temperature=TEMPERATURE,
+            temperature=temperature,
             n=1,
             stop=None,
         )

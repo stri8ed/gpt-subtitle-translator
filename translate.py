@@ -1,7 +1,7 @@
 import argparse
 import os
 import time
-from gpt_subtitle_translator.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL, MAX_RETRIES
+from gpt_subtitle_translator.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL, MAX_RETRIES, DEFAULT_TEMPERATURE
 from gpt_subtitle_translator.models.claude import Claude
 from gpt_subtitle_translator.models.gpt import GPT
 from gpt_subtitle_translator.subtitle_translator import SubtitleTranslator, TranslationError
@@ -18,6 +18,7 @@ def main():
     parser.add_argument('file', help='The transcript file to translate.', nargs='?', default='')
     parser.add_argument('-l', '--language', type=str, default="English", help='Language to translate to.')
     parser.add_argument('-t', '--threads', type=int, default=1, help='Number of threads to use.')
+    parser.add_argument('-temp', '--temperature', type=float, default=DEFAULT_TEMPERATURE, help='Temperature for generation.')
     parser.add_argument('-s', '--chunk_size', type=int, default=TOKENS_PER_CHUNK, help='Number of tokens per chunk.')
     parser.add_argument('-m', '--model', type=str, default=DEFAULT_MODEL, help='Model to use.')
     parser.add_argument('-r', '--retries', type=int, default=MAX_RETRIES, help='Number of retries.')
@@ -37,7 +38,8 @@ def main():
         lang=args.language,
         num_threads=args.threads,
         tokens_per_chunk=args.chunk_size,
-        max_retries=args.retries
+        max_retries=args.retries,
+        temperature=args.temperature
     )
 
     try:
