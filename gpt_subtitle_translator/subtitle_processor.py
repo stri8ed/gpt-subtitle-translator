@@ -69,7 +69,13 @@ class SubtitleProcessor:
             new_id = new_ids[index]
             mapping[original_id] = new_id
             updated.append(f"<{new_id}>{text}</{new_id}>")
+
         return "\n".join(updated), {v: k for k, v in mapping.items()}
+
+    def shuffle_order(self, subtitles):
+        items = self.TAG_PATTERN.findall(subtitles)
+        random.shuffle(items)
+        return "\n".join([f"<{id_}>{text}</{id_}>" for id_, text in items])
 
     def revert_id_randomization(self, subtitles, mapping):
         def replace_with_original(match):
@@ -77,7 +83,9 @@ class SubtitleProcessor:
             return f"<{original_id}>{match.group(2)}</{original_id}>"
 
         tagged_texts = re.finditer(self.TAG_PATTERN, subtitles)
-        return "\n".join([replace_with_original(match) for match in tagged_texts])
+        reverted = [replace_with_original(match) for match in tagged_texts]
+        reverted.sort(key=lambda x: int(self.TAG_PATTERN.match(x).group(1)))
+        return "\n".join(reverted)
 
     def post_process_text(self, text, original_subtitles):
         text = self.insert_timestamps(original_subtitles, text)

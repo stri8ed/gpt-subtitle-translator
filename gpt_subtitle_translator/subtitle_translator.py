@@ -78,6 +78,11 @@ class SubtitleTranslator:
 
         chunk_number = chunk_idx + 1
         subtitles, mapping = self.processor.randomize_ids(chunk)
+
+        if attempt >= 1:
+            logger.info(f"Shuffling order of chunk {chunk_number} after error.")
+            subtitles = self.processor.shuffle_order(subtitles)
+
         raw_response = self.get_translation(chunk_number, subtitles)
         response = raw_response.strip()
         response = self.processor.revert_id_randomization(response, mapping)
@@ -86,7 +91,7 @@ class SubtitleTranslator:
             self.validate_response(response, chunk, chunk_number, raw_response)
         except Exception as e:
             if attempt < self.max_retries and isinstance(e, MissingSubtitlesError):
-                logger.info(f"Retrying chunk {chunk_number}, after error: {e}")
+                logger.info(f"Retrying chunk {chunk_number}, after error: {e}. attempt {attempt + 1}")
                 return self.translate_chunk(chunk_idx, chunk, stop_flag, attempt + 1)
             else:
                 raise e
