@@ -79,7 +79,7 @@ class SubtitleTranslator:
         chunk_number = chunk_idx + 1
         subtitles, mapping = self.processor.randomize_ids(chunk)
 
-        if attempt >= 1:
+        if attempt >= 2:
             logger.info(f"Shuffling order of chunk {chunk_number} after error.")
             subtitles = self.processor.shuffle_order(subtitles)
 
