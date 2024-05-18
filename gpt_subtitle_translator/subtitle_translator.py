@@ -6,7 +6,7 @@ from typing import Callable, Optional
 
 from gpt_subtitle_translator.models.base_model import BaseModel
 from gpt_subtitle_translator.logger import logger
-from gpt_subtitle_translator.subtitle_processor import SubtitleProcessor
+from gpt_subtitle_translator.subtitle_processor import SubtitleProcessor, Chunk
 
 
 class SubtitleTranslator:
@@ -48,7 +48,7 @@ class SubtitleTranslator:
 
         with ThreadPoolExecutor(max_workers=self.num_threads) as executor:
             for i, chunk in enumerate(chunks):
-                future = executor.submit(self.translate_chunk, i, chunk, stop_flag, 0)
+                future = executor.submit(self.translate_chunk, chunk, stop_flag, 0)
                 futures.append(future)
 
             for future in concurrent.futures.as_completed(futures):
@@ -72,55 +72,54 @@ class SubtitleTranslator:
 
         return result_text
 
-    def translate_chunk(self, chunk_idx: int, chunk: str, stop_flag, attempt: int):
+    def translate_chunk(self, chunk: Chunk, stop_flag, attempt: int):
         if stop_flag.is_set():
-            return chunk_idx, "", ""
+            return chunk.idx, "", ""
 
-        chunk_number = chunk_idx + 1
-        subtitles, mapping = self.processor.randomize_ids(chunk)
+        chunk_number = chunk.idx + 1
+        subtitles, mapping = self.processor.randomize_ids(chunk.text)
 
         if attempt >= 2:
             logger.info(f"Shuffling order of chunk {chunk_number} after error.")
             subtitles = self.processor.shuffle_order(subtitles)
 
-        raw_response = self.get_translation(chunk_number, subtitles)
+        raw_response, num_tokens = self.get_translation(chunk_number, subtitles, chunk.num_tokens)
         response = raw_response.strip()
         response = self.processor.revert_id_randomization(response, mapping)
 
         try:
-            self.validate_response(response, chunk, chunk_number, raw_response)
+            self.validate_response(response, chunk.text, chunk_number, raw_response, num_tokens)
         except Exception as e:
             if attempt < self.max_retries and isinstance(e, MissingSubtitlesError):
                 logger.info(f"Retrying chunk {chunk_number}, after error: {e}. attempt {attempt + 1}")
-                return self.translate_chunk(chunk_idx, chunk, stop_flag, attempt + 1)
+                return self.translate_chunk(chunk, stop_flag, attempt + 1)
             else:
                 raise e
 
-        return chunk_idx, response, attempt + 1
+        return chunk.idx, response, attempt + 1
 
-    def get_translation(self, chunk_number, chunk):
-        prompt = self.prompt_template.replace("{subtitles}", chunk.strip()) \
+    def get_translation(self, chunk_number, text: str, num_tokens: int) -> (str, int):
+        prompt = self.prompt_template.replace("{subtitles}", text.strip()) \
             .replace("{target_language}", self.lang)
-        logger.info(f"Processing chunk {chunk_number}, with {self.model.num_tokens_from_string(chunk)} tokens.")
+        logger.info(f"Processing chunk {chunk_number}, with {num_tokens} tokens.")
         return self.model.generate_completion(prompt, self.temperature)
 
-    def validate_response(self, response: str, chunk: str, chunk_number: int, raw_response: str):
-        token_count = self.model.num_tokens_from_string(response)
-        if token_count >= self.model.max_output_tokens():
+    def validate_response(self, response: str, original_text: str, chunk_number: int, raw_response: str, num_tokens: int):
+        if num_tokens >= self.model.max_output_tokens():
             raise ResponseTooLongError(
-                f"Response too long. Might be missing tokens. {token_count} tokens, max is {self.model.max_output_tokens()} tokens. Try a smaller chunk size."
+                f"Response too long. Might be missing tokens. {num_tokens} tokens, max is {self.model.max_output_tokens()} tokens. Try a smaller chunk size."
             )
 
-        missing_subtitles = self.processor.get_missing_subtitles(response, chunk)
+        missing_subtitles = self.processor.get_missing_subtitles(response, original_text)
         if missing_subtitles:
-            if len(missing_subtitles) == len(self.processor.split_on_tags(chunk)) and len(response) > 0:
+            if len(missing_subtitles) == len(self.processor.split_on_tags(original_text)) and len(response) > 0:
                 raise RefuseToTranslateError(f"Response: {raw_response}")
             else:
                 raise MissingSubtitlesError(
                     f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
                 )
 
-        logger.info(f"Got chunk {chunk_number}, length is {token_count} tokens.")
+        logger.info(f"Got chunk {chunk_number}, length is {num_tokens} tokens.")
 
 
 class ResponseTooLongError(Exception):

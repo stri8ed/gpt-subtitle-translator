@@ -39,7 +39,7 @@ class GPT(BaseModel):
         self.total_input_tokens = 0
         self.total_output_tokens = 0
 
-    def generate_completion(self, prompt: str, temperature: float) -> str:
+    def generate_completion(self, prompt: str, temperature: float) -> (str, int):
         messages = [{"role": "system", "content": prompt}]
         response = openai.chat.completions.create(
             model=self.model_name,
@@ -51,7 +51,7 @@ class GPT(BaseModel):
         )
         self.total_input_tokens += response.usage.prompt_tokens
         self.total_output_tokens += response.usage.completion_tokens
-        return response.choices[0].message.content
+        return response.choices[0].message.content, response.usage.completion_tokens
 
     def get_total_cost(self) -> float:
         input_cost =  (self.total_input_tokens / 1000) * self.params["price_input"]

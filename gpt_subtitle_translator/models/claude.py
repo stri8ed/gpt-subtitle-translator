@@ -39,7 +39,7 @@ class Claude(BaseModel):
         self.params = model_params[model_name]
 
 
-    def generate_completion(self, prompt: str, temperature: float) -> str:
+    def generate_completion(self, prompt: str, temperature: float) -> (str, int):
         message = self.client.messages.create(
             model=self.model_name,
             max_tokens=self.params["max_output_tokens"],
@@ -50,7 +50,7 @@ class Claude(BaseModel):
         )
         self.total_input_tokens += message.usage.input_tokens
         self.total_output_tokens += message.usage.output_tokens
-        return message.content[0].text
+        return message.content[0].text, message.usage.output_tokens
 
     def get_total_cost(self) -> float:
         input_cost = (self.total_input_tokens / 1000) * self.params["price_input"]

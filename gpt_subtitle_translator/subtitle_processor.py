@@ -1,8 +1,14 @@
 import random
 import re
+from typing import NamedTuple
 
 from gpt_subtitle_translator.models.base_model import BaseModel
 
+
+class Chunk(NamedTuple):
+    text: str
+    num_tokens: int
+    idx: int
 
 class SubtitleProcessor:
     TAG_PATTERN = re.compile(r"^<(\d+)>(.*?)</\1>$", re.DOTALL | re.MULTILINE)
@@ -36,18 +42,26 @@ class SubtitleProcessor:
     def preprocess(self, srt_data):
         return "\n".join(f"<{key}>{value['text']}</{key}>" for key, value in srt_data.items())
 
-    def make_chunks(self, text, max_tokens_per_chunk):
+    def make_chunks(self, text, max_tokens_per_chunk) -> list[Chunk]:
         items = self.split_on_tags(text)
         chunks = []
         current_piece = ""
+        current_tokens = 0
+
         for text in items:
-            candidate_length = self.model.num_tokens_from_string(current_piece) + self.model.num_tokens_from_string(text) + 1
+            text_token_count = self.model.num_tokens_from_string(text)
+            candidate_length = self.model.num_tokens_from_string(current_piece) + text_token_count + 1
             if candidate_length <= max_tokens_per_chunk:
                 current_piece += ("\n" + text)
+                current_tokens = candidate_length
             else:
-                chunks.append(current_piece)
+                chunks.append(
+                    Chunk(text=current_piece, num_tokens=current_tokens, idx=len(chunks))
+                )
                 current_piece = text
-        chunks.append(current_piece)
+                current_tokens = text_token_count
+
+        chunks.append(Chunk(text=current_piece, num_tokens=current_tokens, idx=len(chunks)))
         return chunks
 
     def split_on_tags(self, text):

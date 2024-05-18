@@ -6,7 +6,7 @@ class BaseModel(ABC):
         self.model_name = model_name
 
     @abstractmethod
-    def generate_completion(self, prompt: str, temperature: float) -> str:
+    def generate_completion(self, prompt: str, temperature: float) -> (str, int):
         pass
 
     def num_tokens_from_string(self, string: str) -> int:

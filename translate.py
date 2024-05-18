@@ -3,6 +3,7 @@ import os
 import time
 from gpt_subtitle_translator.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL, MAX_RETRIES, DEFAULT_TEMPERATURE
 from gpt_subtitle_translator.models.claude import Claude
+from gpt_subtitle_translator.models.gemeni import Gemeni
 from gpt_subtitle_translator.models.gpt import GPT
 from gpt_subtitle_translator.subtitle_translator import SubtitleTranslator, TranslationError
 from gpt_subtitle_translator.logger import logger
@@ -32,6 +33,7 @@ def main():
         srt_data = f.read()
 
     filename = get_output_filename(args.file)
+    # model = Gemeni()
     model = GPT(args.model) if args.model.startswith("gpt") else Claude(args.model)
     translator = SubtitleTranslator(
         model=model,
