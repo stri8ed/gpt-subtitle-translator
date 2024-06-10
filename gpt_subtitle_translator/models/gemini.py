@@ -19,11 +19,12 @@ model_params = {
     },
 }
 
-genai.configure(api_key=os.environ["GEMENI_API_KEY"])
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
-class Gemeni(BaseModel):
+class Gemini(BaseModel):
     def __init__(self, model_name: str = "gemini-1.5-flash-latest", params: Union[None, dict] = None):
         super().__init__(model_name)
+        assert model_name in model_params, f"Model {model_name} info not found."
         self.client = genai.GenerativeModel(model_name)
         self.total_input_tokens = 0
         self.total_output_tokens = 0

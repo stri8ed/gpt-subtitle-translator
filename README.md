@@ -6,7 +6,7 @@ Translate subtitles with LLMs.
 - Strips the timestamps from the subtitles before translating, to reduce input tokens.
 - Runs multiple chunks in parallel to speed up the translation process.
 - Tries to ensure model does not skip or merge subtitles while translating.
-- Supports Anthropic Claude and OpenAI models.
+- Supports Claude, OpenAI, Gemini models.
 
 ## Installation
 
@@ -18,7 +18,7 @@ pip install -r requirements.txt
 
 Create an environment file:
 1. Rename the `.env.example` at the root of your project to `.env`
-2. In the new `.env` file, replace `YOUR_OPENAI_API_KEY` or `ANTHROPIC_API_KEY` with the correct value.
+2. In the new `.env` file, add your API key(s)
 
 ## Usage
 

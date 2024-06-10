@@ -3,7 +3,7 @@ import os
 import time
 from gpt_subtitle_translator.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL, MAX_RETRIES, DEFAULT_TEMPERATURE
 from gpt_subtitle_translator.models.claude import Claude
-from gpt_subtitle_translator.models.gemeni import Gemeni
+from gpt_subtitle_translator.models.gemini import Gemini
 from gpt_subtitle_translator.models.gpt import GPT
 from gpt_subtitle_translator.subtitle_translator import SubtitleTranslator, TranslationError
 from gpt_subtitle_translator.logger import logger
@@ -18,7 +18,7 @@ def get_model(model_name):
     if model_name.startswith("gpt"):
         return GPT(model_name)
     if model_name.startswith("gemini"):
-        return Gemeni(model_name)
+        return Gemini(model_name)
     return Claude(model_name)
 
 def main():
