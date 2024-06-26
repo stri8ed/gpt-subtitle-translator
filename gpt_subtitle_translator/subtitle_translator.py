@@ -17,6 +17,7 @@ class SubtitleTranslator:
         num_threads: int = 1,
         tokens_per_chunk: int = 500,
         max_retries: int = 1,
+        retry_on_refusal: bool = False,
         temperature: float = 0.5
     ):
         self.model = model
@@ -25,6 +26,7 @@ class SubtitleTranslator:
         self.num_threads = num_threads
         self.tokens_per_chunk = tokens_per_chunk
         self.max_retries = max_retries
+        self.retry_on_refusal = retry_on_refusal
         self.processor = SubtitleProcessor(model)
         self.prompt_template = self.load_prompt()
 
@@ -83,15 +85,24 @@ class SubtitleTranslator:
             logger.info(f"Shuffling order of chunk {chunk_number} after error.")
             subtitles = self.processor.shuffle_order(subtitles)
 
-        raw_response, num_tokens = self.get_translation(chunk_number, subtitles, chunk.num_tokens)
-        response = raw_response.strip()
-        response = self.processor.revert_id_randomization(response, mapping)
-
         try:
-            self.validate_response(response, chunk.text, chunk_number, raw_response, num_tokens)
+            raw_response, num_tokens = self.get_translation(
+                chunk_number, subtitles, chunk.num_tokens
+            )
+            response = raw_response.strip()
+            response = self.processor.revert_id_randomization(response, mapping)
+            self.validate_response(
+                response, chunk.text, chunk_number, raw_response, num_tokens
+            )
         except Exception as e:
-            if attempt < self.max_retries and isinstance(e, MissingSubtitlesError):
-                logger.info(f"Retrying chunk {chunk_number}, after error: {e} [attempt {attempt + 1}]")
+            if (
+                attempt < self.max_retries
+                and (isinstance(e, MissingSubtitlesError))
+                or (isinstance(e, RefuseToTranslateError) and self.retry_on_refusal)
+            ):
+                logger.info(
+                    f"Retrying chunk {chunk_number}, after error: {e} [attempt {attempt + 1}]"
+                )
                 return self.translate_chunk(chunk, stop_flag, attempt + 1)
             else:
                 raise e

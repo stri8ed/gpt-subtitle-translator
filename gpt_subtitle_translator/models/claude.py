@@ -3,10 +3,11 @@ from typing import Union
 
 import anthropic
 import tiktoken
-from anthropic import AnthropicBedrock
+from anthropic import AnthropicBedrock, BadRequestError
 from dotenv import load_dotenv
 
 from gpt_subtitle_translator.models.base_model import BaseModel
+from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError
 
 load_dotenv()
 
@@ -40,17 +41,22 @@ class Claude(BaseModel):
 
 
     def generate_completion(self, prompt: str, temperature: float) -> (str, int):
-        message = self.client.messages.create(
-            model=self.model_name,
-            max_tokens=self.params["max_output_tokens"],
-            temperature=temperature,
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
-        )
-        self.total_input_tokens += message.usage.input_tokens
-        self.total_output_tokens += message.usage.output_tokens
-        return message.content[0].text, message.usage.output_tokens
+        try:
+            message = self.client.messages.create(
+                model=self.model_name,
+                max_tokens=self.params["max_output_tokens"],
+                temperature=temperature,
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            self.total_input_tokens += message.usage.input_tokens
+            self.total_output_tokens += message.usage.output_tokens
+            return message.content[0].text, message.usage.output_tokens
+        except BadRequestError as e:
+            if 'blocked by content filtering policy' in str(e):
+                raise RefuseToTranslateError("Output blocked by content filtering policy")
+            raise e
 
     def get_total_cost(self) -> float:
         input_cost = (self.total_input_tokens / 1000) * self.params["price_input"]
