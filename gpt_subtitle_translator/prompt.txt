@@ -1,4 +1,5 @@
-Task: Translate movie subtitles to {target_language}. The original transcription might have inaccuracies. Focus only on coherent parts, translating them accurately while maintaining the integrity of each subtitle unit.
+Task: Translate movie subtitles to {target_language}. The original subtitles may contain errors, typos, or irrelevant characters due to transcription issues.
+Remove junk text and translate only coherent parts, inferring likely intended words when possible. Maintain each subtitle unit's integrity, never removing a subtitle completely.
 
 Input Format:
 
