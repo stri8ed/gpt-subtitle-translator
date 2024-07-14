@@ -1,5 +1,6 @@
 import os
 import threading
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
 from typing import Callable, Optional
@@ -61,6 +62,7 @@ class SubtitleTranslator:
                         progress_callback(len([t for t in translations if t]) / len(chunks))
                 except Exception as e:
                     err = e
+                    stack_trace = traceback.format_exc()
                     stop_flag.set()
                     for fut in futures:
                         fut.cancel()
@@ -70,7 +72,7 @@ class SubtitleTranslator:
         result_text = self.processor.post_process_text(joined_text, parsed_srt)
 
         if err:
-            raise TranslationError(err, result_text)
+            raise TranslationError(err, stack_trace, result_text)
 
         return result_text
 
@@ -151,13 +153,17 @@ class TranslationError(Exception):
     Stores the error type, partial translation.
     """
 
-    def __init__(self, original_exception, partial_translation=None):
+    def __init__(self, original_exception, stack_trace, partial_translation=None):
         super().__init__(str(original_exception))
         self.original_exception = original_exception
         self.partial_translation = partial_translation
+        self.stack_trace = stack_trace
 
     def __str__(self):
         return "".join([
             f"An error occurred ({type(self.original_exception).__name__}): {str(self.original_exception)}\n",
             f"Partial translation\n: {self.partial_translation}" if self.partial_translation else ""
         ])
+
+    def get_stack_trace(self):
+        return self.stack_trace
