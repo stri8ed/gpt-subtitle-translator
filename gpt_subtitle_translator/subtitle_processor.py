@@ -94,11 +94,13 @@ class SubtitleProcessor:
 
     def revert_id_randomization(self, subtitles, mapping):
         def replace_with_original(match):
-            original_id = mapping[int(match.group(1))]
-            return f"<{original_id}>{match.group(2)}</{original_id}>"
+            sub_id = int(match.group(1))
+            original_id = mapping.get(sub_id)
+            return f"<{original_id}>{match.group(2)}</{original_id}>" if original_id else None
 
         tagged_texts = re.finditer(self.TAG_PATTERN, subtitles)
         reverted = [replace_with_original(match) for match in tagged_texts]
+        reverted = [x for x in reverted if x is not None]
         reverted.sort(key=lambda x: int(self.TAG_PATTERN.match(x).group(1)))
         return "\n".join(reverted)
 
