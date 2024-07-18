@@ -120,7 +120,9 @@ class SubtitleTranslator:
     def validate_response(self, response: str, original_text: str, chunk_number: int, raw_response: str, num_tokens: int):
         if num_tokens >= self.model.max_output_tokens():
             raise ResponseTooLongError(
-                f"Response too long. Might be missing tokens. {num_tokens} tokens, max is {self.model.max_output_tokens()} tokens. Try a smaller chunk size."
+                f"Chunk {chunk_number} response too long. Might be missing tokens. {num_tokens} tokens, "
+                f"max is {self.model.max_output_tokens()} tokens. Try a smaller chunk size. "
+                f"Preview: {response[:1000]}"
             )
 
         missing_subtitles = self.processor.get_missing_subtitles(response, original_text)
