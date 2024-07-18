@@ -122,7 +122,7 @@ class SubtitleTranslator:
             raise ResponseTooLongError(
                 f"Chunk {chunk_number} response too long. Might be missing tokens. {num_tokens} tokens, "
                 f"max is {self.model.max_output_tokens()} tokens. Try a smaller chunk size. "
-                f"Preview: {response[:1000]}"
+                f"Preview: {raw_response[:1000]}"
             )
 
         missing_subtitles = self.processor.get_missing_subtitles(response, original_text)
