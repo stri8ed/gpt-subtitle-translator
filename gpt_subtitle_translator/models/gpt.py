@@ -28,7 +28,12 @@ model_params = {
         "price_input": 0.0010,
         "price_output": 0.0020,
         "max_output_tokens": 4096,
-    }
+    },
+    "gpt-4o-mini": {
+        "price_input": 0.00015,
+        "price_output": 0.0006,
+        "max_output_tokens": 8192,
+    },
 }
 
 class GPT(BaseModel):
