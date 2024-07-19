@@ -1,10 +1,12 @@
 import os
 import threading
 import traceback
+import zlib
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
 from typing import Callable, Optional
 
+from gpt_subtitle_translator.constants import COMPRESSION_RATIO_THRESHOLD
 from gpt_subtitle_translator.models.base_model import BaseModel
 from gpt_subtitle_translator.logger import logger
 from gpt_subtitle_translator.subtitle_processor import SubtitleProcessor, Chunk
@@ -76,7 +78,7 @@ class SubtitleTranslator:
 
         return result_text
 
-    def translate_chunk(self, chunk: Chunk, stop_flag, attempt: int):
+    def translate_chunk(self, chunk: Chunk, stop_flag, attempt: int, temperature=None):
         if stop_flag.is_set():
             return chunk.idx, "", ""
 
@@ -89,7 +91,7 @@ class SubtitleTranslator:
 
         try:
             raw_response, num_tokens = self.get_translation(
-                chunk_number, subtitles, chunk.num_tokens
+                chunk_number, subtitles, chunk.num_tokens, temperature
             )
             response = raw_response.strip()
             response = self.processor.revert_id_randomization(response, mapping)
@@ -99,31 +101,43 @@ class SubtitleTranslator:
         except Exception as e:
             if (
                 attempt < self.max_retries
-                and (isinstance(e, MissingSubtitlesError))
+                and isinstance(e, (MissingSubtitlesError, ResponseRepetitiveError))
                 or (isinstance(e, RefuseToTranslateError) and self.retry_on_refusal)
             ):
                 logger.info(
                     f"Retrying chunk {chunk_number}, after error: {e} [attempt {attempt + 1}]"
                 )
-                return self.translate_chunk(chunk, stop_flag, attempt + 1)
+                temperature = 1 if isinstance(e, ResponseRepetitiveError) else None
+                return self.translate_chunk(chunk, stop_flag, attempt + 1, temperature)
             else:
                 raise e
 
         return chunk.idx, response, attempt + 1
 
-    def get_translation(self, chunk_number, text: str, num_tokens: int) -> (str, int):
+    def get_translation(self, chunk_number, text: str, num_tokens: int, temperature=None) -> (str, int):
         prompt = self.prompt_template.replace("{subtitles}", text.strip()) \
             .replace("{target_language}", self.lang)
         logger.info(f"Processing chunk {chunk_number}, with {num_tokens} tokens.")
-        return self.model.generate_completion(prompt, self.temperature)
+        return self.model.generate_completion(prompt, temperature or self.temperature)
+
+    @staticmethod
+    def get_compression_ratio(text: str) -> float:
+        text_bytes = text.encode("utf-8")
+        return len(text_bytes) / len(zlib.compress(text_bytes))
 
     def validate_response(self, response: str, original_text: str, chunk_number: int, raw_response: str, num_tokens: int):
         if num_tokens >= self.model.max_output_tokens():
-            raise ResponseTooLongError(
-                f"Chunk {chunk_number} response too long. Might be missing tokens. {num_tokens} tokens, "
-                f"max is {self.model.max_output_tokens()} tokens. Try a smaller chunk size. "
-                f"Preview: {raw_response[:1000]}"
-            )
+            if self.get_compression_ratio(raw_response) >= COMPRESSION_RATIO_THRESHOLD:
+                raise ResponseRepetitiveError(
+                    f"Chunk {chunk_number} response is stuck in a repeating pattern. {num_tokens} tokens, "
+                    f"Preview: {raw_response[:1000]}"
+                )
+            else:
+                raise ResponseTooLongError(
+                    f"Chunk {chunk_number} response too long. Might be missing tokens. {num_tokens} tokens, "
+                    f"max is {self.model.max_output_tokens()} tokens. Try a smaller chunk size. "
+                    f"Preview: {raw_response[:1000]}"
+                )
 
         missing_subtitles = self.processor.get_missing_subtitles(response, original_text)
         if missing_subtitles:
@@ -140,10 +154,11 @@ class SubtitleTranslator:
 class ResponseTooLongError(Exception):
     """Exception raised when the response exceeds the maximum token limit."""
 
+class ResponseRepetitiveError(Exception):
+    """Exception raised when the response is stuck in a repeating pattern."""
 
 class MissingSubtitlesError(Exception):
     """Exception raised when subtitles are missing in the response."""
-
 
 class RefuseToTranslateError(Exception):
     """Exception raised when the model refuses to translate the text."""
