@@ -2,6 +2,8 @@ import random
 import re
 from typing import NamedTuple
 
+import srt
+
 from gpt_subtitle_translator.models.base_model import BaseModel
 
 class Chunk(NamedTuple):
@@ -20,23 +22,11 @@ class SubtitleProcessor:
 
     @staticmethod
     def parse_srt(srt_content: str) -> dict:
-        lines = srt_content.strip().split('\n')
         subtitles = {}
-        i = 0
         try:
-            while i < len(lines):
-                if lines[i].strip() == "":
-                    i += 1
-                    continue
-                subtitle_id = int(lines[i])
-                timestamp = lines[i + 1]
-                text_lines = []
-                i += 2
-                while i < len(lines) and lines[i].strip() != "":
-                    text_lines.append(lines[i])
-                    i += 1
-                subtitles[subtitle_id] = {"timestamp": timestamp, "text": "\n".join(text_lines)}
-                i += 1
+            for sub in srt.parse(srt_content):
+                ts = f"{srt.timedelta_to_srt_timestamp(sub.start)} --> {srt.timedelta_to_srt_timestamp(sub.end)}"
+                subtitles[sub.index] = {"timestamp": ts, "text": sub.content}
         except Exception as e:
             raise InvalidSRTFile("Invalid SRT file. Please check your input. " + str(e))
         return subtitles
