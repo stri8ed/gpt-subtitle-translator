@@ -9,6 +9,9 @@ class Chunk(NamedTuple):
     num_tokens: int
     idx: int
 
+class InvalidSRTFile(Exception):
+    pass
+
 class SubtitleProcessor:
     TAG_PATTERN = re.compile(r"^<(\d+)>(.*?)</\1>$", re.DOTALL | re.MULTILINE)
 
@@ -35,7 +38,7 @@ class SubtitleProcessor:
                 subtitles[subtitle_id] = {"timestamp": timestamp, "text": "\n".join(text_lines)}
                 i += 1
         except Exception as e:
-            raise Exception("Invalid SRT file. Please check your input. " + str(e))
+            raise InvalidSRTFile("Invalid SRT file. Please check your input. " + str(e))
         return subtitles
 
     def preprocess(self, srt_data):
