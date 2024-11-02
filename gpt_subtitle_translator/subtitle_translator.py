@@ -142,7 +142,7 @@ class SubtitleTranslator:
         missing_subtitles = self.processor.get_missing_subtitles(response, original_text)
         if missing_subtitles:
             if len(missing_subtitles) == len(self.processor.split_on_tags(original_text)) and len(raw_response) > 0:
-                raise RefuseToTranslateError(f"Response: {raw_response}")
+                raise RefuseToTranslateError(f"Refused: {raw_response}")
             else:
                 raise MissingSubtitlesError(
                     f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
