@@ -3,9 +3,10 @@ import os
 from typing import Union
 
 import google.generativeai as genai
-import tiktoken
 from dotenv import load_dotenv
 from google.generativeai import GenerationConfig
+from google.ai.generativelanguage_v1 import HarmCategory
+from google.generativeai.types import HarmBlockThreshold
 
 from gpt_subtitle_translator.models.base_model import BaseModel
 
@@ -35,16 +36,41 @@ class Gemini(BaseModel):
     def generate_completion(self, prompt: str, temperature: float) -> (str, int):
         message = self.client.generate_content(
             contents=[prompt],
+            safety_settings=[
+                {
+                    "category": HarmCategory.HARM_CATEGORY_HARASSMENT,
+                    "threshold": HarmBlockThreshold.BLOCK_NONE,
+                },
+                {
+                    "category": HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                    "threshold": HarmBlockThreshold.BLOCK_NONE,
+                },
+                {
+                    "category": HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                    "threshold": HarmBlockThreshold.BLOCK_NONE,
+                },
+                {
+                    "category": HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                    "threshold": HarmBlockThreshold.BLOCK_NONE,
+                }
+            ],
             generation_config=GenerationConfig(
                 temperature=temperature,
                 max_output_tokens=self.params["max_output_tokens"],
             ),
         )
-        output_token_count = self._get_token_count(message.text)
-        input_token_count = self._get_token_count(prompt)
+
+        if message.parts:
+            message_text = message.text
+        else:
+            message_text = f"finish_reason: {message.candidates[0].finish_reason}"
+
+        usage = message.usage_metadata
+        output_token_count = usage.candidates_token_count
+        input_token_count = usage.prompt_token_count
         self.total_input_tokens += input_token_count
         self.total_output_tokens += output_token_count
-        return message.text, output_token_count
+        return message_text, output_token_count
 
     def init_vocab(self, text: str):
         token_count = self._get_token_count(text) # get token count requires an http request, so we only do it once
