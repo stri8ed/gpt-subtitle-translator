@@ -18,6 +18,11 @@ model_params = {
         "price_output": 0.00053,
         "max_output_tokens": 8192,
     },
+    "gemini-1.5-pro-latest": {
+        "price_input": 0.00125,
+        "price_output": 0.005,
+        "max_output_tokens": 8192,
+    }
 }
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
@@ -36,6 +41,7 @@ class Gemini(BaseModel):
     def generate_completion(self, prompt: str, temperature: float) -> (str, int):
         message = self.client.generate_content(
             contents=[prompt],
+            request_options={"timeout": 1000},
             safety_settings=[
                 {
                     "category": HarmCategory.HARM_CATEGORY_HARASSMENT,
