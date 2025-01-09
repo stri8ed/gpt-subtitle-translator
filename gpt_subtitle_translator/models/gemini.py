@@ -7,8 +7,10 @@ from dotenv import load_dotenv
 from google.generativeai import GenerationConfig
 from google.ai.generativelanguage_v1 import HarmCategory
 from google.generativeai.types import HarmBlockThreshold
+from google.generativeai.types.answer_types import FinishReason
 
 from gpt_subtitle_translator.models.base_model import BaseModel
+from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError
 
 load_dotenv()
 
@@ -76,7 +78,10 @@ class Gemini(BaseModel):
         if message.parts:
             message_text = message.text
         else:
-            message_text = f"finish_reason: {message.candidates[0].finish_reason}"
+            if message.candidates[0].finish_reason == FinishReason.SAFETY:
+                raise RefuseToTranslateError("Output blocked by content filtering policy")
+            else:
+                message_text = f"finish_reason: {message.candidates[0].finish_reason}"
 
         usage = message.usage_metadata
         output_token_count = usage.candidates_token_count
