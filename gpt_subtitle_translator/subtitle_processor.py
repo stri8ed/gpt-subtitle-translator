@@ -28,7 +28,7 @@ class SubtitleProcessor:
                 ts = f"{srt.timedelta_to_srt_timestamp(sub.start)} --> {srt.timedelta_to_srt_timestamp(sub.end)}"
                 subtitles[sub.index] = {"timestamp": ts, "text": sub.content}
         except Exception as e:
-            raise InvalidSRTFile("Invalid SRT file. Please check your input. " + str(e))
+            raise InvalidSRTFile("Invalid SRT file. Please check your input. " + str(e)[:1000])
         return subtitles
 
     def preprocess(self, srt_data):
