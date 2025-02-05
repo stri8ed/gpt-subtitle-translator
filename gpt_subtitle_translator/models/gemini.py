@@ -29,15 +29,18 @@ model_params = {
         "price_input": 0.00125,
         "price_output": 0.005,
         "max_output_tokens": 8192,
-    }
+    },
+    "gemini-2.0-flash-001" : {
+        "price_input": 0.0001,
+        "price_output": 0.0004,
+        "max_output_tokens": 8192,
+    },
 }
-
-model_params['gemini-2.0-flash-exp'] = model_params['gemini-1.5-flash-latest']
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 class Gemini(BaseModel):
-    def __init__(self, model_name: str = "gemini-2.0-flash-exp", params: Union[None, dict] = None):
+    def __init__(self, model_name: str = "gemini-2.0-flash-001", params: Union[None, dict] = None):
         super().__init__(model_name)
         assert model_name in model_params, f"Model {model_name} info not found."
         self.client = genai.GenerativeModel(model_name)
