@@ -10,6 +10,7 @@ Instructions:
 
     - Retain the subtitle_id as it is.
     - Translate subtitle_text to {target_language}. Focus only on coherent parts and ignore gibberish or errors. If the subtitle_text is gibberish or empty, replace it with an empty string in the translation.
+    - Translate naturally, preserving the original tone and cultural nuances while using language that sounds authentic in the target language.
     - Preserve the integrity of each subtitle:
         - Do not merge or split subtitles. Each subtitle must be translated as a separate entity.
         - Maintain a one-to-one correspondence between each input and output subtitle.
