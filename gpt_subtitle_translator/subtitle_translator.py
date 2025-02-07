@@ -78,12 +78,16 @@ class SubtitleTranslator:
 
         return result_text
 
-    def translate_chunk(self, chunk: Chunk, stop_flag, attempt: int, temperature=None):
+    def translate_chunk(self, chunk: Chunk, stop_flag, attempt: int, temperature=None, randomize_ids=False):
         if stop_flag.is_set():
             return chunk.idx, "", ""
 
         chunk_number = chunk.idx + 1
-        subtitles, mapping = self.processor.randomize_ids(chunk.text)
+        if randomize_ids:
+            subtitles, mapping = self.processor.randomize_ids(chunk.text)
+        else:
+            subtitles = chunk.text
+            mapping = {}
 
         if attempt >= 2:
             logger.info(f"Shuffling order of chunk {chunk_number} after error.")
@@ -94,7 +98,8 @@ class SubtitleTranslator:
                 chunk_number, subtitles, chunk.num_tokens, temperature
             )
             response = raw_response.strip()
-            response = self.processor.revert_id_randomization(response, mapping)
+            if randomize_ids:
+                response = self.processor.revert_id_randomization(response, mapping)
             self.validate_response(
                 response, chunk.text, chunk_number, raw_response, num_tokens
             )
