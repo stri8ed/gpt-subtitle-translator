@@ -85,13 +85,13 @@ class SubtitleProcessor:
         random.shuffle(items)
         return "\n".join([f"<{id_}>{text}</{id_}>" for id_, text in items])
 
-    def revert_id_randomization(self, subtitles, mapping):
+    def extract_subtitles(self, response, id_mapping):
         def replace_with_original(match):
             sub_id = int(match.group(1))
-            original_id = mapping.get(sub_id)
+            original_id = id_mapping.get(sub_id, sub_id)
             return f"<{original_id}>{match.group(2)}</{original_id}>" if original_id else None
 
-        tagged_texts = re.finditer(self.TAG_PATTERN, subtitles)
+        tagged_texts = re.finditer(self.TAG_PATTERN, response)
         reverted = [replace_with_original(match) for match in tagged_texts]
         reverted = [x for x in reverted if x is not None]
         reverted.sort(key=lambda x: int(self.TAG_PATTERN.match(x).group(1)))

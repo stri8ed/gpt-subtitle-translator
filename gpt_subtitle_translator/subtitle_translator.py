@@ -98,8 +98,7 @@ class SubtitleTranslator:
                 chunk_number, subtitles, chunk.num_tokens, temperature
             )
             response = raw_response.strip()
-            if randomize_ids:
-                response = self.processor.revert_id_randomization(response, mapping)
+            response = self.processor.extract_subtitles(response, mapping)
             self.validate_response(
                 response, chunk.text, chunk_number, raw_response, num_tokens
             )
