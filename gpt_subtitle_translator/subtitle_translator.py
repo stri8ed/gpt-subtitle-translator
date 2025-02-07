@@ -78,7 +78,7 @@ class SubtitleTranslator:
 
         return result_text
 
-    def translate_chunk(self, chunk: Chunk, stop_flag, attempt: int, temperature=None, randomize_ids=False):
+    def translate_chunk(self, chunk: Chunk, stop_flag, attempt: int, temperature=None, randomize_ids=True):
         if stop_flag.is_set():
             return chunk.idx, "", ""
 
