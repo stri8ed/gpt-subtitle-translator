@@ -7,7 +7,6 @@ from google import genai
 from dotenv import load_dotenv
 from google.genai.types import HarmBlockThreshold, FinishReason, GenerateContentConfigDict, GenerateContentConfig, \
     HttpOptions, SafetySetting, ThinkingConfig
-from google.ai.generativelanguage_v1 import HarmCategory
 
 from gpt_subtitle_translator.models.base_model import BaseModel
 from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError
