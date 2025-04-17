@@ -2,12 +2,12 @@ import json
 import os
 from typing import Union
 
-import google.generativeai as genai
+from google import genai
+
 from dotenv import load_dotenv
-from google.generativeai import GenerationConfig
+from google.genai.types import HarmBlockThreshold, FinishReason, GenerateContentConfigDict, GenerateContentConfig, \
+    HttpOptions, SafetySetting, ThinkingConfig
 from google.ai.generativelanguage_v1 import HarmCategory
-from google.generativeai.types import HarmBlockThreshold
-from google.generativeai.types.answer_types import FinishReason
 
 from gpt_subtitle_translator.models.base_model import BaseModel
 from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError
@@ -19,31 +19,39 @@ model_params = {
         "price_input": 0.000075,
         "price_output": 0.0003,
         "max_output_tokens": 8192,
+        "thinking_enabled": False,
     },
     "gemini-exp-1206": {
         "price_input": 0.00035,
         "price_output": 0.00053,
         "max_output_tokens": 8192,
+    "thinking_enabled": False,
     },
     "gemini-1.5-pro-latest": {
         "price_input": 0.00125,
         "price_output": 0.005,
         "max_output_tokens": 8192,
+    "thinking_enabled": False,
     },
     "gemini-2.0-flash-001" : {
         "price_input": 0.0001,
         "price_output": 0.0004,
         "max_output_tokens": 8192,
+        "thinking_enabled": False,
+    },
+    "gemini-2.5-flash-preview-04-17" : {
+        "price_input": 0.00016,
+        "price_output": 0.0006,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
     },
 }
-
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 class Gemini(BaseModel):
     def __init__(self, model_name: str = "gemini-2.0-flash-001", params: Union[None, dict] = None):
         super().__init__(model_name)
         assert model_name in model_params, f"Model {model_name} info not found."
-        self.client = genai.GenerativeModel(model_name)
+        self.client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
         self.total_input_tokens = 0
         self.total_output_tokens = 0
         self.params = model_params[model_name]
@@ -51,34 +59,39 @@ class Gemini(BaseModel):
 
 
     def generate_completion(self, prompt: str, temperature: float) -> (str, int):
-        message = self.client.generate_content(
+        message = self.client.models.generate_content(
             contents=[prompt],
-            request_options={"timeout": 1000},
-            safety_settings=[
-                {
-                    "category": HarmCategory.HARM_CATEGORY_HARASSMENT,
-                    "threshold": HarmBlockThreshold.BLOCK_NONE,
-                },
-                {
-                    "category": HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-                    "threshold": HarmBlockThreshold.BLOCK_NONE,
-                },
-                {
-                    "category": HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-                    "threshold": HarmBlockThreshold.BLOCK_NONE,
-                },
-                {
-                    "category": HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-                    "threshold": HarmBlockThreshold.BLOCK_NONE,
-                }
-            ],
-            generation_config=GenerationConfig(
+            model=self.model_name,
+            config=GenerateContentConfig(
                 temperature=temperature,
                 max_output_tokens=self.params["max_output_tokens"],
-            ),
+                http_options=HttpOptions(
+                    timeout=1000 * 120,
+                ),
+                thinking_config=self.params['thinking_enabled'] and ThinkingConfig(
+                    thinking_budget=0
+                ) or None,
+                safety_settings=[
+                    SafetySetting(
+                        category="HARM_CATEGORY_HARASSMENT",
+                        threshold="OFF"
+                    ),
+                    SafetySetting(
+                        category="HARM_CATEGORY_HATE_SPEECH",
+                        threshold="OFF"
+                    ),
+                    SafetySetting(
+                        category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                        threshold="OFF"
+                    ),
+                    SafetySetting(
+                        category="HARM_CATEGORY_DANGEROUS_CONTENT",
+                        threshold="OFF"
+                    )
+            ])
         )
 
-        if message.parts:
+        if message.text:
             message_text = message.text
         else:
             if message.candidates[0].finish_reason == FinishReason.SAFETY:
@@ -107,7 +120,10 @@ class Gemini(BaseModel):
         return int(num_chars * self.average_tokens_per_char)
 
     def _get_token_count(self, string: str) -> int:
-        res = self.client.count_tokens([string])
+        res = self.client.models.count_tokens(
+            model=self.model_name,
+            contents=string,
+        )
         return max(res.total_tokens, 1)
 
     def max_output_tokens(self) -> int:
