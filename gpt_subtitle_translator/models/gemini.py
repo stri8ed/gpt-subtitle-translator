@@ -66,7 +66,7 @@ class Gemini(BaseModel):
                 temperature=temperature,
                 max_output_tokens=self.params["max_output_tokens"],
                 http_options=HttpOptions(
-                    timeout=1000 * 120,
+                    timeout=1000 * 60 * 5
                 ),
                 thinking_config=self.params['thinking_enabled'] and ThinkingConfig(
                     thinking_budget=0
