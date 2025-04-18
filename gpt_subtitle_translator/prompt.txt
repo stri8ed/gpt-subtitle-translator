@@ -1,5 +1,8 @@
 Task: Translate movie subtitles to {target_language}. The original subtitles may contain errors, typos, or irrelevant characters due to transcription issues.
-Remove junk text and translate only coherent parts, inferring likely intended words when possible. Maintain each subtitle unit's integrity, never removing a subtitle completely.
+When there is ambiguity or a likely transcription error, infer the most likely intended words from the surrounding context.
+If its difficult to determine the intended meaning, spend extra time analyzing the context and provide a thoughtful translation.
+Ignore noise, such as irrelevant characters or formatting issues, and focus on the meaningful content of the subtitles.
+Maintain each subtitle unit's integrity, never removing a subtitle completely.
 
 Input Format:
 
@@ -9,13 +12,19 @@ Input Format:
 Instructions:
 
     - Retain the subtitle_id as it is.
-    - Translate subtitle_text to {target_language}. Focus only on coherent parts and ignore gibberish or errors. If the subtitle_text is gibberish or empty, replace it with an empty string in the translation.
+    - Translate subtitle_text to {target_language}.
+        - If the subtitle_text is almost certainly gibberish or empty, replace it with an empty string in the translation.
     - Translate naturally, preserving the original tone and cultural nuances while using language that sounds authentic in the target language.
     - Preserve the integrity of each subtitle:
         - Do not merge or split subtitles. Each subtitle must be translated as a separate entity.
         - Maintain a one-to-one correspondence between each input and output subtitle.
         - Repeat subtitles in the output if they are repeated in the input.
         - No skipping of subtitles is allowed.
+    - Each subtitle should be processed separately, with the following format:
+
+    $subtitle_id
+    thoughts
+    <>final translated subtitle<>
 
 --------
 
@@ -25,15 +34,28 @@ Input:
 
 START
 
-<90>// איך עשית את המדגם? מה הייתה השאלה?</90>
-<95>< איך עשית את המדגם? מה הייתה</95>
-<9>"השאלה?
- האם כשאתה</9>
-<44> /במכולת, אתה קונה חלב?"י</44>
-<10>< ברור שיגידו "כן". -למה? -אבל זה לא אומר שיקנו את המוצר 1<</10>
-<56>יאללה.</56>
-<60>000הרי כל האנושות כולה</60>
-<47>,הולכת להירתם עכשיו ליצירה של כלכלה ירוקה וטובה יותר</47>
+<1>אני מסתכל על הים</1>
+<2>והים מסתכל חזרה בי</2>
+<3>כמה פעמים חלמתי על הרגע הזה</3>
+<4>עכשיו אני כאן, סוף סוף</4>
+<5>אחרי שנים של צימאון למים</5>
+<6>השםש בוהק על פני המזם</6>
+<7>רוח קלה מלאפת את פני</7>
+<8>אני ושאר הבוגדים מיורדי הספונה</8>
+<9>מהמרים על חיינו בכל הפלגה</9>
+<10>אבל הים אינו יודע זאת</10>
+<11>הוא רק ממשיך בדרכו, ללא חשבון</11>
+<12>מים ולח</12>
+<13>אין דרך לדעת מה נמצא בצד השני של האופק</13>
+<14>יעקב, תביא את החבל!</14>
+<15>מה?</15>
+<16>החשד סוער כמו גל שחור באמצע ים פתוח.</16>
+<17>איפה הכלים שהבאנה מהמזרך?</17>
+<18>הכל נעלם כמו ערפל.</18>
+<19>מי אנחנו בתוך הסיפור הזה?</19>
+<20>אולי רק תווים בשיר עתיק של הים.</20>
+<21>כל טיפה מספרת סיפור. כל גל הוא זיכרון.</21>
+<22>אם יש דבר אחד שהים יודע, זה לשמור סודות.</22>
 
 END
 
@@ -41,15 +63,93 @@ Output:
 
 START
 
-<90>How did you conduct the sample? What was the question?</90>
-<95>How did you conduct the sample? What was</95>
-<9>the question?
-When you're</9>
-<44>in the grocery store, do you buy milk?</44>
-<10>Of course they'll say "yes". -Why? But that doesn't mean they'll buy the product.</10>
-<56>Come on.</56>
-<60>After all, all of humanity</60>
-<47>Is now going to be harnessed for the creation of a greener and better economy</47>
+1
+"אני מסתכל על הים" - Simple phrase meaning "I'm looking at the sea"
+<>I'm looking at the sea</>
+
+2
+"והים מסתכל חזרה בי" - Straightforward phrase meaning "and the sea looks back at me"
+<>and the sea looks back at me</>
+
+3
+"כמה פעמים חלמתי על הרגע הזה" - Clear phrase translating to "How many times I've dreamed of this moment"
+<>How many times I've dreamed of this moment</>
+
+4
+"עכשיו אני כאן, סוף סוף" - Simple phrase meaning "Now I am here, finally"
+<>Now I am here, finally</>
+
+5
+"אחרי שנים של צימאון למים" - Direct translation is "After years of thirst for water"
+<>After years of thirst for water</>
+
+6
+"השםש בוהק על פני המזם" - Contains typos. "השםש" should be "השמש" (the sun), and "המזם" should be "המים" (the water). The corrected sentence would be "השמש בוהק על פני המים"
+<>The sun shines on the surface of the water</>
+
+7
+"רוח קלה מלאפת את פני" - Clear phrase meaning "A light breeze caresses my face"
+<>A light breeze caresses my face</>
+
+8
+"אני ושאר הבוגדים מיורדי הספונה" - Contains unusual phrasing. "מיורדי הספונה" (miyordei hasponah) is not standard Hebrew. "יורדי" means "those who descend" and "ספינה" (spelled slightly differently) means "ship." Likely a reference to "יורדי הספינה" (yordei hasfinah), meaning "seafarers."
+<>I and the rest of the traitors from the seafarers</>
+
+9
+"מהמרים על חיינו בכל הפלגה" - Clear phrase meaning "gambling with our lives on every voyage"
+<>gambling with our lives on every voyage</>
+
+10
+"אבל הים אינו יודע זאת" - Simple phrase translating to "but the sea doesn't know this"
+<>but the sea doesn't know this</>
+
+11
+"הוא רק ממשיך בדרכו, ללא חשבון" - Direct translation is "it just continues on its way, without accounting"
+<>it just continues on its way, without accounting</>
+
+12
+"מים ולח" - Very short and seems incomplete. "מים" means "water" and "לח" means "moisture" or "humid." Without context, translating literally.
+<>Water and moisture</>
+
+13
+"אין דרך לדעת מה נמצא בצד השני של האופק" - Clear phrase meaning "There is no way to know what lies on the other side of the horizon"
+<>There is no way to know what lies on the other side of the horizon</>
+
+14
+"יעקב, תביא את החבל!" - Simple direct request translating to "Jacob, bring the rope!"
+<>Jacob, bring the rope!</>
+
+15
+"מה?" - Single word question, "What?"
+<>What?</>
+
+16
+"החשד סוער כמו גל שחור באמצע ים פתוח." - Metaphorical phrase translating to "The suspicion rages like a black wave in the middle of the open sea."
+<>The suspicion rages like a black wave in the middle of the open sea.</>
+
+17
+"איפה הכלים שהבאנה מהמזרך?" - Contains typos. "שהבאנה" should probably be "שהבאנו" (that we brought), and "מהמזרך" should likely be "מהמזרח" (from the East).
+<>Where are the tools that we brought from the East?</>
+
+18
+"הכל נעלם כמו ערפל." - Simple metaphor translating to "Everything disappears like fog."
+<>Everything disappears like fog.</>
+
+19
+"מי אנחנו בתוך הסיפור הזה?" - Philosophical question meaning "Who are we in this story?"
+<>Who are we in this story?</>
+
+20
+"אולי רק תווים בשיר עתיק של הים." - Poetic phrase translating to "Perhaps just notes in an ancient song of the sea."
+<>Perhaps just notes in an ancient song of the sea.</>
+
+21
+"כל טיפה מספרת סיפור. כל גל הוא זיכרון." - Two parallel poetic statements meaning "Every drop tells a story. Every wave is a memory."
+<>Every drop tells a story. Every wave is a memory.</>
+
+22
+"אם יש דבר אחד שהים יודע, זה לשמור סודות." - Conclusion statement translating to "If there's one thing the sea knows, it's how to keep secrets."
+<>If there's one thing the sea knows, it's how to keep secrets.</>
 
 END
 

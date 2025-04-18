@@ -86,8 +86,7 @@ class SubtitleTranslator:
         if randomize_ids:
             subtitles, mapping = self.processor.randomize_ids(chunk.text)
         else:
-            subtitles = chunk.text
-            mapping = {}
+            subtitles, mapping = self.processor.reindex_ids(chunk.text)
 
         if attempt >= 2:
             logger.info(f"Shuffling order of chunk {chunk_number} after error.")

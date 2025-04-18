@@ -16,6 +16,7 @@ class InvalidSRTFile(Exception):
 
 class SubtitleProcessor:
     TAG_PATTERN = re.compile(r"^<(\d+)>(.*?)</\1>$", re.DOTALL | re.MULTILINE)
+    OUT_TAG_PATTERN = re.compile(r"^(\d+)\n.+?\n<>(.*?)</>$", re.DOTALL | re.MULTILINE)
 
     def __init__(self, model: BaseModel):
         self.model = model
@@ -80,6 +81,21 @@ class SubtitleProcessor:
 
         return "\n".join(updated), {v: k for k, v in mapping.items()}
 
+    def reindex_ids(self, subtitles):
+        """
+        Re-index subtitle IDs sequentially
+        """
+        items = self.TAG_PATTERN.findall(subtitles)
+        mapping = {}
+        updated = []
+
+        for index, (original_id, text) in enumerate(items):
+            new_id = index + 1  # Start from 1
+            mapping[original_id] = new_id
+            updated.append(f"<{new_id}>{text}</{new_id}>")
+
+        return "\n".join(updated), {v: k for k, v in mapping.items()}
+
     def shuffle_order(self, subtitles):
         items = self.TAG_PATTERN.findall(subtitles)
         random.shuffle(items)
@@ -91,7 +107,7 @@ class SubtitleProcessor:
             original_id = id_mapping.get(sub_id, sub_id)
             return f"<{original_id}>{match.group(2)}</{original_id}>" if original_id else None
 
-        tagged_texts = re.finditer(self.TAG_PATTERN, response)
+        tagged_texts = re.finditer(self.OUT_TAG_PATTERN, response)
         reverted = [replace_with_original(match) for match in tagged_texts]
         reverted = [x for x in reverted if x is not None]
         reverted.sort(key=lambda x: int(self.TAG_PATTERN.match(x).group(1)))

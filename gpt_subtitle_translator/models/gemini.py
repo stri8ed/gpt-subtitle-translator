@@ -99,7 +99,8 @@ class Gemini(BaseModel):
                 message_text = f"finish_reason: {message.candidates[0].finish_reason}"
 
         usage = message.usage_metadata
-        output_token_count = usage.candidates_token_count
+        thought_tokens = (usage.thoughts_token_count or 0 if hasattr(usage, 'thoughts_token_count') else 0)
+        output_token_count = usage.candidates_token_count + thought_tokens
         input_token_count = usage.prompt_token_count
         self.total_input_tokens += input_token_count
         self.total_output_tokens += output_token_count
