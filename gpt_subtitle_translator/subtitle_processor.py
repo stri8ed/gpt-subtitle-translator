@@ -16,7 +16,7 @@ class InvalidSRTFile(Exception):
 
 class SubtitleProcessor:
     TAG_PATTERN = re.compile(r"^<(\d+)>(.*?)</\1>$", re.DOTALL | re.MULTILINE)
-    OUT_TAG_PATTERN = re.compile(r"^<?(\d+)>?\n.+?\n<>(.*?)</>$", re.DOTALL | re.MULTILINE)
+    OUT_TAG_PATTERN = re.compile(r"<(\d+)>.*?</\1>(?:\s+<thought>.*?</thought>)?\s+<>(.*?)</?>", re.DOTALL)
 
     def __init__(self, model: BaseModel):
         self.model = model

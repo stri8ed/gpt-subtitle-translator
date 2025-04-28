@@ -22,9 +22,11 @@ Instructions:
         - No skipping of subtitles is allowed.
     - Each subtitle should be processed separately, with the following format:
 
-    $subtitle_id
-    "original_untranslated_text" - optional thoughts
+    <subtitle_id>original_untranslated_text</subtitle_id>
+    <thought>optional_thoughts_and_reasoning</thought>
     <>final translated subtitle<>
+
+    Make sure to open and close the tags correctly.
 
 --------
 
@@ -63,92 +65,74 @@ Output:
 
 START
 
-1
-אני מסתכל על הים
+<1>אני מסתכל על הים</1>
 <>I'm looking at the sea</>
 
-2
-והים מסתכל חזרה בי
+<2>והים מסתכל חזרה בי</2>
 <>and the sea looks back at me</>
 
-3
-כמה פעמים חלמתי על הרגע הזה
+<3>כמה פעמים חלמתי על הרגע הזה</3>
 <>How many times I've dreamed of this moment</>
 
-4
-עכשיו אני כאן, סוף סוף
+<4>עכשיו אני כאן, סוף סוף</4>
 <>Now I am here, finally</>
 
-5
-אחרי שנים של צימאון למים
+<5>אחרי שנים של צימאון למים</5>
 <>After years of thirst for water</>
 
-6
-השםש בוהק על פני המזם - Contains typos. "השםש" should be "השמש" (sun), "המזם" should be "המים" (water).
+<6>השםש בוהק על פני המזם</6>
+<thought>Contains typos. "השםש" should be "השמש" (sun), "המזם" should be "המים" (water).</thought>
 <>The sun shines on the surface of the water</>
 
-7
-רוח קלה מלאפת את פני
+<7>רוח קלה מלאפת את פני</7>
 <>A light breeze caresses my face</>
 
-8
-אני ושאר הבוגדים מיורדי הספונה - Unusual term "מיורדי הספונה" likely refers to "יורדי הספינה" (seafarers).
+<8>אני ושאר הבוגדים מיורדי הספונה</8>
+<thought>Unusual term "מיורדי הספונה" likely refers to "יורדי הספינה" (seafarers).</thought>
 <>I and the rest of the traitors from the seafarers</>
 
-9
-מהמרים על חיינו בכל הפלגה
+<9>מהמרים על חיינו בכל הפלגה</9>
 <>gambling with our lives on every voyage</>
 
-10
-אבל הים אינו יודע זאת
+<10>אבל הים אינו יודע זאת</10>
 <>but the sea doesn't know this</>
 
-11
-הוא רק ממשיך בדרכו, ללא חשבון
+<11>הוא רק ממשיך בדרכו, ללא חשבון</11>
 <>it just continues on its way, without accounting</>
 
-12
-מים ולח - Very short, possibly incomplete.
+<12>מים ולח</12>
+<thought>Very short, possibly incomplete.</thought>
 <>Water and moisture</>
 
-13
-אין דרך לדעת מה נמצא בצד השני של האופק
+<13>אין דרך לדעת מה נמצא בצד השני של האופק</13>
 <>There is no way to know what lies on the other side of the horizon</>
 
-14
-יעקב, תביא את החבל!
+<14>יעקב, תביא את החבל!</14>
 <>Jacob, bring the rope!</>
 
-15
-מה?
+<15>מה?</15>
 <>What?</>
 
-16
-החשד סוער כמו גל שחור באמצע ים פתוח.
+<16>החשד סוער כמו גל שחור באמצע ים פתוח.</16>
 <>The suspicion rages like a black wave in the middle of the open sea.</>
 
-17
-איפה הכלים שהבאנה מהמזרך? - Typos: "שהבאנה" should be "שהבאנו" (we brought), "מהמזרך" should be "מהמזרח" (East).
+<17>איפה הכלים שהבאנה מהמזרך?</17>
+<thought>Typos: "שהבאנה" should be "שהבאנו" (we brought), "מהמזרך" should be "מהמזרח" (East).</thought>
 <>Where are the tools that we brought from the East?</>
 
-18
-הכל נעלם כמו ערפל.
+<18>הכל נעלם כמו ערפל.</18>
 <>Everything disappears like fog.</>
 
-19
-מי אנחנו בתוך הסיפור הזה?
+<19>מי אנחנו בתוך הסיפור הזה?</19>
 <>Who are we in this story?</>
 
-20
-אולי רק תווים בשיר עתיק של הים.
+<20>אולי רק תווים בשיר עתיק של הים.</20>
 <>Perhaps just notes in an ancient song of the sea.</>
 
-21
-כל טיפה מספרת סיפור. כל גל הוא זיכרון.
+<21>כל טיפה מספרת סיפור. כל גל הוא זיכרון.</21>
 <>Every drop tells a story. Every wave is a memory.</>
 
-22
-אם יש דבר אחד שהים יודע, זה לשמור סודות.
+<22>אם יש דבר אחד שהים יודע, זה לשמור סודות.</22>
 <>If there's one thing the sea knows, it's how to keep secrets.</>
 
 END
