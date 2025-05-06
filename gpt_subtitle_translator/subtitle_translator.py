@@ -104,8 +104,9 @@ class SubtitleTranslator:
         except Exception as e:
             if (
                 attempt < self.max_retries and
-                (isinstance(e, (MissingSubtitlesError, ResponseRepetitiveError)) or
-                 isinstance(e, RefuseToTranslateError) and self.retry_on_refusal)
+                (isinstance(e, (MissingSubtitlesError, ResponseRepetitiveError) or "retry" in str(e)) or
+                (isinstance(e, RefuseToTranslateError) and self.retry_on_refusal)
+                )
             ):
                 logger.info(
                     f"Retrying chunk {chunk_number}, after error: {e} [attempt {attempt + 1}]"
