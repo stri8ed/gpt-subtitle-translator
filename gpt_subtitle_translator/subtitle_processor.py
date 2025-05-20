@@ -103,7 +103,11 @@ class SubtitleProcessor:
 
     def extract_subtitles(self, response, id_mapping):
         try:
-            subtitles_array = json.loads(response.strip())
+            if isinstance(response, list):
+                subtitles_array = response
+            else:
+                subtitles_array = json.loads(response.strip())
+
             reverted = []
             for subtitle in subtitles_array:
                 sub_id = int(subtitle["id"])
@@ -115,8 +119,9 @@ class SubtitleProcessor:
             reverted.sort(key=lambda x: int(self.TAG_PATTERN.match(x).group(1)))
             return "\n".join(reverted)
 
-        except json.JSONDecodeError:
-            return []
+        except (json.JSONDecodeError, AttributeError):
+            print("Error processing subtitles response")
+            return ""
 
     def post_process_text(self, text, original_subtitles):
         text = self.insert_timestamps(original_subtitles, text)
