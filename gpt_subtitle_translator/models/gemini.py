@@ -46,6 +46,37 @@ model_params = {
     },
 }
 
+JSON_SCHEMA = {
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "The subtitle ID number matching the original subtitle"
+      },
+      "original": {
+        "type": "string",
+        "description": "The original subtitle text in the source language"
+      },
+      "translation": {
+        "type": "string",
+        "description": "The translated subtitle text in the target language"
+      },
+      "thoughts": {
+        "type": "string",
+        "description": "Brief reasoning about ambiguities, errors, or challenging translations. Empty string for straightforward cases."
+      }
+    },
+    "required": [
+      "id",
+      "original",
+      "translation",
+      "thoughts"
+    ]
+  }
+}
+
 def get_model_params(model_name: str):
     for key, value in model_params.items():
         if key in model_name:
@@ -71,6 +102,8 @@ class Gemini(BaseModel):
             model=self.model_name,
             config=GenerateContentConfig(
                 temperature=temperature,
+                response_schema=JSON_SCHEMA,
+                response_mime_type="application/json",
                 max_output_tokens=self.params["max_output_tokens"],
                 http_options=HttpOptions(
                     timeout=1000 * 60 * 5
