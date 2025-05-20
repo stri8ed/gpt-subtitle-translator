@@ -32,13 +32,13 @@ model_params = {
         "max_output_tokens": 8192,
     "thinking_enabled": False,
     },
-    "gemini-2.0-flash-001" : {
+    "gemini-2.0-flash" : {
         "price_input": 0.0001,
         "price_output": 0.0004,
         "max_output_tokens": 8192,
         "thinking_enabled": False,
     },
-    "gemini-2.5-flash-preview-04-17" : {
+    "gemini-2.5-flash-preview" : {
         "price_input": 0.00016,
         "price_output": 0.0006,
         "max_output_tokens": 65_536,
@@ -46,14 +46,22 @@ model_params = {
     },
 }
 
+def get_model_params(model_name: str):
+    for key, value in model_params.items():
+        if key in model_name:
+            return value
+    return None
+
+
 class Gemini(BaseModel):
     def __init__(self, model_name: str = "gemini-2.0-flash-001", params: Union[None, dict] = None):
         super().__init__(model_name)
-        assert model_name in model_params, f"Model {model_name} info not found."
+        _model_params = get_model_params(model_name)
+        assert _model_params is not None, f"Model {model_name} info not found."
         self.client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
         self.total_input_tokens = 0
         self.total_output_tokens = 0
-        self.params = model_params[model_name]
+        self.params = _model_params
         self.average_tokens_per_char = None
 
 
