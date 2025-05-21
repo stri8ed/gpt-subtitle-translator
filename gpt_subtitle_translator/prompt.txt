@@ -1,29 +1,29 @@
 # Advanced Subtitle Translation & Correction Task
 
-Task: Translate Hebrew movie subtitles, **originating from flawed AI audio transcription**, to **fluent, natural-sounding English**. The original subtitles **will frequently contain phonetic errors, misheard words, typos, and nonsensical phrases.** Your primary goal is to **recover the intended meaning** and produce subtitles that are contextually appropriate, clear, and engaging for an English-speaking audience.
+Task: Translate movie subtitles to {target_language}, **originating from flawed AI transcription**, to **fluent, natural-sounding {target_language}**. The original subtitles **will frequently contain phonetic errors, misheard words, typos, and nonsensical phrases.** Your primary goal is to **recover the intended meaning** and produce subtitles that are contextually appropriate, clear, and engaging for a {target_language}-speaking audience.
 
 ## Input Format
 - Subtitles are presented between START and END markers.
 - Each subtitle consists of a unique `<subtitle_id>subtitle_text</subtitle_id>`.
 
 ## Core Instructions & Philosophy
-1.  **Prioritize Intended Meaning & Naturalness:** Your translation must prioritize natural dialogue flow and the *likely intended meaning* in English over strict, literal adherence to the (often erroneous) Hebrew source. The translation should sound like something a native English speaker would naturally say in that situation.
-2.  **Embrace Error Correction:** **Assume the Hebrew input is imperfect.** Actively look for and correct transcription errors. Don't be afraid to significantly alter the translation from a literal rendering if the source is nonsensical.
+1.  **Prioritize Intended Meaning & Naturalness:** Your translation must prioritize natural dialogue flow and the *likely intended meaning* in {target_language} over strict, literal adherence to the (often erroneous) source. The translation should sound like something a native {target_language} speaker would naturally say in that situation.
+2.  **Embrace Error Correction:** **Assume the source input is imperfect.** Actively look for and correct transcription errors. Don't be afraid to significantly alter the translation from a literal rendering if the source is nonsensical.
 3.  **Context is King:** Use surrounding subtitles and general knowledge of human conversation/storytelling to infer meaning, especially when the source text is garbled.
-4.  **Cultural Localization:** Where appropriate, adapt cultural references, units of measurement (e.g., meters to feet/inches), or expressions to be more familiar to a general English-speaking audience, while preserving the original cultural setting's integrity.
+4.  **Cultural Localization:** Where appropriate, adapt cultural references, units of measurement (e.g., meters to feet/inches for English), or expressions to be more familiar to a general {target_language}-speaking audience, while preserving the original cultural setting's integrity.
 
 ## Detailed Instructions
-- Translate each subtitle to English, preserving the speaker's intent, tone, and relevant cultural nuances, **even if it means diverging significantly from a literal translation of the flawed source.**
+- Translate each subtitle to {target_language}, preserving the speaker's intent, tone, and relevant cultural nuances, **even if it means diverging significantly from a literal translation of the flawed source.**
 - Use the "thoughts" field extensively to document your reasoning, especially for complex translations.
 - For ambiguous, nonsensical, or difficult passages:
     - **Aggressively identify potential transcription errors.** Consider:
-        - Phonetic similarities or near-misses: For instance, a word that sounds very similar to the correct word but is slightly off (e.g., AI transcribing "sea" as "see" if context clearly points to the ocean, or in another language, a common mishearing like "dere" for "nere" if the first makes no sense).
+        - Phonetic similarities or near-misses: For instance, a word that sounds very similar to the correct word but is slightly off (e.g., AI transcribing similar-sounding words if context clearly points to a different meaning).
         - Words that don't fit the grammatical or conversational context.
         - Phrases that are meaningless literally but might be misheard idioms or common expressions.
-    - **Clearly state your hypothesis in the "thoughts" field about the *intended original language phrase* and why you believe the source is an error.**
+    - **Clearly state your hypothesis in the "thoughts" field about the *intended original phrase* and why you believe the source is an error.**
     - **Translate the *hypothesized intended meaning*, not the literal error.**
-    - **Identify potential *original language* idioms or colloquialisms.** Do not translate them word-for-word if it sounds unnatural or loses meaning in English. Find an appropriate English idiomatic equivalent or convey the meaning naturally. Explain your choice in "thoughts."
-- For straightforward subtitles where the source is likely correct and the translation is direct, the "thoughts" field **can be brief or remain empty**.
+    - **Identify potential *source language* idioms or colloquialisms.** Do not translate them word-for-word if it sounds unnatural or loses meaning in {target_language}. Find an appropriate {target_language} idiomatic equivalent or convey the meaning naturally. Explain your choice in "thoughts."
+- For straightforward subtitles where the source is likely correct and the translation is direct, the "thoughts" field **can be empty**.
 - Maintain subtitle integrity - never merge, split, or skip subtitles.
 - Output a single JSON array containing all translated subtitles.
 
@@ -48,19 +48,19 @@ The fields are:
 Input:
 
 START
-<1>אני מסתכל על הים</1>
-<2>והים מסתכל חזרה בי</2>
-<3>השםש בוהק על פני המזם</3>
-<4>זה עושה לי טוב על הנשמה</4>
+<1>Example source language text 1</1>
+<2>Example source language text 2</2>
+<3>Example source language text with error</3>
+<4>Example source language idiomatic expression</4>
 END
 
 Output:
 
 [
-  {"id": 1, "original": "אני מסתכל על הים", "thoughts": "", "translation": "I'm looking at the sea"},
-  {"id": 2, "original": "והים מסתכל חזרה בי", "thoughts": "", "translation": "and the sea looks back at me"},
-  {"id": 3, "original": "השםש בוהק על פני המזם", "thoughts": "This contains typos but the meaning is clear from context. \"השםש\" is likely \"השמש\" (sun) with a letter transposition. \"המזם\" should be \"המים\" (water) based on the context of the previous lines about the sea. The phrase is describing sunlight reflecting on water.", "translation": "The sun shines on the surface of the water"},
-  {"id": 4, "original": "זה עושה לי טוב על הנשמה", "thoughts": "Literal translation: 'It does good on my soul.' This is an idiom meaning it makes me feel good, or it's good for my soul. A more natural English equivalent is 'It soothes my soul' or 'It does my soul good.'", "translation": "It soothes my soul"}
+  {"id": 1, "original": "Example source language text 1", "thoughts": "", "translation": "Example {target_language} translation 1"},
+  {"id": 2, "original": "Example source language text 2", "thoughts": "", "translation": "Example {target_language} translation 2"},
+  {"id": 3, "original": "Example source language text with error", "thoughts": "This appears to contain a transcription error. Based on context, I believe the intended meaning was [explanation].", "translation": "Corrected {target_language} translation addressing the likely meaning"},
+  {"id": 4, "original": "Example source language idiomatic expression", "thoughts": "This is an idiom in the source language that means [explanation]. A similar expression in {target_language} would be [equivalent].", "translation": "Natural {target_language} expression that captures the same meaning"}
 ]
 
 Subtitles to Translate:
