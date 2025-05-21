@@ -1,6 +1,6 @@
 # Advanced Subtitle Translation & Correction Task
 
-Task: Translate movie subtitles to {target_language}, **originating from flawed AI transcription**, to **fluent, natural-sounding {target_language}**. The original subtitles **will frequently contain phonetic errors, misheard words, typos, and nonsensical phrases.** Your primary goal is to **recover the intended meaning** and produce subtitles that are contextually appropriate, clear, and engaging for a {target_language}-speaking audience.
+Task: Translate video subtitles to {target_language}, **originating from flawed AI transcription**, to **fluent, natural-sounding {target_language}**. The original subtitles **will frequently contain phonetic errors, misheard words, typos, and nonsensical phrases.** Your primary goal is to **recover the intended meaning** and produce subtitles that are contextually appropriate, clear, and engaging for a {target_language}-speaking audience.
 
 ## Input Format
 - Subtitles are presented between START and END markers.
@@ -8,22 +8,26 @@ Task: Translate movie subtitles to {target_language}, **originating from flawed 
 
 ## Core Instructions & Philosophy
 1.  **Prioritize Intended Meaning & Naturalness:** Your translation must prioritize natural dialogue flow and the *likely intended meaning* in {target_language} over strict, literal adherence to the (often erroneous) source. The translation should sound like something a native {target_language} speaker would naturally say in that situation.
-2.  **Embrace Error Correction:** **Assume the source input is imperfect.** Actively look for and correct transcription errors. Don't be afraid to significantly alter the translation from a literal rendering if the source is nonsensical.
-3.  **Context is King:** Use surrounding subtitles and general knowledge of human conversation/storytelling to infer meaning, especially when the source text is garbled.
-4.  **Cultural Localization:** Where appropriate, adapt cultural references, units of measurement (e.g., meters to feet/inches for English), or expressions to be more familiar to a general {target_language}-speaking audience, while preserving the original cultural setting's integrity.
+2.  **Embrace Proactive and Confident Error Correction:** **Assume the source input is imperfect.** Actively look for and correct transcription errors. Don't be afraid to significantly alter the translation from a literal rendering if the source is nonsensical or highly improbable in the context of the *source language* itself. **If a word or phrase is phonetically plausible as a mishearing of a common source language word that fits the context, prioritize this correction.**
+3.  **Context is King (and Queen!):** Use **both immediate and broader surrounding subtitles (looking for patterns, repetitions, or thematic links)**, the broader narrative, potential scene dynamics (e.g., multiple people present), and general knowledge of human conversation/storytelling to infer meaning, especially when the source text is garbled. **Use context to confirm or refute hypotheses about errors and intended meanings.**
+4.  **Distinguish True Errors from Natural Dialogue Features (Apply Judiciously):** **If a phrase is intelligible in the source language but seems contextually odd or abrupt, *then* consider if it could be an aside, a comment to another character (e.g., a parent speaking to a child while on the phone), or an abrupt but natural topic shift.** The recurrence of a similar phrase or theme in subsequent subtitles can be a strong indicator of an intentional, albeit possibly layered, dialogue. If plausible, translate it as such and explain in "thoughts." **However, if a phrase is largely nonsensical or a clear phonetic mismatch for the context even as an aside, treat it as a transcription error first (see point 2).**
+5.  **Cultural Localization:** Where appropriate, adapt cultural references, units of measurement (e.g., meters to feet/inches for English), or expressions to be more familiar to a general {target_language}-speaking audience, while preserving the original cultural setting's integrity.
+6.  **Leverage Source Language Understanding for Error Hypotheses:** When encountering a likely transcription error, actively consider common words, phrases, idioms, and phonetic patterns in the **original source language** that might have been misheard or mistranscribed. Hypothesize what the **correct source language word/phrase** likely was.
 
 ## Detailed Instructions
 - Translate each subtitle to {target_language}, preserving the speaker's intent, tone, and relevant cultural nuances, **even if it means diverging significantly from a literal translation of the flawed source.**
-- Use the "thoughts" field extensively to document your reasoning, especially for complex translations.
+- Use the "thoughts" field extensively to document your reasoning, **but only when the translation involves significant interpretation, error correction, idiomatic choices, or consideration of asides/layered dialogue.**
 - For ambiguous, nonsensical, or difficult passages:
-    - **Aggressively identify potential transcription errors.** Consider:
-        - Phonetic similarities or near-misses: For instance, a word that sounds very similar to the correct word but is slightly off (e.g., AI transcribing similar-sounding words if context clearly points to a different meaning).
+    - **First, assess if the phrase is likely a direct transcription error (Core Instruction #2 & #6). Is it nonsensical, a probable phonetic mishearing of a common source language word, or a typo?**
+    - **If it's likely an error, *then* aggressively identify potential transcription errors.** Consider:
+        - Phonetic similarities or near-misses **to actual words in the source language.**
         - Words that don't fit the grammatical or conversational context.
-        - Phrases that are meaningless literally but might be misheard idioms or common expressions.
-    - **Clearly state your hypothesis in the "thoughts" field about the *intended original phrase* and why you believe the source is an error.**
-    - **Translate the *hypothesized intended meaning*, not the literal error.**
-    - **Identify potential *source language* idioms or colloquialisms.** Do not translate them word-for-word if it sounds unnatural or loses meaning in {target_language}. Find an appropriate {target_language} idiomatic equivalent or convey the meaning naturally. Explain your choice in "thoughts."
-- For straightforward subtitles where the source is likely correct and the translation is direct, the "thoughts" field **can be empty**.
+        - Phrases that are meaningless literally but might be misheard idioms or common expressions from the source language.
+    - **If, after the above, the phrase is intelligible but still seems out of place, *then* apply Core Instruction #4: Could this be a potential natural dialogue feature (aside, multi-address)?** Document this consideration in "thoughts," **noting if the phrase/theme recurs later, which might support it being intentional.**
+    - **Clearly state your hypothesis in the "thoughts" field about the *intended original source language phrase* and why you believe the source is an error (e.g., "Source 'קיפה' is likely a mishearing of Hebrew 'כיפה' (kippah) due to phonetic similarity and context of a religious man") or why you believe it's a natural interjection.**
+    - **Translate the *hypothesized intended meaning* or the *interpreted natural interjection*, not the literal error if one is identified.**
+    - **Identify potential *source language* idioms or colloquialisms.** Do not translate them word-for-word if it sounds unnatural or loses meaning in {target_language}. Find an appropriate {target_language} idiomatic equivalent or convey the meaning naturally. Explain your choice in "thoughts," **mentioning the original source idiom.**
+- For straightforward subtitles where the source is likely correct and the translation is direct, **the "thoughts" field must be an empty string `""`. Do not provide thoughts for simple, literal translations.**
 - Maintain subtitle integrity - never merge, split, or skip subtitles.
 - Output a single JSON array containing all translated subtitles.
 
@@ -32,35 +36,46 @@ Your output must be a valid JSON array containing subtitle objects:
 
 ```json
 [
-  {"id": 1, "original": "Original subtitle text", "thoughts": "", "translation": "Translated text"},
-  {"id": 2, "original": "Text with errors or ambiguity", "thoughts": "Here's my reasoning process...", "translation": "Carefully considered translation"}
+  {"id": 1, "original": "Straightforward original text", "thoughts": "", "translation": "Direct {target_language} translation"},
+  {"id": 2, "original": "Another easy original text", "thoughts": "", "translation": "Simple {target_language} translation"},
+  {"id": 3, "original": "Text with errors or ambiguity", "thoughts": "Here's my reasoning process...", "translation": "Carefully considered translation"},
+  {"id": 4, "original": "Example source language text with error", "thoughts": "This appears to contain a transcription error. Based on context and phonetic similarity, I believe the intended source language word was '[correct source word]' meaning '[meaning]'. The AI likely misheard it as '[original error]'. Translating the corrected meaning.", "translation": "Corrected {target_language} translation addressing the likely meaning"},
+  {"id": 5, "original": "Example source language idiomatic expression", "thoughts": "This is an idiom in the source language: '[source idiom]', which means [explanation]. A similar expression in {target_language} would be [equivalent].", "translation": "Natural {target_language} expression that captures the same meaning"},
+  {"id": 6, "original": "Seemingly out-of-place phrase", "thoughts": "This phrase '[original phrase]' is intelligible but initially seemed odd. However, considering the speaker might be addressing someone else off-screen (e.g., a child), '[translation of aside]' is a plausible aside here. This is further supported by a similar comment in subtitle #X. Translating as such.", "translation": "Plausible {target_language} aside"}
 ]
 ```
-
 The fields are:
 - `id` (required): The subtitle number matching the original
 - `original` (required): The original subtitle text
 - `translation` (required): Your translation into {target_language}
-- `thoughts` (required): Your reasoning process about difficult translations, ambiguities, cultural context, **idioms, and suspected transcription errors.** This is your space to think through complex translations before deciding on the final wording. Use empty string for straightforward cases.
+- `thoughts` (required): Your reasoning process about difficult translations, ambiguities, cultural context, **idioms, suspected transcription errors (including hypothesized correct source words/phrases and the basis for the correction), and considerations for asides/multi-layered dialogue, including noting recurring themes/phrases from surrounding context. Use an empty string `""` for straightforward translations where no such complex reasoning is required.** This is your space to think through complex translations before deciding on the final wording.
 
 ## Example Translation
 
 Input:
 
 START
-<1>Example source language text 1</1>
-<2>Example source language text 2</2>
-<3>Example source language text with error</3>
-<4>Example source language idiomatic expression</4>
+<1>Hello</1>
+<2>How are you?</2>
+<3>This texx has a typo</3>
+<4>It's raining cats and dogs.</4>
+<5>Go to bad now.</5>
+<6>Did you hear that?</6>
+<7>I said, go to bad!</7>
+<8>The kipa is on his head.</8>
 END
 
 Output:
 
 [
-  {"id": 1, "original": "Example source language text 1", "thoughts": "", "translation": "Example {target_language} translation 1"},
-  {"id": 2, "original": "Example source language text 2", "thoughts": "", "translation": "Example {target_language} translation 2"},
-  {"id": 3, "original": "Example source language text with error", "thoughts": "This appears to contain a transcription error. Based on context, I believe the intended meaning was [explanation].", "translation": "Corrected {target_language} translation addressing the likely meaning"},
-  {"id": 4, "original": "Example source language idiomatic expression", "thoughts": "This is an idiom in the source language that means [explanation]. A similar expression in {target_language} would be [equivalent].", "translation": "Natural {target_language} expression that captures the same meaning"}
+  {"id": 1, "original": "Hello", "thoughts": "", "translation": "Hola"},
+  {"id": 2, "original": "How are you?", "thoughts": "", "translation": "¿Cómo estás?"},
+  {"id": 3, "original": "This texx has a typo", "thoughts": "The word 'texx' is likely a typo for 'text'. Correcting this in the translation.", "translation": "Este texto tiene un error tipográfico."},
+  {"id": 4, "original": "It's raining cats and dogs.", "thoughts": "This is an English idiom meaning it's raining very heavily. A Spanish equivalent for heavy rain is 'Está lloviendo a cántaros'.", "translation": "Está lloviendo a cántaros."},
+  {"id": 5, "original": "Go to bad now.", "thoughts": "The word 'bad' is likely a phonetic mis-transcription of 'bed'. The phrase 'go to bed' is common. Correcting this. While it could be an aside, the primary issue is the transcription error.", "translation": "Vete a la cama ahora."},
+  {"id": 6, "original": "Did you hear that?", "thoughts": "", "translation": "¿Escuchaste eso?"},
+  {"id": 7, "original": "I said, go to bad!", "thoughts": "Again, 'bad' is likely a mis-transcription of 'bed'. This reiterates the command from subtitle #5 with added emphasis, directed at the same presumed person.", "translation": "¡Dije, vete a la cama!"},
+  {"id": 8, "original": "The kipa is on his head.", "thoughts": "Assuming the original language might have a word like 'kippah' (a Jewish skullcap), and 'kipa' is a plausible phonetic transcription or a slight misspelling. If the source were, for example, Hebrew with an AI error like 'הקיפה', this would be a correction to 'הכיפה'. Translating based on the likely intended 'kippah'.", "translation": "La kipá está en su cabeza."}
 ]
 
 Subtitles to Translate:
