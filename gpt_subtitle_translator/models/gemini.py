@@ -9,7 +9,7 @@ from google.genai.types import HarmBlockThreshold, FinishReason, GenerateContent
     HttpOptions, SafetySetting, ThinkingConfig
 
 from gpt_subtitle_translator.models.base_model import BaseModel
-from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError
+from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError, ResponseTooLongError
 
 load_dotenv()
 
@@ -65,7 +65,8 @@ JSON_SCHEMA = {
       },
       "thoughts": {
         "type": "string",
-        "description": "Brief reasoning about ambiguities, errors, or challenging translations. Empty string for straightforward cases."
+        "description": "Brief reasoning about ambiguities, errors, or challenging translations. Empty string for straightforward cases.",
+        "maxLength": "1024",
       }
     },
     "required": [
@@ -136,6 +137,8 @@ class Gemini(BaseModel):
         else:
             if message.candidates[0].finish_reason == FinishReason.SAFETY:
                 raise RefuseToTranslateError("Output blocked by content filtering policy")
+            elif message.candidates[0].finish_reason == FinishReason.MAX_TOKENS:
+                raise ResponseTooLongError("Response too long. Might be missing tokens.")
             else:
                 message_text = f"finish_reason: {message.candidates[0].finish_reason}"
 
