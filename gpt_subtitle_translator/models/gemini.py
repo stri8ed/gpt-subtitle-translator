@@ -66,7 +66,7 @@ JSON_SCHEMA = {
       "thoughts": {
         "type": "string",
         "description": "Brief reasoning about ambiguities, errors, or challenging translations. Empty string for straightforward cases.",
-        "maxLength": "1024",
+        "maxLength": "750",
       }
     },
     "required": [
