@@ -137,6 +137,8 @@ class Gemini(BaseModel):
         else:
             if message.candidates[0].finish_reason == FinishReason.SAFETY:
                 raise RefuseToTranslateError("Output blocked by content filtering policy")
+            if message.candidates[0].finish_reason == FinishReason.RECITATION:
+                raise RefuseToTranslateError("Output blocked due to RECITATION policy")
             elif message.candidates[0].finish_reason == FinishReason.MAX_TOKENS:
                 raise ResponseTooLongError("Response too long. Might be missing tokens.")
             else:
@@ -144,10 +146,11 @@ class Gemini(BaseModel):
 
         usage = message.usage_metadata
         thought_tokens = (usage.thoughts_token_count or 0 if hasattr(usage, 'thoughts_token_count') else 0)
-        output_token_count = usage.candidates_token_count + thought_tokens
-        input_token_count = usage.prompt_token_count
+        output_token_count = (usage.candidates_token_count or 0) + thought_tokens
+        input_token_count = usage.prompt_token_count or 0
         self.total_input_tokens += input_token_count
         self.total_output_tokens += output_token_count
+        print(prompt, message_text)
         return message_text, output_token_count
 
     def init_vocab(self, text: str):
