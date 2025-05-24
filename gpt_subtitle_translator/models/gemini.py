@@ -150,7 +150,6 @@ class Gemini(BaseModel):
         input_token_count = usage.prompt_token_count or 0
         self.total_input_tokens += input_token_count
         self.total_output_tokens += output_token_count
-        print(prompt, message_text)
         return message_text, output_token_count
 
     def init_vocab(self, text: str):
