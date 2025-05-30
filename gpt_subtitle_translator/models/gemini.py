@@ -118,6 +118,10 @@ class Gemini(BaseModel):
                         threshold="OFF"
                     ),
                     SafetySetting(
+                        category="HARM_CATEGORY_CIVIC_INTEGRITY",
+                        threshold="OFF"
+                    ),
+                    SafetySetting(
                         category="HARM_CATEGORY_HATE_SPEECH",
                         threshold="OFF"
                     ),
@@ -135,6 +139,9 @@ class Gemini(BaseModel):
         if message.text:
             message_text = message.text
         else:
+            if message.candidates is None:
+                block_reason = message.prompt_feedback.block_reason if message.prompt_feedback else None
+                raise RefuseToTranslateError(f"Prompt blocked for reason: {block_reason or 'Unknown'}. Prompt: {prompt[-1000:]}")
             if message.candidates[0].finish_reason == FinishReason.SAFETY:
                 raise RefuseToTranslateError("Output blocked by content filtering policy")
             if message.candidates[0].finish_reason == FinishReason.RECITATION:
