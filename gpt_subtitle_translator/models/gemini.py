@@ -57,11 +57,13 @@ JSON_SCHEMA = {
       },
       "original": {
         "type": "string",
-        "description": "The original subtitle text in the source language"
+        "description": "The original subtitle text in the source language",
+        "maxLength": "750"
       },
       "translation": {
         "type": "string",
-        "description": "The translated subtitle text in the target language"
+        "description": "The translated subtitle text in the target language",
+        "maxLength": "1000",
       },
       "thoughts": {
         "type": "string",
