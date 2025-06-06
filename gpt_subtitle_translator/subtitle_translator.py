@@ -21,7 +21,8 @@ class SubtitleTranslator:
         tokens_per_chunk: int = 500,
         max_retries: int = 1,
         retry_on_refusal: bool = False,
-        temperature: float = 0.5
+        temperature: float = 0.5,
+        prompt_template: Optional[str] = None
     ):
         self.model = model
         self.lang = lang
@@ -31,7 +32,7 @@ class SubtitleTranslator:
         self.max_retries = max_retries
         self.retry_on_refusal = retry_on_refusal
         self.processor = SubtitleProcessor(model)
-        self.prompt_template = self.load_prompt()
+        self.prompt_template = self.load_prompt() if prompt_template is None else prompt_template
 
     @staticmethod
     def load_prompt():
