@@ -14,23 +14,11 @@ from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError, 
 load_dotenv()
 
 model_params = {
-    "gemini-1.5-flash-latest": {
-        "price_input": 0.000075,
-        "price_output": 0.0003,
-        "max_output_tokens": 8192,
-        "thinking_enabled": False,
-    },
-    "gemini-exp-1206": {
-        "price_input": 0.00035,
-        "price_output": 0.00053,
-        "max_output_tokens": 8192,
-    "thinking_enabled": False,
-    },
     "gemini-1.5-pro-latest": {
         "price_input": 0.00125,
         "price_output": 0.005,
         "max_output_tokens": 8192,
-    "thinking_enabled": False,
+        "thinking_enabled": False,
     },
     "gemini-2.0-flash" : {
         "price_input": 0.0001,
@@ -38,9 +26,15 @@ model_params = {
         "max_output_tokens": 8192,
         "thinking_enabled": False,
     },
-    "gemini-2.5-flash-preview" : {
-        "price_input": 0.00016,
-        "price_output": 0.0006,
+    "gemini-2.5-flash" : {
+        "price_input": 0.0003,
+        "price_output": 0.0025,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
+    },
+    "gemini-2.5-flash-lite-preview": {
+        "price_input": 0.0001,
+        "price_output": 0.0004,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
     },
