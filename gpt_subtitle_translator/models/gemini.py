@@ -82,11 +82,11 @@ def get_model_params(model_name: str):
 
 
 class Gemini(BaseModel):
-    def __init__(self, model_name: str = "gemini-2.0-flash-001", params: Union[None, dict] = None):
+    def __init__(self, model_name: str = "gemini-2.0-flash-001", api_key: Union[str, None] = None):
         super().__init__(model_name)
         _model_params = get_model_params(model_name)
         assert _model_params is not None, f"Model {model_name} info not found."
-        self.client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+        self.client = genai.Client(api_key=api_key or os.environ["GEMINI_API_KEY"])
         self.total_input_tokens = 0
         self.total_output_tokens = 0
         self.params = _model_params

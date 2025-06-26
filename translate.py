@@ -2,9 +2,7 @@ import argparse
 import os
 import time
 from gpt_subtitle_translator.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL, MAX_RETRIES, DEFAULT_TEMPERATURE
-from gpt_subtitle_translator.models.claude import Claude
 from gpt_subtitle_translator.models.gemini import Gemini
-from gpt_subtitle_translator.models.gpt import GPT
 from gpt_subtitle_translator.subtitle_translator import SubtitleTranslator, TranslationError
 from gpt_subtitle_translator.logger import logger
 import chardet
@@ -15,11 +13,10 @@ def get_output_filename(input_filename):
     return os.path.join(directory, f"{filename.split('.')[0]}_{token}_translated.srt")
 
 def get_model(model_name):
-    if model_name.startswith("gpt"):
-        return GPT(model_name)
     if model_name.startswith("gemini"):
         return Gemini(model_name)
-    return Claude(model_name)
+
+    raise ValueError(f"Unsupported model: {model_name}.")
 
 def main():
     parser = argparse.ArgumentParser(description='Translate a transcript file.')
