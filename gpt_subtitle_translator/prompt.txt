@@ -58,13 +58,19 @@ Input:
 START
 <1>Hello</1>
 <2>How are you?</2>
-<3>This texx has a typo
-and spans multiple lines</3>
-<4>It's raining cats and dogs.</4>
-<5>Go to bad now.</5>
-<6>Did you hear that?</6>
-<7>I said, go to bad!</7>
-<8>The kipa is on his head.</8>
+<3>I'm fine, thanks.</3>
+<4>What time is it?</4>
+<5>It's three o'clock.</5>
+<6>See you tomorrow.</6>
+<7>This texx has a typo
+and spans multiple lines</7>
+<8>It's raining cats and dogs.</8>
+<9>Thank you very much.</9>
+<10>You're welcome.</10>
+<11>Go to bad now.</11>
+<12>Good night.</12>
+<13>I love you.</13>
+<14>The kipa is on his head.</14>
 END
 
 Output:
@@ -72,12 +78,18 @@ Output:
 [
   {"id": 1, "original": "Hello", "thoughts": "", "translation": "Hola"},
   {"id": 2, "original": "How are you?", "thoughts": "", "translation": "¿Cómo estás?"},
-  {"id": 3, "original": "This texx has a typo\nand spans multiple lines", "thoughts": "The word 'texx' is likely a typo for 'text'. Correcting this in the translation while preserving the line break.", "translation": "Este texto tiene un error tipográfico\ny abarca múltiples líneas."},
-  {"id": 4, "original": "It's raining cats and dogs.", "thoughts": "This is an English idiom meaning it's raining very heavily. A Spanish equivalent for heavy rain is 'Está lloviendo a cántaros'.", "translation": "Está lloviendo a cántaros."},
-  {"id": 5, "original": "Go to bad now.", "thoughts": "The word 'bad' is likely a phonetic mis-transcription of 'bed'. The phrase 'go to bed' is common. Correcting this. While it could be an aside, the primary issue is the transcription error.", "translation": "Vete a la cama ahora."},
-  {"id": 6, "original": "Did you hear that?", "thoughts": "", "translation": "¿Escuchaste eso?"},
-  {"id": 7, "original": "I said, go to bad!", "thoughts": "Again, 'bad' is likely a mis-transcription of 'bed'. This reiterates the command from subtitle #5 with added emphasis, directed at the same presumed person.", "translation": "¡Dije, vete a la cama!"},
-  {"id": 8, "original": "The kipa is on his head.", "thoughts": "Assuming the original language might have a word like 'kippah' (a Jewish skullcap), and 'kipa' is a plausible phonetic transcription or a slight misspelling. If the source were, for example, Hebrew with an AI error like 'הקיפה', this would be a correction to 'הכיפה'. Translating based on the likely intended 'kippah'.", "translation": "La kipá está en su cabeza."}
+  {"id": 3, "original": "I'm fine, thanks.", "thoughts": "", "translation": "Estoy bien, gracias."},
+  {"id": 4, "original": "What time is it?", "thoughts": "", "translation": "¿Qué hora es?"},
+  {"id": 5, "original": "It's three o'clock.", "thoughts": "", "translation": "Son las tres."},
+  {"id": 6, "original": "See you tomorrow.", "thoughts": "", "translation": "Nos vemos mañana."},
+  {"id": 7, "original": "This texx has a typo\nand spans multiple lines", "thoughts": "The word 'texx' is likely a typo for 'text'. Correcting this in the translation while preserving the line break.", "translation": "Este texto tiene un error tipográfico\ny abarca múltiples líneas."},
+  {"id": 8, "original": "It's raining cats and dogs.", "thoughts": "This is an English idiom meaning it's raining very heavily. A Spanish equivalent for heavy rain is 'Está lloviendo a cántaros'.", "translation": "Está lloviendo a cántaros."},
+  {"id": 9, "original": "Thank you very much.", "thoughts": "", "translation": "Muchas gracias."},
+  {"id": 10, "original": "You're welcome.", "thoughts": "", "translation": "De nada."},
+  {"id": 11, "original": "Go to bad now.", "thoughts": "The word 'bad' is likely a phonetic mis-transcription of 'bed'. The phrase 'go to bed' is common. Correcting this transcription error.", "translation": "Vete a la cama ahora."},
+  {"id": 12, "original": "Good night.", "thoughts": "", "translation": "Buenas noches."},
+  {"id": 13, "original": "I love you.", "thoughts": "", "translation": "Te amo."},
+  {"id": 14, "original": "The kipa is on his head.", "thoughts": "Assuming the original language might have a word like 'kippah' (a Jewish skullcap), and 'kipa' is a plausible phonetic transcription. Translating based on the likely intended 'kippah'.", "translation": "La kipá está en su cabeza."}
 ]
 
 Subtitles to Translate:
