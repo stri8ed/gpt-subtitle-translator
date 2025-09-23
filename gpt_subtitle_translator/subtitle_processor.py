@@ -138,6 +138,8 @@ class SubtitleProcessor:
     def insert_timestamps(parsed_subtitles, content):
         def replacement(match):
             subtitle_id = int(match.group(1))
+            if subtitle_id not in parsed_subtitles:
+                raise ValueError(f"Subtitle ID {subtitle_id} not in parsed_subtitles")
             return f'\n{subtitle_id}\n{parsed_subtitles[subtitle_id]["timestamp"]}\n{match.group(2)}'
         return re.sub(r'^<(\d+)>(.*?)</\1>$', replacement, content, flags=re.DOTALL | re.MULTILINE)
 
