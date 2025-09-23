@@ -1,4 +1,5 @@
 import os
+import re
 import threading
 import traceback
 import zlib
@@ -144,14 +145,23 @@ class SubtitleTranslator:
                     f"Preview: {raw_response[:1000]}"
                 )
 
+        original_count = len(self.processor.split_on_tags(original_text))
         missing_subtitles = self.processor.get_missing_subtitles(response, original_text)
+
         if missing_subtitles:
-            if len(missing_subtitles) == len(self.processor.split_on_tags(original_text)) and len(raw_response) > 0:
+            if len(missing_subtitles) == original_count and len(raw_response) > 0:
                 raise MissingSubtitlesError(f"Chunk {chunk_number} is missing all subtitles.")
             else:
                 raise MissingSubtitlesError(
                     f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
                 )
+
+        translated_count = len(re.findall(r'^<(\d+)>', response.strip(), flags=re.MULTILINE))
+        if translated_count > original_count:
+            raise MissingSubtitlesError(
+                f"Chunk {chunk_number} generated {translated_count - original_count} extra subtitles: "
+                f"expected {original_count}, got {translated_count}."
+            )
 
         logger.info(f"Got chunk {chunk_number}, length is {num_tokens} tokens.")
 
