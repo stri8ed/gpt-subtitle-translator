@@ -106,6 +106,11 @@ class SubtitleProcessor:
             if isinstance(response, list):
                 subtitles_array = response
             else:
+                start = response.find("[")
+                end = response.rfind("]")
+                if start != -1 and end != -1:
+                    response = response[start:end + 1]
+
                 subtitles_array = json.loads(response.strip())
 
             reverted = []
