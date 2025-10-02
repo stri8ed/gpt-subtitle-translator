@@ -35,7 +35,6 @@ Task: Translate video subtitles to {target_language}, **originating from flawed 
 ## OUTPUT FORMAT
 Your output must be a valid JSON array containing subtitle objects:
 
-```json
 [
   {"id": 1, "original": "Straightforward original text", "thoughts": "", "translation": "Direct {target_language} translation"},
   {"id": 2, "original": "Another easy original text", "thoughts": "", "translation": "Simple {target_language} translation"},
@@ -44,12 +43,12 @@ Your output must be a valid JSON array containing subtitle objects:
   {"id": 5, "original": "Example source language idiomatic expression", "thoughts": "This is an idiom in the source language: '[source idiom]', which means [explanation]. A similar expression in {target_language} would be [equivalent].", "translation": "Natural {target_language} expression that captures the same meaning"},
   {"id": 6, "original": "Seemingly out-of-place phrase", "thoughts": "This phrase '[original phrase]' is intelligible but initially seemed odd. However, considering the speaker might be addressing someone else off-screen (e.g., a child), '[translation of aside]' is a plausible aside here. This is further supported by a similar comment in subtitle #X. Translating as such.", "translation": "Plausible {target_language} aside"}
 ]
-```
+
 The fields are:
 - `id` (required): The subtitle number matching the original
 - `original` (required): The original subtitle text
-- `translation` (required): Your translation into {target_language}, preserving any line breaks from the original
 - `thoughts` (required): Your reasoning process about difficult translations, ambiguities, cultural context, **idioms, suspected transcription errors (including hypothesized correct source words/phrases and the basis for the correction), and considerations for asides/multi-layered dialogue, including noting recurring themes/phrases from surrounding context. Use an empty string `""` for straightforward translations where no such complex reasoning is required.** This is your space to think through complex translations before deciding on the final wording.
+- `translation` (required): Your translation into {target_language}, preserving any line breaks from the original
 
 ## Example Translation
 
