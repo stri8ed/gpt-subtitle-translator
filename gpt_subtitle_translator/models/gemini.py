@@ -1,11 +1,9 @@
-import json
 import os
 from typing import Union
 
-from google import genai
-
 from dotenv import load_dotenv
-from google.genai.types import HarmBlockThreshold, FinishReason, GenerateContentConfigDict, GenerateContentConfig, \
+from google import genai
+from google.genai.types import FinishReason, GenerateContentConfig, \
     HttpOptions, SafetySetting, ThinkingConfig
 
 from gpt_subtitle_translator.models.base_model import BaseModel
@@ -14,21 +12,17 @@ from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError, 
 load_dotenv()
 
 model_params = {
-    "gemini-1.5-pro-latest": {
-        "price_input": 0.00125,
-        "price_output": 0.005,
-        "max_output_tokens": 8192,
-        "thinking_enabled": False,
-    },
-    "gemini-2.0-flash" : {
+    "gemini-2.0-flash": {
         "price_input": 0.0001,
         "price_output": 0.0004,
+        "price_cached": 0.000025,
         "max_output_tokens": 8192,
         "thinking_enabled": False,
     },
-    "gemini-2.5-flash" : {
+    "gemini-2.5-flash": {
         "price_input": 0.0003,
         "price_output": 0.0025,
+        "price_cached": 0.000075,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
     },
@@ -41,38 +35,39 @@ model_params = {
 }
 
 JSON_SCHEMA = {
-  "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "id": {
-        "type": "integer",
-        "description": "The subtitle ID number matching the original subtitle"
-      },
-      "original": {
-        "type": "string",
-        "description": "The original subtitle text in the source language",
-        "maxLength": 750
-      },
-      "translation": {
-        "type": "string",
-        "description": "The translated subtitle text in the target language",
-        "maxLength": 1000,
-      },
-      "thoughts": {
-        "type": "string",
-        "description": "Brief reasoning about ambiguities, errors, or challenging translations. Empty string for straightforward cases.",
-        "maxLength": 650,
-      }
-    },
-    "required": [
-      "id",
-      "original",
-      "translation",
-      "thoughts"
-    ]
-  }
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "integer",
+                "description": "The subtitle ID number matching the original subtitle"
+            },
+            "original": {
+                "type": "string",
+                "description": "The original subtitle text in the source language",
+                "maxLength": 750
+            },
+            "thoughts": {
+                "type": "string",
+                "description": "Brief reasoning about ambiguities, errors, or challenging translations. Empty string for straightforward cases.",
+                "maxLength": 650,
+            },
+            "translation": {
+                "type": "string",
+                "description": "The translated subtitle text in the target language",
+                "maxLength": 1000,
+            }
+        },
+        "required": [
+            "id",
+            "original",
+            "thoughts",
+            "translation"
+        ]
+    }
 }
+
 
 def get_model_params(model_name: str):
     for key, value in model_params.items():
@@ -89,9 +84,9 @@ class Gemini(BaseModel):
         self.client = genai.Client(api_key=api_key or os.environ["GEMINI_API_KEY"])
         self.total_input_tokens = 0
         self.total_output_tokens = 0
+        self.total_cached_tokens = 0
         self.params = _model_params
         self.average_tokens_per_char = None
-
 
     def generate_completion(self, prompt: str, temperature: float) -> (str, int):
         message = self.client.models.generate_content(
@@ -129,7 +124,7 @@ class Gemini(BaseModel):
                         category="HARM_CATEGORY_DANGEROUS_CONTENT",
                         threshold="OFF"
                     )
-            ])
+                ])
         )
 
         if message.text:
@@ -148,19 +143,23 @@ class Gemini(BaseModel):
                 message_text = f"finish_reason: {message.candidates[0].finish_reason}"
 
         usage = message.usage_metadata
+        cached_token_count = (usage.cached_content_token_count or 0 if hasattr(usage, 'cached_content_token_count') else 0)
         thought_tokens = (usage.thoughts_token_count or 0 if hasattr(usage, 'thoughts_token_count') else 0)
         output_token_count = (usage.candidates_token_count or 0) + thought_tokens
         input_token_count = usage.prompt_token_count or 0
         self.total_input_tokens += input_token_count
         self.total_output_tokens += output_token_count
+        self.total_cached_tokens += cached_token_count
         return message_text, output_token_count
 
     def init_vocab(self, text: str):
-        token_count = self._get_token_count(text) # get token count requires an http request, so we only do it once
+        token_count = self._get_token_count(text)  # get token count requires an http request, so we only do it once
         self.average_tokens_per_char = token_count / len(text)
 
     def get_total_cost(self) -> float:
-        input_cost = (self.total_input_tokens / 1000) * self.params["price_input"]
+        input_tokens = self.total_input_tokens - self.total_cached_tokens
+        input_cost = (input_tokens / 1000) * self.params["price_input"]
+        input_cost += self.total_cached_tokens / 1000 * self.params.get("price_cached", 0)
         output_cost = (self.total_output_tokens / 1000) * self.params["price_output"]
         return input_cost + output_cost
 
