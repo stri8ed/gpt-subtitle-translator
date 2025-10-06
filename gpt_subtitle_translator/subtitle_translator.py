@@ -215,7 +215,7 @@ class TranslationError(Exception):
         return "".join([
             f"An error occurred ({type(self.original_exception).__name__}): {str(self.original_exception)}\n"
             f"Completed chunks: {len(self.completed_chunks)}\n",
-            f"Partial translation\n: {self.partial_translation[:1000]}" if self.partial_translation else ""
+            f"Partial translation\n: {self.partial_translation[:350]}" if self.partial_translation else ""
         ])
 
     def get_stack_trace(self):
