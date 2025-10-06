@@ -43,20 +43,33 @@ class SubtitleTranslator:
             prompt = f.read()
         return prompt
 
-    def translate_subtitles(self, srt_data: str, progress_callback: Optional[Callable[[float], None]] = None) -> str:
+    def translate_subtitles(
+        self,
+        srt_data: str,
+        progress_callback:
+        Optional[Callable[[float], None]] = None,
+        completed_chunks: Optional[dict[int, str]] = None
+    ) -> str:
         parsed_srt = self.processor.parse_srt(srt_data)
         preprocessed_text = self.processor.preprocess(parsed_srt)
         chunks = self.processor.make_chunks(preprocessed_text, self.tokens_per_chunk)
         logger.info(f"Split into {len(chunks)} chunks.")
+
+        completed_chunks = completed_chunks or {}
         translations = [""] * len(chunks)
         futures = []
         err = None
         stop_flag = threading.Event()
 
+        for idx, translation in completed_chunks.items():
+            translations[idx] = translation
+            logger.info(f"Skipping chunk {idx + 1} (already completed)")
+
         with ThreadPoolExecutor(max_workers=self.num_threads) as executor:
             for i, chunk in enumerate(chunks):
-                future = executor.submit(self.translate_chunk, chunk, stop_flag, 0)
-                futures.append(future)
+                if i not in completed_chunks:
+                    future = executor.submit(self.translate_chunk, chunk, stop_flag, 0)
+                    futures.append(future)
 
             for future in concurrent.futures.as_completed(futures):
                 try:
@@ -70,13 +83,13 @@ class SubtitleTranslator:
                     stop_flag.set()
                     for fut in futures:
                         fut.cancel()
-                    break
 
         joined_text = "\n\n".join(translations)
         result_text = self.processor.post_process_text(joined_text, parsed_srt)
 
         if err:
-            raise TranslationError(err, stack_trace, result_text)
+            completed_chunks = {i: t for i, t in enumerate(translations) if t}
+            raise TranslationError(err, stack_trace, result_text, completed_chunks)
 
         return result_text
 
@@ -185,15 +198,23 @@ class TranslationError(Exception):
     Stores the error type, partial translation.
     """
 
-    def __init__(self, original_exception, stack_trace, partial_translation=None):
+    def __init__(
+        self,
+        original_exception,
+        stack_trace,
+        partial_translation=None,
+        completed_chunks: Optional[dict[int, str]] = None
+    ):
         super().__init__(str(original_exception))
         self.original_exception = original_exception
         self.partial_translation = partial_translation
         self.stack_trace = stack_trace
+        self.completed_chunks = completed_chunks or {}
 
     def __str__(self):
         return "".join([
-            f"An error occurred ({type(self.original_exception).__name__}): {str(self.original_exception)}\n",
+            f"An error occurred ({type(self.original_exception).__name__}): {str(self.original_exception)}\n"
+            f"Completed chunks: {len(self.completed_chunks)}\n",
             f"Partial translation\n: {self.partial_translation[:1000]}" if self.partial_translation else ""
         ])
 
