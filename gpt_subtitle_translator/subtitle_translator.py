@@ -78,11 +78,12 @@ class SubtitleTranslator:
                     if progress_callback:
                         progress_callback(len([t for t in translations if t]) / len(chunks))
                 except Exception as e:
-                    err = e
-                    stack_trace = traceback.format_exc()
-                    stop_flag.set()
-                    for fut in futures:
-                        fut.cancel()
+                    if not err:
+                        err = e
+                        stack_trace = traceback.format_exc()
+                        stop_flag.set()
+                        for fut in futures:
+                            fut.cancel()
 
         joined_text = "\n\n".join(translations)
         result_text = self.processor.post_process_text(joined_text, parsed_srt)
