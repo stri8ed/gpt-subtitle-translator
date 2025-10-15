@@ -38,7 +38,7 @@ class SubtitleTranslator:
     @staticmethod
     def load_prompt():
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        prompt_file = os.path.join(script_dir, '.', 'prompt.txt')
+        prompt_file = os.path.join(script_dir, '.', 'prompt/prompt_transcription.txt')
         with open(prompt_file, encoding="utf-8") as f:
             prompt = f.read()
         return prompt
