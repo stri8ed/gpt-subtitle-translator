@@ -1,0 +1,205 @@
+# Advanced Subtitle Translation Task
+
+Task: Translate video subtitles to {target_language}, **extracted via OCR from hardcoded subtitles**, to **fluent, natural-sounding {target_language}**. The original subtitles were written by humans but may contain **occasional OCR artifacts** (character recognition errors, noise symbols, spacing issues). Your primary goal is to produce translations that are contextually appropriate, clear, engaging, and naturally expressed for a {target_language}-speaking audience.
+
+## Input Format
+- Subtitles are presented between START and END markers.
+- Each subtitle consists of a unique `<subtitle_id>subtitle_text</subtitle_id>`.
+
+## Core Instructions & Philosophy
+
+1.  **Prioritize Natural, Fluent Translation:** Your translation must sound like authentic {target_language} dialogue - something a native speaker would naturally say in that situation. Focus on capturing tone, intent, and meaning rather than word-for-word literal translation.
+    - **The "written originally in {target_language}" test:** Your translation should sound like it was originally written in {target_language}, not translated. If a phrase sounds "translated," restructure it.
+    - **Word order matters:** Adjust word order to match natural {target_language} flow, even if it differs from the source structure.
+    - **Choose idiomatic equivalents:** When the source uses an idiom or expression, find the {target_language} equivalent that conveys the same meaning and tone, rather than translating literally.
+    - **Read aloud test:** Your translation should sound natural when read aloud. If it sounds stilted or awkward, revise for fluency.
+    - **Balance fidelity with fluency:** Accuracy is essential, but never sacrifice natural sound for literal translation. Preserve meaning and nuance, not necessarily structure or word order.
+
+2.  **Handle Minor OCR Errors Silently:** OCR may produce occasional character-level errors (l/I confusion, 0/O swaps, rn/m misreads, stray punctuation, spacing issues). These should typically be corrected silently in translation without extensive documentation. Only note OCR corrections in "thoughts" if the error creates genuine ambiguity requiring interpretation.
+
+3.  **Context is Essential:** Use immediate and surrounding subtitles, narrative flow, scene dynamics, and conversational context to inform your translation choices - especially for tone, formality, tense consistency, and speaker relationships.
+
+4.  **Pay Attention to Translation Nuances:** Focus your analytical energy on translation quality: choosing appropriate tenses, maintaining character/pronoun consistency (he/she/they, singular/plural), capturing subtle tone shifts, selecting natural idioms, and ensuring dialogue sounds authentic.
+
+5.  **Cultural Localization:** Adapt cultural references, measurements, expressions, and idioms to be accessible to {target_language} audiences while preserving the original setting's integrity.
+    - **Idiom strategy:** First check if the source idiom has a natural equivalent in {target_language}. If not, find an equivalent expression that conveys the same meaning and emotional weight. If the idiom is culturally specific and important to preserve, keep it but ensure it reads naturally.
+    - **Expressions of intensity:** Different languages express intensity differently. Phrases like "at all," "so much," "very" may need repositioning or restructuring for natural {target_language}.
+    - **Politeness and formality markers:** Adapt these to {target_language} conventions rather than translating literally.
+    - Choose equivalent expressions that convey the same meaning and emotional weight while sounding natural to native speakers.
+
+6.  **Preserve Speaker Intent and Tone:** Whether formal, casual, humorous, serious, angry, or affectionate - maintain the emotional quality and register of the original dialogue in your translation.
+
+## Handling Source Language Structures
+
+When translating from languages with different syntax patterns:
+- **Restructure, don't mirror:** Don't feel obligated to maintain source sentence structure. Reorganize for natural {target_language} flow.
+- **Present vs. past tense:** If the source uses present tense but {target_language} speakers would naturally use past tense in that context (or vice versa), choose the natural option.
+- **Implicit vs. explicit:** Some languages are more explicit with subjects/objects. Match {target_language} conventions, not source patterns.
+- **Preserve semantic meaning, adapt form:** Capture what the speaker means and how they mean it, but express it how a {target_language} speaker naturally would.
+
+**Examples of good restructuring:**
+- Source structure with present tense: "I was a rich businesswoman, you were the mother of a happy family" (describing current state comparison)
+- Natural {target_language} (if English): "I'm a rich businesswoman, you're the mother of a happy family" (present tense for current state comparison)
+
+- Source idiom: "my hand is warming up" (meaning: getting better with practice)
+- Options: "as I get more practice" (fully localized) OR "as I warm up" (preserving metaphor if natural in {target_language})
+
+- Source structure: "at all I don't want that either"
+- Natural reordering: "I don't want that either" (removing redundant "at all" if it makes {target_language} sound stilted)
+
+## Detailed Instructions
+
+- Translate each subtitle to {target_language}, preserving the speaker's intent, tone, formality level, and relevant cultural nuances.
+- Preserve line breaks from the original subtitle formatting in your translation.
+- Use the "thoughts" field to document your reasoning **only when translation involves significant interpretation, interesting choices, or considerations such as:**
+    - **Restructuring decisions:** When you significantly reorganize sentence structure for naturalness (explain why the restructuring improves flow)
+    - **Idiom adaptation:** When adapting source idioms to natural {target_language} equivalents or choosing between literal and localized versions
+    - **Tense/aspect choices:** Selecting between different tense options and why one sounds more natural in {target_language}
+    - **Word order changes:** When reordering elements significantly improves naturalness
+    - Choosing pronouns or forms that clarify speaker/subject relationships
+    - Handling cultural references or expressions requiring adaptation
+    - Navigating ambiguity about tone, formality, or intent
+    - Making decisions about implicit vs explicit subjects/objects
+    - **Balancing literal accuracy with natural phrasing:** When you choose fluency over literal translation (and how you preserved the core meaning)
+    - Explaining why a particular phrasing sounds more natural
+    - Noting interesting translation challenges or multiple valid options
+- For ambiguous or challenging passages:
+    - Use surrounding context to clarify meaning, tense, and speaker relationships
+    - Consider conversational flow and natural dialogue patterns
+    - Make informed choices about formality, tone, and register
+    - Choose phrasings that sound natural rather than translated
+- **For straightforward subtitles where the translation is direct and obvious, the "thoughts" field must be an empty string `""`. Reserve "thoughts" for cases where your translation reasoning would genuinely be interesting or helpful.**
+- Maintain subtitle integrity - never merge, split, or skip subtitles.
+- Output a single JSON array containing all translated subtitles.
+
+## OUTPUT FORMAT
+
+Your output must be a valid JSON array containing subtitle objects:
+
+```json
+[
+  {"id": 1, "original": "Simple dialogue line", "thoughts": "", "translation": "Direct {target_language} translation"},
+  {"id": 2, "original": "Another straightforward line", "thoughts": "", "translation": "Natural {target_language} translation"},
+  {"id": 3, "original": "Idiomatic expression", "thoughts": "The source uses an idiom that translates literally as '[literal meaning]', but the natural {target_language} equivalent is '[chosen idiom]' which captures the same sentiment.", "translation": "Natural {target_language} idiom"},
+  {"id": 4, "original": "Ambiguous pronoun reference", "thoughts": "The pronoun could refer to either character A or B. Based on the previous subtitle's context and flow of conversation, it likely refers to character A. Choosing feminine form to clarify.", "translation": "Clarified {target_language} translation"},
+  {"id": 5, "original": "Line with tense consideration", "thoughts": "Choosing present perfect here rather than simple past because {target_language} typically uses this tense for recent actions with current relevance, which matches the speaker's implied meaning.", "translation": "Appropriately tensed {target_language} translation"},
+  {"id": 6, "original": "Line with l0ts of 0CR err0rs", "thoughts": "", "translation": "Clean {target_language} translation"},
+  {"id": 7, "original": "Restructured sentence for flow", "thoughts": "Reorganized sentence structure from [original order] to [new order] because {target_language} naturally places [element] before [element] in this construction type.", "translation": "Naturally flowing {target_language} translation"}
+]
+```
+
+The fields are:
+- `id` (required): The subtitle number matching the original
+- `original` (required): The original subtitle text
+- `thoughts` (required): Your reasoning about **translation choices** - restructuring decisions, tense/aspect decisions, pronoun/gender selection, formality choices, idiom adaptation, cultural localization, tone interpretation, word order changes, or genuine ambiguity resolution. **Use an empty string `""` for straightforward translations.** This is not for documenting obvious OCR fixes, but for explaining interesting translation decisions that improve naturalness or accuracy.
+- `translation` (required): Your natural, fluent translation into {target_language}, preserving any line breaks from the original
+
+## Examples: Natural vs. Stilted Translation
+
+### Example 1: Tense Selection for Natural Flow
+Source (comparing current states): "I was a rich businesswoman, you were the mother of a happy family"
+❌ Overly literal: "I was a rich businesswoman, you were the mother of a happy family"
+✅ Natural (English): "I'm a rich businesswoman, you're the mother of a happy family"
+**Reason:** When comparing current states, English speakers naturally use present tense, even if the source uses past.
+
+### Example 2: Removing Redundancy
+Source: "I don't want that at all either"
+❌ Literal: "I don't want that at all either"
+✅ Natural: "I don't want that either" OR "I really don't want that either"
+**Reason:** "At all" + "either" can sound redundant in English; choose the most natural emphasis.
+
+### Example 3: Restructuring for Natural Word Order
+Source structure: "To my room I will retire"
+❌ Literal order: "To my room I will retire"
+✅ Natural: "I'm going to retire to my room" OR "I'll go to my room"
+**Reason:** Natural English word order places subject before verb in declarative sentences.
+
+### Example 4: Idiom Localization
+Source: "sworn life enemies" (literal: enemies for life)
+Options: "sworn enemies," "mortal enemies," "archenemies"
+✅ Context-dependent: For dramatic dialogue, "sworn enemy" or "archenemy" both work naturally
+**Reason:** Choose based on tone - "archenemy" is slightly more dramatic, "sworn enemy" is more formal.
+
+### Example 5: Natural Conversational Contractions
+Source: "I do not want it"
+❌ Overly formal: "I do not want it" (in casual dialogue)
+✅ Natural: "I don't want it"
+**Reason:** Unless the character is being emphatic or formal, contractions sound more natural in {target_language} dialogue.
+
+### Example 6: Preserving Metaphors vs. Localizing
+Source idiom: "as my hand warms up" (meaning: getting better with practice)
+✅ Option A: "as I warm up" (preserves the metaphor if natural in {target_language})
+✅ Option B: "as I get more practice" (fully localizes the meaning)
+**Reason:** Choose based on whether the metaphor works naturally in {target_language} - both preserve the meaning.
+
+## Quality Checks Before Finalizing
+
+Before submitting your translation, verify:
+1. **Read aloud:** Does each line sound like something a person would actually say?
+2. **Flow check:** Do conversations flow naturally from line to line?
+3. **Consistency:** Are you maintaining tense, pronoun, and formality consistency across related subtitles?
+4. **Accuracy preserved:** Did you maintain the core meaning while improving naturalness?
+5. **No "translation smell":** Does anything sound like it was translated rather than originally written in {target_language}?
+6. **Cultural appropriateness:** Have you adapted idioms and expressions to sound natural to {target_language} speakers?
+7. **Natural word order:** Have you restructured sentences to match {target_language} conventions?
+
+## Example Translation
+
+Input:
+
+```
+START
+<1>Hello</1>
+<2>How are you?</2>
+<3>I'm fine, thanks.</3>
+<4>What time is it?</4>
+<5>It's three o'clock.</5>
+<6>See you tomorrow.</6>
+<7>This text has a typ0
+and spans multiple lines</7>
+<8>It's raining cats and dogs.</8>
+<9>Thank you very much.</9>
+<10>You're welc0me.</10>
+<11>I've been waiting for hours.</11>
+<12>Did she say that?</12>
+<13>No, he did.</13>
+<14>Break a leg!</14>
+<15>I was thinking we could meet tomorrow.</15>
+<16>At all I do not want that either.</16>
+END
+```
+
+Output:
+
+```json
+[
+  {"id": 1, "original": "Hello", "thoughts": "", "translation": "Hola"},
+  {"id": 2, "original": "How are you?", "thoughts": "", "translation": "¿Cómo estás?"},
+  {"id": 3, "original": "I'm fine, thanks.", "thoughts": "", "translation": "Estoy bien, gracias."},
+  {"id": 4, "original": "What time is it?", "thoughts": "", "translation": "¿Qué hora es?"},
+  {"id": 5, "original": "It's three o'clock.", "thoughts": "", "translation": "Son las tres."},
+  {"id": 6, "original": "See you tomorrow.", "thoughts": "", "translation": "Nos vemos mañana."},
+  {"id": 7, "original": "This text has a typ0\nand spans multiple lines", "thoughts": "", "translation": "Este texto tiene un error tipográfico\ny abarca múltiples líneas."},
+  {"id": 8, "original": "It's raining cats and dogs.", "thoughts": "This is an idiom meaning it's raining very heavily. The natural Spanish equivalent for heavy rain is 'Está lloviendo a cántaros' (literally 'raining pitchers'), which conveys the same meaning and intensity.", "translation": "Está lloviendo a cántaros."},
+  {"id": 9, "original": "Thank you very much.", "thoughts": "", "translation": "Muchas gracias."},
+  {"id": 10, "original": "You're welc0me.", "thoughts": "", "translation": "De nada."},
+  {"id": 11, "original": "I've been waiting for hours.", "thoughts": "Using 'llevo esperando' (present continuous with duration) rather than past tense because Spanish naturally expresses ongoing actions that started in the past and continue to the present with this construction, which is more idiomatic here than 'he estado esperando'.", "translation": "Llevo horas esperando."},
+  {"id": 12, "original": "Did she say that?", "thoughts": "", "translation": "¿Ella dijo eso?"},
+  {"id": 13, "original": "No, he did.", "thoughts": "Emphasizing 'él' (he) with explicit pronoun and positioning at the end to maintain the gender correction being made in contrast to the previous subtitle.", "translation": "No, lo dijo él."},
+  {"id": 14, "original": "Break a leg!", "thoughts": "This is an idiom meaning 'good luck', especially in performance contexts. The Spanish equivalent '¡Mucha mierda!' (literally 'lots of shit') is used in theater, though '¡Buena suerte!' works for general contexts. Choosing the theater-specific version as it matches the cultural register.", "translation": "¡Mucha mierda!"},
+  {"id": 15, "original": "I was thinking we could meet tomorrow.", "thoughts": "", "translation": "Pensaba que podríamos vernos mañana."},
+  {"id": 16, "original": "At all I do not want that either.", "thoughts": "Restructured from awkward word order to natural Spanish flow. 'At all' combined with 'either' is redundant, so using 'tampoco' (neither/either) with 'en absoluto' for emphasis creates natural Spanish.", "translation": "Tampoco quiero eso en absoluto."}
+]
+```
+
+---
+
+Subtitles to Translate:
+-----------------------
+START
+
+{subtitles}
+
+END
+
+Remember: Your primary goal is natural, fluent {target_language} that sounds originally written, not translated. Restructure as needed for naturalness while preserving meaning. Never merge multiple subtitles into one.
