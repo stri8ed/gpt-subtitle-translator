@@ -71,9 +71,9 @@ class XAI(BaseModel):
 
             message_text = json.dumps(translations_list, ensure_ascii=False, indent=2)
 
-            # Extract actual token usage from response
+            reasoning_tokens = response.usage.reasoning_tokens or 0
             input_tokens = response.usage.prompt_tokens
-            output_tokens = response.usage.completion_tokens
+            output_tokens = response.usage.completion_tokens + reasoning_tokens
 
             self.total_input_tokens += input_tokens
             self.total_output_tokens += output_tokens
