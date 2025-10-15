@@ -10,7 +10,10 @@ setup(
     author='stri8ed',
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={
-        'gpt_subtitle_translator': ['prompt/prompt_transcription.txt']
+        'gpt_subtitle_translator': [
+            'prompt/prompt_transcription.txt',
+            'prompt/prompt_ocr.txt'
+        ]
     },
     include_package_data=True,
     install_requires=requirements

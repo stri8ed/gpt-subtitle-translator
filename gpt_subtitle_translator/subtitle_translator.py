@@ -5,7 +5,7 @@ import traceback
 import zlib
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
-from typing import Callable, Optional
+from typing import Callable, Optional, Literal
 
 from gpt_subtitle_translator.constants import COMPRESSION_RATIO_THRESHOLD
 from gpt_subtitle_translator.models.base_model import BaseModel
@@ -23,7 +23,7 @@ class SubtitleTranslator:
         max_retries: int = 1,
         retry_on_refusal: bool = False,
         temperature: float = 0.5,
-        prompt_template: Optional[str] = None
+        source_type: Literal["ocr", "transcription"] = "transcription"
     ):
         self.model = model
         self.lang = lang
@@ -33,12 +33,12 @@ class SubtitleTranslator:
         self.max_retries = max_retries
         self.retry_on_refusal = retry_on_refusal
         self.processor = SubtitleProcessor(model)
-        self.prompt_template = self.load_prompt() if prompt_template is None else prompt_template
+        self.prompt_template = self.load_prompt(source_type)
 
     @staticmethod
-    def load_prompt():
+    def load_prompt(source_type: str) -> str:
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        prompt_file = os.path.join(script_dir, '.', 'prompt/prompt_transcription.txt')
+        prompt_file = os.path.join(script_dir, '.', f"prompt/prompt_{source_type}.txt")
         with open(prompt_file, encoding="utf-8") as f:
             prompt = f.read()
         return prompt
