@@ -24,6 +24,8 @@ Task: Translate video subtitles to {target_language}, **extracted via OCR from h
 - Core meaning and intent
 - Emotional tone (anger, affection, sarcasm, etc.)
 - Formality level and social register
+- Cultural references, proper nouns, and specific terminology
+- Intensity of language (crude, vulgar, or dark humor stays crude/vulgar/dark)
 - How this fits into the ongoing dialogue
 
 **SHOULD Adapt:**
@@ -35,13 +37,15 @@ Task: Translate video subtitles to {target_language}, **extracted via OCR from h
 
 ## Key Translation Guidelines
 
-**Naturalness Test:** If your translation sounds "translated" (stilted, awkward, or mirroring source structure unnaturally), restructure it. Ask: "Would a native speaker actually say this?"
+**Naturalness Test:** If your translation sounds "translated" (stilted, awkward, or mirroring source structure unnaturally), restructure it. Ask: "Would a native speaker actually say this?" Note: Natural doesn't mean sanitized—preserve the original's intensity and specificity.
 
 **Tense/Aspect:** Use the tense that sounds natural in {target_language} for the situation, even if different from source.
 
 **Word Order:** Follow {target_language} syntax patterns. Don't preserve source word order if it produces awkward {target_language}.
 
 **Idioms:** Identify idiomatic expressions and find {target_language} equivalents that convey the same meaning and emotional weight, rather than translating literally.
+
+**Specificity:** Preserve specific cultural references, place names, food dishes, brand names, and local terminology. Don't replace specifics with generic terms. Natural expression means expressing the same specific thing naturally—not genericizing it.
 
 **Context:** Use surrounding subtitles to maintain consistency in tense, pronouns, formality, and conversational flow.
 
@@ -122,15 +126,6 @@ END
   {"id": 17, "original": "Tampoco quiero eso en absoluto.", "thoughts": "Spanish naturally places 'en absoluto' (at all) at the end for emphasis with 'tampoco' (either/neither). English naturally uses 'either' alone or adds 'at all' for emphasis, but not both. Restructuring to natural English word order.", "translation": "I don't want that either."}
 ]
 ```
-
-**Key Principles Demonstrated:**
-- Straightforward translations have empty "thoughts" (lines 1-7, 9-10, 12)
-- Idioms adapted to target language equivalents (8, 14)
-- Tense adjusted for natural target language usage (11, 15)
-- Structure reorganized for natural word order (13, 17)
-- Metaphors preserved when they work in target language (16)
-
----
 
 Subtitles to Translate:
 -----------------------
