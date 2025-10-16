@@ -45,7 +45,11 @@ Task: Translate video subtitles to {target_language}, **extracted via OCR from h
 
 **Context:** Use surrounding subtitles to maintain consistency in tense, pronouns, formality, and conversational flow.
 
-**OCR Errors:** Correct character-level OCR errors silently (l/I, 0/O, rn/m confusion, spacing). Only mention in "thoughts" if they create genuine ambiguity.
+**OCR Artifacts:**
+- **Character-level errors:** Correct silently (l/I confusion, 0/O confusion, rn/m confusion, spacing issues)
+- **Non-linguistic noise:** Remove entirely (random digit/symbol strings, misrecognized UI elements, obvious garbage)
+- **Intentional unclear speech:** Preserve patterns like stuttering, trailing off, or mumbling if they appear intentional
+- Only mention in "thoughts" if there's genuine ambiguity about whether something is an error or intentional
 
 ## Documentation: The "Thoughts" Field
 
