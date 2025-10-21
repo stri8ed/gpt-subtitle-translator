@@ -27,6 +27,7 @@ Task: Translate video subtitles to {target_language}, **extracted via OCR from h
 - Cultural references, proper nouns, and specific terminology
 - Intensity of language (crude, vulgar, or dark humor stays crude/vulgar/dark)
 - How this fits into the ongoing dialogue
+- Preserve line breaks from the original subtitle formatting in your translation.
 
 **SHOULD Adapt:**
 - Sentence structure and word order
@@ -37,13 +38,13 @@ Task: Translate video subtitles to {target_language}, **extracted via OCR from h
 
 ## Key Translation Guidelines
 
+**CRITICAL - Idioms First:** Before translating any line, check: Is this an idiom or culturally-specific expression? If yes, find the natural {target_language} equivalent that conveys the same meaning and emotional weight. Never translate idioms literally. Document your reasoning in "thoughts."
+
 **Naturalness Test:** If your translation sounds "translated" (stilted, awkward, or mirroring source structure unnaturally), restructure it. Ask: "Would a native speaker actually say this?" Note: Natural doesn't mean sanitized—preserve the original's intensity and specificity.
 
 **Tense/Aspect:** Use the tense that sounds natural in {target_language} for the situation, even if different from source.
 
 **Word Order:** Follow {target_language} syntax patterns. Don't preserve source word order if it produces awkward {target_language}.
-
-**Idioms:** Identify idiomatic expressions and find {target_language} equivalents that convey the same meaning and emotional weight, rather than translating literally.
 
 **Specificity:** Preserve specific cultural references, place names, food dishes, brand names, and local terminology. Don't replace specifics with generic terms. Natural expression means expressing the same specific thing naturally—not genericizing it.
 
@@ -75,6 +76,12 @@ Use "thoughts" to explain **non-obvious translation choices only**:
   {"id": 2, "original": "source text", "thoughts": "explanation of choice", "translation": "natural {target_language}"}
 ]
 ```
+
+The fields are:
+- `id` (required): The subtitle number matching the original
+- `original` (required): The original subtitle text
+- `thoughts` (required): Your pre-translation reasoning. Before translating, systematically check: (1) **Is this idiomatic?** If yes, what's the natural {target_language} equivalent? (2) Does natural {target_language} require restructuring (tense/word order/register)? (3) Any ambiguity needing context? For straightforward translations requiring none of these considerations, use empty string `""`.
+- `translation` (required): Your translation into {target_language}, preserving any line breaks from the original
 
 ## Example Translation
 
@@ -114,15 +121,15 @@ END
   {"id": 5, "original": "Son las tres.", "thoughts": "", "translation": "It's three o'clock."},
   {"id": 6, "original": "Nos vemos mañana.", "thoughts": "", "translation": "See you tomorrow."},
   {"id": 7, "original": "Este texto tiene un err0r\ny abarca múltiples líneas", "thoughts": "", "translation": "This text has an error\nand spans multiple lines"},
-  {"id": 8, "original": "Está lloviendo a cántaros.", "thoughts": "This is an idiom meaning heavy rain (literally 'raining pitchers'). The natural English equivalent is 'raining cats and dogs' or 'pouring', both conveying the same intensity.", "translation": "It's pouring."},
+  {"id": 8, "original": "Está lloviendo a cántaros.", "thoughts": "'lloviendo a cántaros' literally means 'raining pitchers' but is the Spanish idiom for heavy rain. Natural English equivalent is 'raining cats and dogs' or 'pouring', both conveying the same intensity. 'Pouring' is more concise for subtitles.", "translation": "It's pouring."},
   {"id": 9, "original": "Muchas gracias.", "thoughts": "", "translation": "Thank you very much."},
   {"id": 10, "original": "De nada.", "thoughts": "", "translation": "You're welcome."},
   {"id": 11, "original": "Llevo horas esperando.", "thoughts": "Spanish uses 'llevar + gerund' to express ongoing duration. English naturally uses present perfect continuous 'have been waiting' for actions that started in the past and continue to the present.", "translation": "I've been waiting for hours."},
   {"id": 12, "original": "¿Ella dijo eso?", "thoughts": "", "translation": "Did she say that?"},
   {"id": 13, "original": "No, lo dijo él.", "thoughts": "Spanish emphasizes the pronoun 'él' at the end for contrast. English achieves the same emphasis by stressing 'he' or positioning it: 'No, he did.'", "translation": "No, he did."},
-  {"id": 14, "original": "¡Mucha mierda!", "thoughts": "This is a theater idiom meaning 'good luck' (literally 'lots of shit'). The English theater equivalent is 'break a leg', which serves the same cultural function.", "translation": "Break a leg!"},
+  {"id": 14, "original": "¡Mucha mierda!", "thoughts": "'¡Mucha mierda!' literally means 'lots of shit' but is a standard theater expression meaning 'good luck.' The English theater equivalent is 'break a leg', which serves the same cultural function and conveys the same supportive intent.", "translation": "Break a leg!"},
   {"id": 15, "original": "Yo era una mujer de negocios rica, tú eras la madre de una familia feliz.", "thoughts": "Spanish uses past tense (era/eras) but the context suggests comparing current states. English speakers naturally use present tense when making current state comparisons, so restructuring to 'I'm/you're' sounds more natural.", "translation": "I'm a rich businesswoman, you're the mother of a happy family."},
-  {"id": 16, "original": "Mi mano se está calentando.", "thoughts": "This idiom literally means 'my hand is warming up' meaning getting better with practice. English has the equivalent 'warming up' or the more explicit 'getting more practice'. Both preserve the meaning; 'warming up' keeps the metaphor which also works in English.", "translation": "I'm warming up."},
+  {"id": 16, "original": "Mi mano se está calentando.", "thoughts": "'Mi mano se está calentando' literally means 'my hand is warming up' but means getting better with practice. English has the equivalent metaphor 'warming up' which also works naturally and preserves the sports/practice connotation.", "translation": "I'm warming up."},
   {"id": 17, "original": "Tampoco quiero eso en absoluto.", "thoughts": "Spanish naturally places 'en absoluto' (at all) at the end for emphasis with 'tampoco' (either/neither). English naturally uses 'either' alone or adds 'at all' for emphasis, but not both. Restructuring to natural English word order.", "translation": "I don't want that either."}
 ]
 ```
