@@ -1,4 +1,5 @@
 import os
+import time
 from typing import Union
 
 from dotenv import load_dotenv
@@ -6,6 +7,7 @@ from google import genai
 from google.genai.types import FinishReason, GenerateContentConfig, \
     HttpOptions, SafetySetting, ThinkingConfig
 
+from gpt_subtitle_translator.logger import logger
 from gpt_subtitle_translator.models.base_model import BaseModel
 from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError, ResponseTooLongError
 
@@ -87,45 +89,56 @@ class Gemini(BaseModel):
         self.total_cached_tokens = 0
         self.params = _model_params
         self.average_tokens_per_char = None
+        self.max_attempts = 3
 
     def generate_completion(self, prompt: str, temperature: float) -> (str, int):
-        message = self.client.models.generate_content(
-            contents=[prompt],
-            model=self.model_name,
-            config=GenerateContentConfig(
-                temperature=temperature,
-                response_schema=JSON_SCHEMA,
-                response_mime_type="application/json",
-                max_output_tokens=self.params["max_output_tokens"],
-                http_options=HttpOptions(
-                    timeout=1000 * 60 * 5
-                ),
-                thinking_config=self.params['thinking_enabled'] and ThinkingConfig(
-                    thinking_budget=0
-                ) or None,
-                safety_settings=[
-                    SafetySetting(
-                        category="HARM_CATEGORY_HARASSMENT",
-                        threshold="OFF"
-                    ),
-                    SafetySetting(
-                        category="HARM_CATEGORY_CIVIC_INTEGRITY",
-                        threshold="OFF"
-                    ),
-                    SafetySetting(
-                        category="HARM_CATEGORY_HATE_SPEECH",
-                        threshold="OFF"
-                    ),
-                    SafetySetting(
-                        category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                        threshold="OFF"
-                    ),
-                    SafetySetting(
-                        category="HARM_CATEGORY_DANGEROUS_CONTENT",
-                        threshold="OFF"
-                    )
-                ])
-        )
+        message = None
+        for attempt in range(self.max_attempts):
+            try:
+                message = self.client.models.generate_content(
+                    contents=[prompt],
+                    model=self.model_name,
+                    config=GenerateContentConfig(
+                        temperature=temperature,
+                        response_schema=JSON_SCHEMA,
+                        response_mime_type="application/json",
+                        max_output_tokens=self.params["max_output_tokens"],
+                        http_options=HttpOptions(
+                            timeout=1000 * 60 * 5
+                        ),
+                        thinking_config=self.params['thinking_enabled'] and ThinkingConfig(
+                            thinking_budget=0
+                        ) or None,
+                        safety_settings=[
+                            SafetySetting(
+                                category="HARM_CATEGORY_HARASSMENT",
+                                threshold="OFF"
+                            ),
+                            SafetySetting(
+                                category="HARM_CATEGORY_CIVIC_INTEGRITY",
+                                threshold="OFF"
+                            ),
+                            SafetySetting(
+                                category="HARM_CATEGORY_HATE_SPEECH",
+                                threshold="OFF"
+                            ),
+                            SafetySetting(
+                                category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                                threshold="OFF"
+                            ),
+                            SafetySetting(
+                                category="HARM_CATEGORY_DANGEROUS_CONTENT",
+                                threshold="OFF"
+                            )
+                        ])
+                )
+                break
+            except Exception as e:
+                if attempt < 2 and ("Server disconnected" in str(e) or "RemoteProtocolError" in type(e).__name__):
+                    logger.warning(f"Gemini connection error: {e}. Retrying in 2 seconds...")
+                    time.sleep(2)
+                    continue
+                raise e
 
         if message.text:
             message_text = message.text
