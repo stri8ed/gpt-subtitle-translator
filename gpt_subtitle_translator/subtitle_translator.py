@@ -48,7 +48,8 @@ class SubtitleTranslator:
         srt_data: str,
         progress_callback:
         Optional[Callable[[float], None]] = None,
-        completed_chunks: Optional[dict[int, str]] = None
+        completed_chunks: Optional[dict[int, str]] = None,
+        timeout: Optional[float] = None
     ) -> str:
         parsed_srt = self.processor.parse_srt(srt_data)
         preprocessed_text = self.processor.preprocess(parsed_srt)
@@ -65,25 +66,28 @@ class SubtitleTranslator:
             translations[idx] = translation
             logger.info(f"Skipping chunk {idx + 1} (already completed)")
 
-        with ThreadPoolExecutor(max_workers=self.num_threads) as executor:
+        executor = ThreadPoolExecutor(max_workers=self.num_threads)
+        try:
             for i, chunk in enumerate(chunks):
                 if i not in completed_chunks:
                     future = executor.submit(self.translate_chunk, chunk, stop_flag, 0)
                     futures.append(future)
 
-            for future in concurrent.futures.as_completed(futures):
-                try:
+            try:
+                for future in concurrent.futures.as_completed(futures, timeout=timeout):
                     index, response, _ = future.result()
                     translations[index] = response
                     if progress_callback:
                         progress_callback(len([t for t in translations if t]) / len(chunks))
-                except Exception as e:
-                    if not err:
-                        err = e
-                        stack_trace = traceback.format_exc()
-                        stop_flag.set()
-                        for fut in futures:
-                            fut.cancel()
+            except Exception as e:
+                if not err:
+                    err = e
+                    stack_trace = traceback.format_exc()
+                    stop_flag.set()
+                    for fut in futures:
+                        fut.cancel()
+        finally:
+            executor.shutdown(wait=False, cancel_futures=True)
 
         joined_text = "\n\n".join(translations)
         result_text = self.processor.post_process_text(joined_text, parsed_srt)
