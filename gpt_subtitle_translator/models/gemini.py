@@ -5,7 +5,7 @@ from typing import Union
 from dotenv import load_dotenv
 from google import genai
 from google.genai.types import FinishReason, GenerateContentConfig, \
-    HttpOptions, SafetySetting, ThinkingConfig
+    HttpOptions, SafetySetting, ThinkingConfig, ThinkingLevel
 
 from gpt_subtitle_translator.logger import logger
 from gpt_subtitle_translator.models.base_model import BaseModel
@@ -25,6 +25,12 @@ model_params = {
         "price_input": 0.0003,
         "price_output": 0.0025,
         "price_cached": 0.000075,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
+    },
+    "gemini-3-flash": {
+        "price_input": 0.0005,
+        "price_output": 0.003,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
     },
@@ -95,6 +101,10 @@ class Gemini(BaseModel):
         message = None
         for attempt in range(self.max_attempts):
             try:
+                thinking_config = self.params['thinking_enabled'] and ThinkingConfig(
+                    thinking_budget=0 if "3" not in self.model_name else None,
+                    thinking_level=ThinkingLevel.LOW if "3" in self.model_name else None
+                )
                 message = self.client.models.generate_content(
                     contents=[prompt],
                     model=self.model_name,
@@ -106,9 +116,7 @@ class Gemini(BaseModel):
                         http_options=HttpOptions(
                             timeout=1000 * 60 * 5
                         ),
-                        thinking_config=self.params['thinking_enabled'] and ThinkingConfig(
-                            thinking_budget=0
-                        ) or None,
+                        thinking_config=thinking_config,
                         safety_settings=[
                             SafetySetting(
                                 category="HARM_CATEGORY_HARASSMENT",
