@@ -99,12 +99,18 @@ class Gemini(BaseModel):
 
     def generate_completion(self, prompt: str, temperature: float) -> (str, int):
         message = None
+        thinking_config = None
+
+        if self.params['thinking_enabled']:
+            kwargs = {}
+            if "3" not in self.model_name:
+                kwargs['thinking_budget'] = 0
+            else:
+                kwargs['thinking_level'] = ThinkingLevel.LOW
+            thinking_config = ThinkingConfig(**kwargs)
+
         for attempt in range(self.max_attempts):
             try:
-                thinking_config = self.params['thinking_enabled'] and ThinkingConfig(
-                    thinking_budget=0 if "3" not in self.model_name else None,
-                    thinking_level=ThinkingLevel.LOW if "3" in self.model_name else None
-                )
                 message = self.client.models.generate_content(
                     contents=[prompt],
                     model=self.model_name,
