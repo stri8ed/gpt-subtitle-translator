@@ -46,8 +46,8 @@ class SubtitleTranslator:
     def translate_subtitles(
         self,
         srt_data: str,
-        progress_callback:
-        Optional[Callable[[float], None]] = None,
+        progress_callback: Optional[Callable[[float], None]] = None,
+        on_complete_chunk: Optional[Callable[[int, str], None]] = None,
         completed_chunks: Optional[dict[int, str]] = None,
         timeout: Optional[float] = None
     ) -> str:
@@ -75,10 +75,12 @@ class SubtitleTranslator:
 
             try:
                 for future in concurrent.futures.as_completed(futures, timeout=timeout):
-                    index, response, _ = future.result()
+                    index, response, raw_response = future.result()
                     translations[index] = response
                     if progress_callback:
                         progress_callback(len([t for t in translations if t]) / len(chunks))
+                    if on_complete_chunk:
+                        on_complete_chunk(index, raw_response)
             except Exception as e:
                 if not err:
                     err = e
@@ -148,7 +150,7 @@ class SubtitleTranslator:
             else:
                 raise e
 
-        return chunk.idx, response, attempt + 1
+        return chunk.idx, response, raw_response
 
     def get_translation(self, chunk_number, text: str, num_tokens: int, temperature=None) -> (str, int):
         prompt = self.prompt_template.replace("{subtitles}", text.strip()) \
