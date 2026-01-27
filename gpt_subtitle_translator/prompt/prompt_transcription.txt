@@ -17,7 +17,7 @@ Task: Translate video subtitles to {target_language}, **originating from flawed 
 ## Detailed Instructions
 - Translate each subtitle to {target_language}, preserving the speaker's intent, tone, and relevant cultural nuances, **even if it means diverging significantly from a literal translation of the flawed source.**
 - Preserve line breaks from the original subtitle formatting in your translation.
-- Use the "thoughts" field extensively to document your reasoning, **but only when the translation involves significant interpretation, error correction, idiomatic choices, or consideration of asides/layered dialogue.**
+- Use the "thoughts" field **only when reasoning is required to arrive at the translation** (error correction, idiom selection, disambiguation). Do not document routine choices after the fact.
 - For ambiguous, nonsensical, or difficult passages:
     - **First, assess if the phrase is likely a direct transcription error (Core Instruction #2 & #6). Is it nonsensical, a probable phonetic mishearing of a common source language word, or a typo?**
     - **If it's likely an error, *then* aggressively identify potential transcription errors.** Consider:
@@ -25,29 +25,25 @@ Task: Translate video subtitles to {target_language}, **originating from flawed 
         - Words that don't fit the grammatical or conversational context.
         - Phrases that are meaningless literally but might be misheard idioms or common expressions from the source language.
     - **If, after the above, the phrase is intelligible but still seems out of place, *then* apply Core Instruction #4: Could this be a potential natural dialogue feature (aside, multi-address)?** Document this consideration in "thoughts," **noting if the phrase/theme recurs later, which might support it being intentional.**
-    - **Clearly state your hypothesis in the "thoughts" field about the *intended original source language phrase* and why you believe the source is an error (e.g., "Source 'קיפה' is likely a mishearing of Hebrew 'כיפה' (kippah) due to phonetic similarity and context of a religious man") or why you believe it's a natural interjection.**
+    - **State your hypothesis concisely in the "thoughts" field about the *intended original source language phrase* and why you believe the source is an error (e.g., "Source 'קיפה' is likely a mishearing of Hebrew 'כיפה' (kippah) due to phonetic similarity and context of a religious man") or why you believe it's a natural interjection.**
     - **Translate the *hypothesized intended meaning* or the *interpreted natural interjection*, not the literal error if one is identified.**
     - **Identify potential *source language* idioms or colloquialisms.** Do not translate them word-for-word if it sounds unnatural or loses meaning in {target_language}. Find an appropriate {target_language} idiomatic equivalent or convey the meaning naturally. Explain your choice in "thoughts," **mentioning the original source idiom.**
 - For straightforward subtitles where the source is likely correct and the translation is direct, **the "thoughts" field must be an empty string `""`. Do not provide thoughts for simple, literal translations.**
 - Maintain subtitle integrity - never merge, split, or skip subtitles.
 - Output a single JSON array containing all translated subtitles.
 
-## OUTPUT FORMAT
-Your output must be a valid JSON array containing subtitle objects:
-
+## Output Format
+```json
 [
-  {"id": 1, "original": "Straightforward original text", "thoughts": "", "translation": "Direct {target_language} translation"},
-  {"id": 2, "original": "Another easy original text", "thoughts": "", "translation": "Simple {target_language} translation"},
-  {"id": 3, "original": "Text with errors or ambiguity", "thoughts": "Here's my reasoning process...", "translation": "Carefully considered translation"},
-  {"id": 4, "original": "Example source language text with error", "thoughts": "This appears to contain a transcription error. Based on context and phonetic similarity, I believe the intended source language word was '[correct source word]' meaning '[meaning]'. The AI likely misheard it as '[original error]'. Translating the corrected meaning.", "translation": "Corrected {target_language} translation addressing the likely meaning"},
-  {"id": 5, "original": "Example source language idiomatic expression", "thoughts": "This is an idiom in the source language: '[source idiom]', which means [explanation]. A similar expression in {target_language} would be [equivalent].", "translation": "Natural {target_language} expression that captures the same meaning"},
-  {"id": 6, "original": "Seemingly out-of-place phrase", "thoughts": "This phrase '[original phrase]' is intelligible but initially seemed odd. However, considering the speaker might be addressing someone else off-screen (e.g., a child), '[translation of aside]' is a plausible aside here. This is further supported by a similar comment in subtitle #X. Translating as such.", "translation": "Plausible {target_language} aside"}
+  {"id": 1, "original": "source text", "thoughts": "", "translation": "natural {target_language}"},
+  {"id": 2, "original": "source text", "thoughts": "reasoning to arrive at translation", "translation": "natural {target_language}"}
 ]
+```
 
 The fields are:
 - `id` (required): The subtitle number matching the original
 - `original` (required): The original subtitle text
-- `thoughts` (required): Your reasoning process about difficult translations, ambiguities, cultural context, **idioms, suspected transcription errors (including hypothesized correct source words/phrases and the basis for the correction), and considerations for asides/multi-layered dialogue, including noting recurring themes/phrases from surrounding context. Use an empty string `""` for straightforward translations where no such complex reasoning is required.** This is your space to think through complex translations before deciding on the final wording.
+- `thoughts` (required): Reasoning **only when needed to arrive at** the translation (error correction, idiom selection, disambiguation). Use empty string `""` for straightforward translations.
 - `translation` (required): Your translation into {target_language}, preserving any line breaks from the original
 
 ## Example Translation

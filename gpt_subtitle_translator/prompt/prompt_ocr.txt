@@ -58,13 +58,15 @@ Task: Translate video subtitles to {target_language}, **extracted via OCR from h
 
 ## Documentation: The "Thoughts" Field
 
-Use "thoughts" to explain **non-obvious translation choices only**:
-- Significant restructuring for naturalness
-- Tense/aspect selection based on {target_language} patterns
-- Idiom adaptation or cultural localization
-- Resolving ambiguity using context
-- Formality or register decisions
-- Choosing between multiple valid natural options
+Use "thoughts" **only when reasoning is required to arrive at the translation**:
+- Choosing between multiple valid options for idioms
+- Disambiguating meaning using context
+- Resolving genuine uncertainty
+
+**Do NOT use thoughts to:**
+- Document routine restructuring for naturalness
+- Note obvious OCR corrections
+- Explain what you did after the fact
 
 **Use empty string `""` for straightforward translations.**
 
