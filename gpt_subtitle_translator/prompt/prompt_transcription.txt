@@ -85,10 +85,10 @@ Output:
   {"id": 8, "original": "It's raining cats and dogs.", "thoughts": "This is an English idiom meaning it's raining very heavily. A Spanish equivalent for heavy rain is 'Está lloviendo a cántaros'.", "translation": "Está lloviendo a cántaros."},
   {"id": 9, "original": "Thank you very much.", "thoughts": "", "translation": "Muchas gracias."},
   {"id": 10, "original": "You're welcome.", "thoughts": "", "translation": "De nada."},
-  {"id": 11, "original": "Go to bad now.", "thoughts": "The word 'bad' is likely a phonetic mis-transcription of 'bed'. The phrase 'go to bed' is common. Correcting this transcription error.", "translation": "Vete a la cama ahora."},
+  {"id": 11, "original": "Go to bad now.", "thoughts": "The word 'bad' is likely a phonetic mis-transcription of 'bed'. The phrase 'go to bed' is common.", "translation": "Vete a la cama ahora."},
   {"id": 12, "original": "Good night.", "thoughts": "", "translation": "Buenas noches."},
   {"id": 13, "original": "I love you.", "thoughts": "", "translation": "Te amo."},
-  {"id": 14, "original": "The kipa is on his head.", "thoughts": "Assuming the original language might have a word like 'kippah' (a Jewish skullcap), and 'kipa' is a plausible phonetic transcription. Translating based on the likely intended 'kippah'.", "translation": "La kipá está en su cabeza."}
+  {"id": 14, "original": "The kipa is on his head.", "thoughts": "Assuming the original language might have a word like 'kippah' (a Jewish skullcap), and 'kipa' is a plausible phonetic transcription.", "translation": "La kipá está en su cabeza."}
 ]
 
 Subtitles to Translate:

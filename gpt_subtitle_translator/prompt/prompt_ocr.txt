@@ -86,7 +86,6 @@ The fields are:
 ## Example Translation
 
 **Input (Spanish to English):**
-
 ```
 START
 <1>Hola</1>
@@ -111,7 +110,6 @@ END
 ```
 
 **Output:**
-
 ```json
 [
   {"id": 1, "original": "Hola", "thoughts": "", "translation": "Hello"},
@@ -121,16 +119,16 @@ END
   {"id": 5, "original": "Son las tres.", "thoughts": "", "translation": "It's three o'clock."},
   {"id": 6, "original": "Nos vemos mañana.", "thoughts": "", "translation": "See you tomorrow."},
   {"id": 7, "original": "Este texto tiene un err0r\ny abarca múltiples líneas", "thoughts": "", "translation": "This text has an error\nand spans multiple lines"},
-  {"id": 8, "original": "Está lloviendo a cántaros.", "thoughts": "'lloviendo a cántaros' literally means 'raining pitchers' but is the Spanish idiom for heavy rain. Natural English equivalent is 'raining cats and dogs' or 'pouring', both conveying the same intensity. 'Pouring' is more concise for subtitles.", "translation": "It's pouring."},
+  {"id": 8, "original": "Está lloviendo a cántaros.", "thoughts": "'Lloviendo a cántaros' (lit. 'raining pitchers') is an idiom for heavy rain. English equivalents: 'raining cats and dogs' or 'pouring'. Chose 'pouring' for subtitle brevity.", "translation": "It's pouring."},
   {"id": 9, "original": "Muchas gracias.", "thoughts": "", "translation": "Thank you very much."},
   {"id": 10, "original": "De nada.", "thoughts": "", "translation": "You're welcome."},
-  {"id": 11, "original": "Llevo horas esperando.", "thoughts": "Spanish uses 'llevar + gerund' to express ongoing duration. English naturally uses present perfect continuous 'have been waiting' for actions that started in the past and continue to the present.", "translation": "I've been waiting for hours."},
+  {"id": 11, "original": "Llevo horas esperando.", "thoughts": "llevar + gerund → present perfect continuous", "translation": "I've been waiting for hours."},
   {"id": 12, "original": "¿Ella dijo eso?", "thoughts": "", "translation": "Did she say that?"},
-  {"id": 13, "original": "No, lo dijo él.", "thoughts": "Spanish emphasizes the pronoun 'él' at the end for contrast. English achieves the same emphasis by stressing 'he' or positioning it: 'No, he did.'", "translation": "No, he did."},
-  {"id": 14, "original": "¡Mucha mierda!", "thoughts": "'¡Mucha mierda!' literally means 'lots of shit' but is a standard theater expression meaning 'good luck.' The English theater equivalent is 'break a leg', which serves the same cultural function and conveys the same supportive intent.", "translation": "Break a leg!"},
-  {"id": 15, "original": "Yo era una mujer de negocios rica, tú eras la madre de una familia feliz.", "thoughts": "Spanish uses past tense (era/eras) but the context suggests comparing current states. English speakers naturally use present tense when making current state comparisons, so restructuring to 'I'm/you're' sounds more natural.", "translation": "I'm a rich businesswoman, you're the mother of a happy family."},
-  {"id": 16, "original": "Mi mano se está calentando.", "thoughts": "'Mi mano se está calentando' literally means 'my hand is warming up' but means getting better with practice. English has the equivalent metaphor 'warming up' which also works naturally and preserves the sports/practice connotation.", "translation": "I'm warming up."},
-  {"id": 17, "original": "Tampoco quiero eso en absoluto.", "thoughts": "Spanish naturally places 'en absoluto' (at all) at the end for emphasis with 'tampoco' (either/neither). English naturally uses 'either' alone or adds 'at all' for emphasis, but not both. Restructuring to natural English word order.", "translation": "I don't want that either."}
+  {"id": 13, "original": "No, lo dijo él.", "thoughts": "Emphatic pronoun contrast → 'No, he did.'", "translation": "No, he did."},
+  {"id": 14, "original": "¡Mucha mierda!", "thoughts": "Theater idiom (good luck) → 'Break a leg!'", "translation": "Break a leg!"},
+  {"id": 15, "original": "Yo era una mujer de negocios rica, tú eras la madre de una familia feliz.", "thoughts": "Past tense in source but appears to be contrasting current situations between two people → present tense more natural", "translation": "I'm a rich businesswoman, you're the mother of a happy family."},
+  {"id": 16, "original": "Mi mano se está calentando.", "thoughts": "Idiom: getting better with practice → 'warming up'", "translation": "I'm warming up."},
+  {"id": 17, "original": "Tampoco quiero eso en absoluto.", "thoughts": "", "translation": "I don't want that either."}
 ]
 ```
 

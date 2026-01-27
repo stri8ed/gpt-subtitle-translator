@@ -106,7 +106,7 @@ class Gemini(BaseModel):
             if "3" not in self.model_name:
                 kwargs['thinking_budget'] = 0
             else:
-                kwargs['thinking_level'] = ThinkingLevel.LOW
+                kwargs['thinking_level'] = ThinkingLevel.MINIMAL
             thinking_config = ThinkingConfig(**kwargs)
 
         for attempt in range(self.max_attempts):
