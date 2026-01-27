@@ -10,7 +10,7 @@ from google.genai.types import FinishReason, GenerateContentConfig, \
 
 from gpt_subtitle_translator.logger import logger
 from gpt_subtitle_translator.models.base_model import BaseModel
-from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError, ResponseTooLongError
+from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError, ResponseTooLongError, QuotaExhaustedError
 
 load_dotenv()
 
@@ -150,10 +150,9 @@ class Gemini(BaseModel):
                 break
             except ClientError as e:
                 error_str = str(e)
-                # Fail fast on 429/quota errors - let translator switch to next model
                 if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str:
-                    raise e
-                # Retry other client errors
+                    raise QuotaExhaustedError(error_str) from e
+
                 if attempt < self.max_attempts - 1:
                     logger.warning(f"Gemini client error: {e}. Retrying in 2 seconds...")
                     time.sleep(2)

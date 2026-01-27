@@ -132,15 +132,13 @@ class SubtitleTranslator:
                 response, chunk.text, chunk_number, raw_response, num_tokens
             )
         except Exception as e:
-            error_str = str(e)
-            is_quota_error = "429" in error_str or "RESOURCE_EXHAUSTED" in error_str
             if (
                 attempt < self.max_retries and
-                not is_quota_error and
+                not isinstance(e, QuotaExhaustedError) and
                 (
                     isinstance(e, (MissingSubtitlesError, ResponseRepetitiveError))
-                    or "retry" in error_str
-                    or "Please try again" in error_str
+                    or "retry" in str(e)
+                    or "Please try again" in str(e)
                     or (isinstance(e, RefuseToTranslateError) and self.retry_on_refusal)
                 )
             ):
@@ -212,6 +210,9 @@ class MissingSubtitlesError(Exception):
 
 class RefuseToTranslateError(Exception):
     """Exception raised when the model refuses to translate the text."""
+
+class QuotaExhaustedError(Exception):
+    """Exception raised when API quota is exhausted. Should fail fast to try next model."""
 
 
 class TranslationError(Exception):
