@@ -132,12 +132,15 @@ class SubtitleTranslator:
                 response, chunk.text, chunk_number, raw_response, num_tokens
             )
         except Exception as e:
+            error_str = str(e)
+            is_quota_error = "429" in error_str or "RESOURCE_EXHAUSTED" in error_str
             if (
                 attempt < self.max_retries and
+                not is_quota_error and
                 (
                     isinstance(e, (MissingSubtitlesError, ResponseRepetitiveError))
-                    or "retry" in str(e)
-                    or "Please try again" in str(e)
+                    or "retry" in error_str
+                    or "Please try again" in error_str
                     or (isinstance(e, RefuseToTranslateError) and self.retry_on_refusal)
                 )
             ):

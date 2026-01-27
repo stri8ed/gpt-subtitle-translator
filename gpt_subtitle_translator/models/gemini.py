@@ -4,6 +4,7 @@ from typing import Union
 
 from dotenv import load_dotenv
 from google import genai
+from google.genai.errors import ClientError
 from google.genai.types import FinishReason, GenerateContentConfig, \
     HttpOptions, SafetySetting, ThinkingConfig, ThinkingLevel
 
@@ -147,8 +148,19 @@ class Gemini(BaseModel):
                         ])
                 )
                 break
+            except ClientError as e:
+                error_str = str(e)
+                # Fail fast on 429/quota errors - let translator switch to next model
+                if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str:
+                    raise e
+                # Retry other client errors
+                if attempt < self.max_attempts - 1:
+                    logger.warning(f"Gemini client error: {e}. Retrying in 2 seconds...")
+                    time.sleep(2)
+                    continue
+                raise e
             except Exception as e:
-                if attempt < 2 and ("Server disconnected" in str(e) or "RemoteProtocolError" in type(e).__name__):
+                if attempt < self.max_attempts - 1 and ("Server disconnected" in str(e) or "RemoteProtocolError" in type(e).__name__):
                     logger.warning(f"Gemini connection error: {e}. Retrying in 2 seconds...")
                     time.sleep(2)
                     continue
