@@ -74,16 +74,16 @@ Use "thoughts" **only when reasoning is required to arrive at the translation**:
 
 ```json
 [
-  {"id": 1, "original": "source text", "thoughts": "", "translation": "natural {target_language}"},
-  {"id": 2, "original": "source text", "thoughts": "explanation of choice", "translation": "natural {target_language}"}
+  [1, "source text", "", "natural {target_language}"],
+  [2, "source text", "explanation of choice", "natural {target_language}"]
 ]
 ```
 
-The fields are:
-- `id` (required): The subtitle number matching the original
-- `original` (required): The original subtitle text
-- `thoughts` (required): Your pre-translation reasoning. Before translating, systematically check: (1) **Is this idiomatic?** If yes, what's the natural {target_language} equivalent? (2) Does natural {target_language} require restructuring (tense/word order/register)? (3) Any ambiguity needing context? For straightforward translations requiring none of these considerations, use empty string `""`.
-- `translation` (required): Your translation into {target_language}, preserving any line breaks from the original
+Each subtitle is a tuple: `[id, original, thoughts, translation]`
+- `id`: The subtitle number matching the original
+- `original`: The original subtitle text
+- `thoughts`: Your pre-translation reasoning. Before translating, systematically check: (1) **Is this idiomatic?** If yes, what's the natural {target_language} equivalent? (2) Does natural {target_language} require restructuring (tense/word order/register)? (3) Any ambiguity needing context? For straightforward translations requiring none of these considerations, use empty string `""`.
+- `translation`: Your translation into {target_language}, preserving any line breaks from the original
 
 ## Example Translation
 
@@ -114,23 +114,23 @@ END
 **Output:**
 ```json
 [
-  {"id": 1, "original": "Hola", "thoughts": "", "translation": "Hello"},
-  {"id": 2, "original": "¿Cómo estás?", "thoughts": "", "translation": "How are you?"},
-  {"id": 3, "original": "Estoy bien, gracias.", "thoughts": "", "translation": "I'm fine, thanks."},
-  {"id": 4, "original": "¿Qué hora es?", "thoughts": "", "translation": "What time is it?"},
-  {"id": 5, "original": "Son las tres.", "thoughts": "", "translation": "It's three o'clock."},
-  {"id": 6, "original": "Nos vemos mañana.", "thoughts": "", "translation": "See you tomorrow."},
-  {"id": 7, "original": "Este texto tiene un err0r\ny abarca múltiples líneas", "thoughts": "", "translation": "This text has an error\nand spans multiple lines"},
-  {"id": 8, "original": "Está lloviendo a cántaros.", "thoughts": "'Lloviendo a cántaros' (lit. 'raining pitchers') is an idiom for heavy rain. English equivalents: 'raining cats and dogs' or 'pouring'. Chose 'pouring' for subtitle brevity.", "translation": "It's pouring."},
-  {"id": 9, "original": "Muchas gracias.", "thoughts": "", "translation": "Thank you very much."},
-  {"id": 10, "original": "De nada.", "thoughts": "", "translation": "You're welcome."},
-  {"id": 11, "original": "Llevo horas esperando.", "thoughts": "llevar + gerund → present perfect continuous", "translation": "I've been waiting for hours."},
-  {"id": 12, "original": "¿Ella dijo eso?", "thoughts": "", "translation": "Did she say that?"},
-  {"id": 13, "original": "No, lo dijo él.", "thoughts": "Emphatic pronoun contrast → 'No, he did.'", "translation": "No, he did."},
-  {"id": 14, "original": "¡Mucha mierda!", "thoughts": "Theater idiom (good luck) → 'Break a leg!'", "translation": "Break a leg!"},
-  {"id": 15, "original": "Yo era una mujer de negocios rica, tú eras la madre de una familia feliz.", "thoughts": "Past tense in source but appears to be contrasting current situations between two people → present tense more natural", "translation": "I'm a rich businesswoman, you're the mother of a happy family."},
-  {"id": 16, "original": "Mi mano se está calentando.", "thoughts": "Idiom: getting better with practice → 'warming up'", "translation": "I'm warming up."},
-  {"id": 17, "original": "Tampoco quiero eso en absoluto.", "thoughts": "", "translation": "I don't want that either."}
+  [1, "Hola", "", "Hello"],
+  [2, "¿Cómo estás?", "", "How are you?"],
+  [3, "Estoy bien, gracias.", "", "I'm fine, thanks."],
+  [4, "¿Qué hora es?", "", "What time is it?"],
+  [5, "Son las tres.", "", "It's three o'clock."],
+  [6, "Nos vemos mañana.", "", "See you tomorrow."],
+  [7, "Este texto tiene un err0r\ny abarca múltiples líneas", "", "This text has an error\nand spans multiple lines"],
+  [8, "Está lloviendo a cántaros.", "'Lloviendo a cántaros' (lit. 'raining pitchers') is an idiom for heavy rain. English equivalents: 'raining cats and dogs' or 'pouring'. Chose 'pouring' for subtitle brevity.", "It's pouring."],
+  [9, "Muchas gracias.", "", "Thank you very much."],
+  [10, "De nada.", "", "You're welcome."],
+  [11, "Llevo horas esperando.", "llevar + gerund → present perfect continuous", "I've been waiting for hours."],
+  [12, "¿Ella dijo eso?", "", "Did she say that?"],
+  [13, "No, lo dijo él.", "Emphatic pronoun contrast → 'No, he did.'", "No, he did."],
+  [14, "¡Mucha mierda!", "Theater idiom (good luck) → 'Break a leg!'", "Break a leg!"],
+  [15, "Yo era una mujer de negocios rica, tú eras la madre de una familia feliz.", "Past tense in source but appears to be contrasting current situations between two people → present tense more natural", "I'm a rich businesswoman, you're the mother of a happy family."],
+  [16, "Mi mano se está calentando.", "Idiom: getting better with practice → 'warming up'", "I'm warming up."],
+  [17, "Tampoco quiero eso en absoluto.", "", "I don't want that either."]
 ]
 ```
 

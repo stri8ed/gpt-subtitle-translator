@@ -46,34 +46,15 @@ model_params = {
 JSON_SCHEMA = {
     "type": "array",
     "items": {
-        "type": "object",
-        "properties": {
-            "id": {
-                "type": "integer",
-                "description": "The subtitle ID number matching the original subtitle"
-            },
-            "original": {
-                "type": "string",
-                "description": "The original subtitle text in the source language",
-                "maxLength": 750
-            },
-            "thoughts": {
-                "type": "string",
-                "description": "Brief reasoning about ambiguities, errors, or challenging translations. Empty string for straightforward cases.",
-                "maxLength": 650,
-            },
-            "translation": {
-                "type": "string",
-                "description": "The translated subtitle text in the target language",
-                "maxLength": 1000,
-            }
-        },
-        "required": [
-            "id",
-            "original",
-            "thoughts",
-            "translation"
-        ]
+        "type": "array",
+        "prefixItems": [
+            {"type": "integer"},   # id
+            {"type": "string"},    # original
+            {"type": "string"},    # thoughts
+            {"type": "string"}     # translation
+        ],
+        "minItems": 4,
+        "maxItems": 4
     }
 }
 
@@ -117,7 +98,7 @@ class Gemini(BaseModel):
                     model=self.model_name,
                     config=GenerateContentConfig(
                         temperature=temperature,
-                        response_schema=JSON_SCHEMA,
+                        response_json_schema=JSON_SCHEMA,
                         response_mime_type="application/json",
                         max_output_tokens=self.params["max_output_tokens"],
                         http_options=HttpOptions(

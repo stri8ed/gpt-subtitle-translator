@@ -35,16 +35,16 @@ Task: Translate video subtitles to {target_language}, **originating from flawed 
 ## Output Format
 ```json
 [
-  {"id": 1, "original": "source text", "thoughts": "", "translation": "natural {target_language}"},
-  {"id": 2, "original": "source text", "thoughts": "reasoning to arrive at translation", "translation": "natural {target_language}"}
+  [1, "source text", "", "natural {target_language}"],
+  [2, "source text", "reasoning to arrive at translation", "natural {target_language}"]
 ]
 ```
 
-The fields are:
-- `id` (required): The subtitle number matching the original
-- `original` (required): The original subtitle text
-- `thoughts` (required): Reasoning **only when needed to arrive at** the translation (error correction, idiom selection, disambiguation). Use empty string `""` for straightforward translations.
-- `translation` (required): Your translation into {target_language}, preserving any line breaks from the original
+Each subtitle is a tuple: `[id, original, thoughts, translation]`
+- `id`: The subtitle number matching the original
+- `original`: The original subtitle text
+- `thoughts`: Reasoning **only when needed to arrive at** the translation (error correction, idiom selection, disambiguation). Use empty string `""` for straightforward translations.
+- `translation`: Your translation into {target_language}, preserving any line breaks from the original
 
 ## Example Translation
 
@@ -71,20 +71,20 @@ END
 Output:
 
 [
-  {"id": 1, "original": "Hello", "thoughts": "", "translation": "Hola"},
-  {"id": 2, "original": "How are you?", "thoughts": "", "translation": "¿Cómo estás?"},
-  {"id": 3, "original": "I'm fine, thanks.", "thoughts": "", "translation": "Estoy bien, gracias."},
-  {"id": 4, "original": "What time is it?", "thoughts": "", "translation": "¿Qué hora es?"},
-  {"id": 5, "original": "It's three o'clock.", "thoughts": "", "translation": "Son las tres."},
-  {"id": 6, "original": "See you tomorrow.", "thoughts": "", "translation": "Nos vemos mañana."},
-  {"id": 7, "original": "This texx has a typo\nand spans multiple lines", "thoughts": "The word 'texx' is likely a typo for 'text'. Correcting this in the translation while preserving the line break.", "translation": "Este texto tiene un error tipográfico\ny abarca múltiples líneas."},
-  {"id": 8, "original": "It's raining cats and dogs.", "thoughts": "This is an English idiom meaning it's raining very heavily. A Spanish equivalent for heavy rain is 'Está lloviendo a cántaros'.", "translation": "Está lloviendo a cántaros."},
-  {"id": 9, "original": "Thank you very much.", "thoughts": "", "translation": "Muchas gracias."},
-  {"id": 10, "original": "You're welcome.", "thoughts": "", "translation": "De nada."},
-  {"id": 11, "original": "Go to bad now.", "thoughts": "The word 'bad' is likely a phonetic mis-transcription of 'bed'. The phrase 'go to bed' is common.", "translation": "Vete a la cama ahora."},
-  {"id": 12, "original": "Good night.", "thoughts": "", "translation": "Buenas noches."},
-  {"id": 13, "original": "I love you.", "thoughts": "", "translation": "Te amo."},
-  {"id": 14, "original": "The kipa is on his head.", "thoughts": "Assuming the original language might have a word like 'kippah' (a Jewish skullcap), and 'kipa' is a plausible phonetic transcription.", "translation": "La kipá está en su cabeza."}
+  [1, "Hello", "", "Hola"],
+  [2, "How are you?", "", "¿Cómo estás?"],
+  [3, "I'm fine, thanks.", "", "Estoy bien, gracias."],
+  [4, "What time is it?", "", "¿Qué hora es?"],
+  [5, "It's three o'clock.", "", "Son las tres."],
+  [6, "See you tomorrow.", "", "Nos vemos mañana."],
+  [7, "This texx has a typo\nand spans multiple lines", "The word 'texx' is likely a typo for 'text'. Correcting this in the translation while preserving the line break.", "Este texto tiene un error tipográfico\ny abarca múltiples líneas."],
+  [8, "It's raining cats and dogs.", "This is an English idiom meaning it's raining very heavily. A Spanish equivalent for heavy rain is 'Está lloviendo a cántaros'.", "Está lloviendo a cántaros."],
+  [9, "Thank you very much.", "", "Muchas gracias."],
+  [10, "You're welcome.", "", "De nada."],
+  [11, "Go to bad now.", "The word 'bad' is likely a phonetic mis-transcription of 'bed'. The phrase 'go to bed' is common.", "Vete a la cama ahora."],
+  [12, "Good night.", "", "Buenas noches."],
+  [13, "I love you.", "", "Te amo."],
+  [14, "The kipa is on his head.", "Assuming the original language might have a word like 'kippah' (a Jewish skullcap), and 'kipa' is a plausible phonetic transcription.", "La kipá está en su cabeza."]
 ]
 
 Subtitles to Translate:

@@ -115,9 +115,13 @@ class SubtitleProcessor:
 
             reverted = []
             for subtitle in subtitles_array:
-                sub_id = int(subtitle["id"])
+                if isinstance(subtitle, list):
+                    sub_id = int(subtitle[0])
+                    translation = subtitle[3]
+                else:
+                    sub_id = int(subtitle["id"])
+                    translation = subtitle.get("translation", "")
                 original_id = id_mapping.get(sub_id, sub_id)
-                translation = subtitle.get("translation", "")
                 if original_id:
                     reverted.append(f"<{original_id}>{translation}</{original_id}>")
 
