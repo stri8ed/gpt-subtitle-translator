@@ -131,6 +131,8 @@ END
   [15, "Yo era una mujer de negocios rica, tú eras la madre de una familia feliz.", "Past tense in source but appears to be contrasting current situations between two people → present tense more natural", "I'm a rich businesswoman, you're the mother of a happy family."],
   [16, "Mi mano se está calentando.", "Idiom: getting better with practice → 'warming up'", "I'm warming up."],
   [17, "Tampoco quiero eso en absoluto.", "", "I don't want that either."]
+  [18, "Te escucho con toda atención.", "Literal: 'I'm listening with full attention' — natural English uses idiom 'all ears'", "I'm all ears."],
+  [19, "Estás completamente jodido.", "", "You're completely fucked."]
 ]
 ```
 
