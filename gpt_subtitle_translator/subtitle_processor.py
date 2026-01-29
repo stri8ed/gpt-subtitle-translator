@@ -117,7 +117,7 @@ class SubtitleProcessor:
             for subtitle in subtitles_array:
                 if isinstance(subtitle, list):
                     sub_id = int(subtitle[0])
-                    translation = subtitle[3]
+                    translation = subtitle[2]
                 else:
                     sub_id = int(subtitle["id"])
                     translation = subtitle.get("translation", "")
