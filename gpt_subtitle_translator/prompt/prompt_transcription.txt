@@ -35,13 +35,14 @@ Task: Translate video subtitles to {target_language}, **originating from flawed 
 ## Output Format
 ```json
 [
-  [1, "", "natural {target_language}"],
-  [2, "reasoning to arrive at translation", "natural {target_language}"]
+  [1, "source text", "", "natural {target_language}"],
+  [2, "source text", "reasoning to arrive at translation", "natural {target_language}"]
 ]
 ```
 
-Each subtitle is a tuple: `[id, thoughts, translation]`
+Each subtitle is a tuple: `[id, original, thoughts, translation]`
 - `id`: The subtitle number matching the original
+- `original`: The original subtitle text
 - `thoughts`: Reasoning **only when needed to arrive at** the translation (error correction, idiom selection, disambiguation). Use empty string `""` for straightforward translations.
 - `translation`: Your translation into {target_language}, preserving any line breaks from the original
 
@@ -70,20 +71,20 @@ END
 Output:
 
 [
-  [1, "", "Hola"],
-  [2, "", "¿Cómo estás?"],
-  [3, "", "Estoy bien, gracias."],
-  [4, "", "¿Qué hora es?"],
-  [5, "", "Son las tres."],
-  [6, "", "Nos vemos mañana."],
-  [7, "The word 'texx' is likely a typo for 'text'. Correcting this in the translation while preserving the line break.", "Este texto tiene un error tipográfico\ny abarca múltiples líneas."],
-  [8, "This is an English idiom meaning it's raining very heavily. A Spanish equivalent for heavy rain is 'Está lloviendo a cántaros'.", "Está lloviendo a cántaros."],
-  [9, "", "Muchas gracias."],
-  [10, "", "De nada."],
-  [11, "The word 'bad' is likely a phonetic mis-transcription of 'bed'. The phrase 'go to bed' is common.", "Vete a la cama ahora."],
-  [12, "", "Buenas noches."],
-  [13, "", "Te amo."],
-  [14, "Assuming the original language might have a word like 'kippah' (a Jewish skullcap), and 'kipa' is a plausible phonetic transcription.", "La kipá está en su cabeza."]
+  [1, "Hello", "", "Hola"],
+  [2, "How are you?", "", "¿Cómo estás?"],
+  [3, "I'm fine, thanks.", "", "Estoy bien, gracias."],
+  [4, "What time is it?", "", "¿Qué hora es?"],
+  [5, "It's three o'clock.", "", "Son las tres."],
+  [6, "See you tomorrow.", "", "Nos vemos mañana."],
+  [7, "This texx has a typo\nand spans multiple lines", "The word 'texx' is likely a typo for 'text'. Correcting this in the translation while preserving the line break.", "Este texto tiene un error tipográfico\ny abarca múltiples líneas."],
+  [8, "It's raining cats and dogs.", "This is an English idiom meaning it's raining very heavily. A Spanish equivalent for heavy rain is 'Está lloviendo a cántaros'.", "Está lloviendo a cántaros."],
+  [9, "Thank you very much.", "", "Muchas gracias."],
+  [10, "You're welcome.", "", "De nada."],
+  [11, "Go to bad now.", "The word 'bad' is likely a phonetic mis-transcription of 'bed'. The phrase 'go to bed' is common.", "Vete a la cama ahora."],
+  [12, "Good night.", "", "Buenas noches."],
+  [13, "I love you.", "", "Te amo."],
+  [14, "The kipa is on his head.", "Assuming the original language might have a word like 'kippah' (a Jewish skullcap), and 'kipa' is a plausible phonetic transcription.", "La kipá está en su cabeza."]
 ]
 
 Subtitles to Translate:
@@ -94,5 +95,4 @@ START
 
 END
 
-Input contains {n} subtitles. Output must contain exactly {n} items.
 Remember: Never merge multiple subtitles into one.

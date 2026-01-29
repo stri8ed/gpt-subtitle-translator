@@ -154,10 +154,8 @@ class SubtitleTranslator:
         return chunk.idx, response, raw_response
 
     def get_translation(self, chunk_number, text: str, num_tokens: int, temperature=None) -> (str, int):
-        subtitle_count = len(re.findall(r'^<\d+>', text.strip(), flags=re.MULTILINE))
         prompt = self.prompt_template.replace("{subtitles}", text.strip()) \
-            .replace("{target_language}", self.lang) \
-            .replace("{n}", str(subtitle_count))
+            .replace("{target_language}", self.lang)
         logger.info(f"Processing chunk {chunk_number}, with {num_tokens} tokens.")
         return self.model.generate_completion(prompt, temperature or self.temperature)
 

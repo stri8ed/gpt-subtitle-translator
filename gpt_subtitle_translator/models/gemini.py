@@ -49,11 +49,12 @@ JSON_SCHEMA = {
         "type": "array",
         "prefixItems": [
             {"type": "integer"},   # id
+            {"type": "string"},    # original
             {"type": "string"},    # thoughts
             {"type": "string"}     # translation
         ],
-        "minItems": 3,
-        "maxItems": 3
+        "minItems": 4,
+        "maxItems": 4
     }
 }
 

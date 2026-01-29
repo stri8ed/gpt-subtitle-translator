@@ -74,13 +74,14 @@ Use "thoughts" **only when reasoning is required to arrive at the translation**:
 
 ```json
 [
-  [1, "", "natural {target_language}"],
-  [2, "explanation of choice", "natural {target_language}"]
+  [1, "source text", "", "natural {target_language}"],
+  [2, "source text", "explanation of choice", "natural {target_language}"]
 ]
 ```
 
-Each subtitle is a tuple: `[id, thoughts, translation]`
+Each subtitle is a tuple: `[id, original, thoughts, translation]`
 - `id`: The subtitle number matching the original
+- `original`: The original subtitle text
 - `thoughts`: Your pre-translation reasoning. Before translating, systematically check: (1) **Is this idiomatic?** If yes, what's the natural {target_language} equivalent? (2) Does natural {target_language} require restructuring (tense/word order/register)? (3) Any ambiguity needing context? For straightforward translations requiring none of these considerations, use empty string `""`.
 - `translation`: Your translation into {target_language}, preserving any line breaks from the original
 
@@ -113,25 +114,25 @@ END
 **Output:**
 ```json
 [
-  [1, "", "Hello"],
-  [2, "", "How are you?"],
-  [3, "", "I'm fine, thanks."],
-  [4, "", "What time is it?"],
-  [5, "", "It's three o'clock."],
-  [6, "", "See you tomorrow."],
-  [7, "", "This text has an error\nand spans multiple lines"],
-  [8, "'Lloviendo a cántaros' (lit. 'raining pitchers') is an idiom for heavy rain. English equivalents: 'raining cats and dogs' or 'pouring'. Chose 'pouring' for subtitle brevity.", "It's pouring."],
-  [9, "", "Thank you very much."],
-  [10, "", "You're welcome."],
-  [11, "llevar + gerund → present perfect continuous", "I've been waiting for hours."],
-  [12, "", "Did she say that?"],
-  [13, "Emphatic pronoun contrast → 'No, he did.'", "No, he did."],
-  [14, "Theater idiom (good luck) → 'Break a leg!'", "Break a leg!"],
-  [15, "Past tense in source but appears to be contrasting current situations between two people → present tense more natural", "I'm a rich businesswoman, you're the mother of a happy family."],
-  [16, "Idiom: getting better with practice → 'warming up'", "I'm warming up."],
-  [17, "", "I don't want that either."],
-  [18, "Literal: 'I'm listening with full attention' — natural English uses idiom 'all ears'", "I'm all ears."],
-  [19, "", "You're completely fucked."]
+  [1, "Hola", "", "Hello"],
+  [2, "¿Cómo estás?", "", "How are you?"],
+  [3, "Estoy bien, gracias.", "", "I'm fine, thanks."],
+  [4, "¿Qué hora es?", "", "What time is it?"],
+  [5, "Son las tres.", "", "It's three o'clock."],
+  [6, "Nos vemos mañana.", "", "See you tomorrow."],
+  [7, "Este texto tiene un err0r\ny abarca múltiples líneas", "", "This text has an error\nand spans multiple lines"],
+  [8, "Está lloviendo a cántaros.", "'Lloviendo a cántaros' (lit. 'raining pitchers') is an idiom for heavy rain. English equivalents: 'raining cats and dogs' or 'pouring'. Chose 'pouring' for subtitle brevity.", "It's pouring."],
+  [9, "Muchas gracias.", "", "Thank you very much."],
+  [10, "De nada.", "", "You're welcome."],
+  [11, "Llevo horas esperando.", "llevar + gerund → present perfect continuous", "I've been waiting for hours."],
+  [12, "¿Ella dijo eso?", "", "Did she say that?"],
+  [13, "No, lo dijo él.", "Emphatic pronoun contrast → 'No, he did.'", "No, he did."],
+  [14, "¡Mucha mierda!", "Theater idiom (good luck) → 'Break a leg!'", "Break a leg!"],
+  [15, "Yo era una mujer de negocios rica, tú eras la madre de una familia feliz.", "Past tense in source but appears to be contrasting current situations between two people → present tense more natural", "I'm a rich businesswoman, you're the mother of a happy family."],
+  [16, "Mi mano se está calentando.", "Idiom: getting better with practice → 'warming up'", "I'm warming up."],
+  [17, "Tampoco quiero eso en absoluto.", "", "I don't want that either."]
+  [18, "Te escucho con toda atención.", "Literal: 'I'm listening with full attention' — natural English uses idiom 'all ears'", "I'm all ears."],
+  [19, "Estás completamente jodido.", "", "You're completely fucked."]
 ]
 ```
 
@@ -143,5 +144,4 @@ START
 
 END
 
-Input contains {n} subtitles. Output must contain exactly {n} items.
 Remember: Never merge multiple subtitles into one.
