@@ -121,6 +121,8 @@ class SubtitleProcessor:
                 else:
                     sub_id = int(subtitle["id"])
                     translation = subtitle.get("translation", "")
+
+                translation = re.sub(r"\n\s*\n+", "\n", translation).strip()
                 original_id = id_mapping.get(sub_id, sub_id)
                 if original_id:
                     reverted.append(f"<{original_id}>{translation}</{original_id}>")
