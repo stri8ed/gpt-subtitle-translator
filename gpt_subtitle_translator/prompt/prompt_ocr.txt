@@ -29,10 +29,15 @@ Task: Translate video subtitles to {target_language}, **originating from OCR ext
 ## Output Format
 ```json
 [
-  [1, "source text", "", "natural {target_language}"],
-  [2, "source text", "reasoning only if needed", "natural {target_language}"]
+  [1, "", "natural {target_language}"],
+  [2, "reasoning only if needed", "natural {target_language}"]
 ]
 ```
+
+Each subtitle is a tuple: `[id, thoughts, translation]`
+- `id`: The subtitle number matching the original
+- `thoughts`: Reasoning **only when needed to arrive at** the translation (error correction, idiom selection, disambiguation). Use empty string `""` for straightforward translations.
+- `translation`: Your translation into {target_language}, preserving any line breaks from the original
 
 ## Example Translation (Spanish Source -> English Target)
 
@@ -59,17 +64,17 @@ END
 
 Output:
 [
-[1, "¡No puedo creer lo que\nme has hechol", "", "I can't believe what\nyou've done!"],
-[2, "Diego", "", "Diego."],
-[3, "N0 me vengas con | cuentos.", "Idiom 'venir con cuentos' (come with stories) means making excuses/lying. OCR visual error '0' and noise '|'.", "Don't give me that crap."],
-[4, "Estas haciendo una tempestad\nen un vaso de agua.", "Idiom 'tempest in a glass of water' equates to 'mountain out of a molehill'.", "You're making a mountain\nout of a molehill."],
-[5, "¡Es el colmo!", "Idiom 'es el colmo' (it's the overflow) means 'that's the last straw'.", "That is the last straw!"],
-[6, "S1empre t1enes una excusa\npara todo.", "", "You always have an excuse\nfor everything."],
-[7, "Dame un respiro, por favor.", "Idiom 'dame un respiro' (give me a breath) equates to 'give me a break'.", "Give me a break, please."],
-[8, "Esto es rnposible.", "", "This is impossible."],
-[9, "Me tienes frito.", "Idiom 'tener frito' (to have fried) means to be fed up with someone.", "I've had it with you."],
-[10, "Solo qu1ero la verdad.", "", "I just want the truth."],
-[11, ">> Y yo también.", "", "And me too."]
+  [1, "", "I can't believe what\nyou've done!"],
+  [2, "", "Diego."],
+  [3, "Idiom 'venir con cuentos' (come with stories) means making excuses/lying. OCR visual error '0' and noise '|'.", "Don't give me that crap."],
+  [4, "Idiom 'tempest in a glass of water' equates to 'mountain out of a molehill'.", "You're making a mountain\nout of a molehill."],
+  [5, "Idiom 'es el colmo' (it's the overflow) means 'that's the last straw'.", "That is the last straw!"],
+  [6, "", "You always have an excuse\nfor everything."],
+  [7, "Idiom 'dame un respiro' (give me a breath) equates to 'give me a break'.", "Give me a break, please."],
+  [8, "", "This is impossible."],
+  [9, "Idiom 'tener frito' (to have fried) means to be fed up with someone.", "I've had it with you."],
+  [10, "", "I just want the truth."],
+  [11, "", "And me too."]
 ]
 Subtitles to Translate:
 -----------------------

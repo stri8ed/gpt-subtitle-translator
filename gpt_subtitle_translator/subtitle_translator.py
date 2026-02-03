@@ -23,7 +23,7 @@ class SubtitleTranslator:
         max_retries: int = 1,
         retry_on_refusal: bool = False,
         temperature: float = 0.5,
-        source_type: Literal["ocr", "transcription"] = "transcription"
+        source_type: Literal["ocr", "transcription"] = "ocr"
     ):
         self.model = model
         self.lang = lang
