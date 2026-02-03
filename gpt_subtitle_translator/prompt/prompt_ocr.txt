@@ -1,141 +1,76 @@
-# Advanced Subtitle Translation Task (OCR-Extracted)
+# Advanced Subtitle Translation & Adaptation Task
 
-Task: Translate video subtitles to {target_language}, **extracted via OCR from hardcoded subtitles**, to **fluent, natural-sounding {target_language}**. The original subtitles were written by humans but may contain **occasional OCR artifacts** (character recognition errors, noise symbols, spacing issues).
+Task: Translate video subtitles to {target_language}, **originating from OCR extraction**, to **fluent, natural-sounding {target_language}**. The original subtitles **will frequently contain OCR artifacts (visual typos), random noise characters, spacing errors, and rigid source-language syntax.** Your primary goal is to **recover the intended meaning** and produce subtitles that are contextually appropriate, clear, and engaging for a {target_language}-speaking audience.
 
 ## Input Format
 - Subtitles are presented between START and END markers.
 - Each subtitle consists of a unique `<subtitle_id>subtitle_text</subtitle_id>`.
 
-## Core Translation Philosophy
+## Core Instructions & Philosophy
+1.  **Prioritize Intended Meaning & Naturalness:** Your translation must prioritize natural dialogue flow and the *likely intended meaning* in {target_language} over strict, literal adherence to the source. The translation should sound like something a native {target_language} speaker would naturally say in that situation. **Do not mimic the sentence structure of the source language if it sounds stiff in {target_language}.**
+2.  **Embrace Proactive Error Correction (Visual & Structural):** **Assume the source input is imperfect.** Actively look for and correct OCR errors.
+    *   **Visual Errors:** Look for characters that resemble each other (e.g., '1' vs 'l', '5' vs 'S', 'rn' vs 'm'). Correct these silently.
+    *   **Noise Removal:** Remove random symbols (e.g., `|`, `_`, `>>`, `...`) resulting from bad OCR scanning.
+    *   **Syntax "Errors":** Treat awkward, literal source phrasing as an error. Rewrite it to be idiomatic.
+3.  **Context is King:** Use surrounding subtitles to infer meaning when the source text has severe OCR damage. Use context to confirm the correct word when a typo creates ambiguity.
+4.  **Cultural Localization:** Adapt cultural references, idioms, or expressions to be natural to a general {target_language}-speaking audience. **Never translate idioms literally.**
+5.  **Leverage Source Language Understanding:** When encountering a nonsense word, check if it is a **visual misrecognition** of a valid source word.
 
-**Primary Goal:** Produce dialogue that sounds like it was originally written by a native {target_language} speaker.
-
-**Decision Hierarchy** (when translation choices conflict):
-
-1. **Semantic Accuracy** - Preserve the core meaning, emotional tone, and speaker intent
-2. **Natural Expression** - Express it as a native {target_language} speaker naturally would
-3. **Structural Fidelity** - Source sentence structure is flexible; adapt as needed
-
-**Core Principle:** Your constraint is meaning, not form. If source structure produces unnatural {target_language}, restructure freely.
-
-## What to Preserve vs. Adapt
-
-**MUST Preserve:**
-- Core meaning and intent
-- Emotional tone (anger, affection, sarcasm, etc.)
-- Formality level and social register
-- Cultural references, proper nouns, and specific terminology
-- Intensity of language (crude, vulgar, or dark humor stays crude/vulgar/dark)
-- How this fits into the ongoing dialogue
-- Preserve line breaks from the original subtitle formatting in your translation.
-
-**SHOULD Adapt:**
-- Sentence structure and word order
-- Tense/aspect (use what {target_language} naturally uses for that situation)
-- Explicit vs. implicit subjects/objects
-- Idioms (find {target_language} equivalents with same meaning/weight)
-- Placement of emphasis and intensity markers
-
-## Key Translation Guidelines
-
-**CRITICAL - Idioms First:** Before translating any line, check: Is this an idiom or culturally-specific expression? If yes, find the natural {target_language} equivalent that conveys the same meaning and emotional weight. Never translate idioms literally. Document your reasoning in "thoughts."
-
-**Naturalness Test:** If your translation sounds "translated" (stilted, awkward, or mirroring source structure unnaturally), restructure it. Ask: "Would a native speaker actually say this?" Note: Natural doesn't mean sanitized—preserve the original's intensity and specificity.
-
-**Tense/Aspect:** Use the tense that sounds natural in {target_language} for the situation, even if different from source.
-
-**Word Order:** Follow {target_language} syntax patterns. Don't preserve source word order if it produces awkward {target_language}.
-
-**Specificity:** Preserve specific cultural references, place names, food dishes, brand names, and local terminology. Don't replace specifics with generic terms. Natural expression means expressing the same specific thing naturally—not genericizing it.
-
-**Context:** Use surrounding subtitles to maintain consistency in tense, pronouns, formality, and conversational flow.
-
-**OCR Artifacts:**
-- **Character-level errors:** Correct silently (l/I confusion, 0/O confusion, rn/m confusion, spacing issues)
-- **Non-linguistic noise:** Remove entirely (random digit/symbol strings, misrecognized UI elements, obvious garbage)
-- **Intentional unclear speech:** Preserve patterns like stuttering, trailing off, or mumbling if they appear intentional
-- Only mention in "thoughts" if there's genuine ambiguity about whether something is an error or intentional
-
-## Documentation: The "Thoughts" Field
-
-Use "thoughts" **only when reasoning is required to arrive at the translation**:
-- Choosing between multiple valid options for idioms
-- Disambiguating meaning using context
-- Resolving genuine uncertainty
-
-**Do NOT use thoughts to:**
-- Document routine restructuring for naturalness
-- Note obvious OCR corrections
-- Explain what you did after the fact
-
-**Use empty string `""` for straightforward translations.**
+## Detailed Instructions
+- Translate each subtitle to {target_language}, preserving the speaker's intent, tone, and relevant cultural nuances.
+- **Use Contractions:** High-quality subtitles use natural speech patterns (e.g., "I'm," "don't," "it's") rather than robotic forms ("I am," "do not").
+- **Preserve Line Breaks:** Maintain the line breaks (`\n`) from the original subtitle formatting in your translation exactly as they appear.
+- **Handling OCR Errors:**
+    - For **obvious** visual OCR errors (e.g., `Th1s` -> `This`, `H0la` -> `Hola`) or noise removal, **correct them silently**. Do **NOT** use the "thoughts" field.
+    - Only use "thoughts" if the OCR error creates genuine ambiguity that requires context to resolve.
+- **Handling Idioms:**
+    - If a phrase is an idiom in the source language, find the equivalent **meaning** in {target_language}. Explain the specific idiom in "thoughts."
 
 ## Output Format
-
 ```json
 [
   [1, "source text", "", "natural {target_language}"],
-  [2, "source text", "explanation of choice", "natural {target_language}"]
+  [2, "source text", "reasoning only if needed", "natural {target_language}"]
 ]
 ```
 
-Each subtitle is a tuple: `[id, original, thoughts, translation]`
-- `id`: The subtitle number matching the original
-- `original`: The original subtitle text
-- `thoughts`: Your pre-translation reasoning. Before translating, systematically check: (1) **Is this idiomatic?** If yes, what's the natural {target_language} equivalent? (2) Does natural {target_language} require restructuring (tense/word order/register)? (3) Any ambiguity needing context? For straightforward translations requiring none of these considerations, use empty string `""`.
-- `translation`: Your translation into {target_language}, preserving any line breaks from the original
+## Example Translation (Spanish Source -> English Target)
 
-## Example Translation
+**Context:** A heated argument in a reality TV show between two contestants, Sofia and Diego.
 
-**Input (Spanish to English):**
-```
+Input:
+
 START
-<1>Hola</1>
-<2>¿Cómo estás?</2>
-<3>Estoy bien, gracias.</3>
-<4>¿Qué hora es?</4>
-<5>Son las tres.</5>
-<6>Nos vemos mañana.</6>
-<7>Este texto tiene un err0r
-y abarca múltiples líneas</7>
-<8>Está lloviendo a cántaros.</8>
-<9>Muchas gracias.</9>
-<10>De nada.</10>
-<11>Llevo horas esperando.</11>
-<12>¿Ella dijo eso?</12>
-<13>No, lo dijo él.</13>
-<14>¡Mucha mierda!</14>
-<15>Yo era una mujer de negocios rica, tú eras la madre de una familia feliz.</15>
-<16>Mi mano se está calentando.</16>
-<17>Tampoco quiero eso en absoluto.</17>
+<1>¡No puedo creer lo que
+me has hechol</1>
+<2>Diego</2>
+<3>N0 me vengas con | cuentos.</3>
+<4>Estas haciendo una tempestad
+en un vaso de agua.</4>
+<5>¡Es el colmo!</5>
+<6>S1empre t1enes una excusa
+para todo.</6>
+<7>Dame un respiro, por favor.</7>
+<8>Esto es rnposible.</8>
+<9>Me tienes frito.</9>
+<10>Solo qu1ero la verdad.</10>
+<11>>> Y yo también.</11>
 END
-```
 
-**Output:**
-```json
+Output:
 [
-  [1, "Hola", "", "Hello"],
-  [2, "¿Cómo estás?", "", "How are you?"],
-  [3, "Estoy bien, gracias.", "", "I'm fine, thanks."],
-  [4, "¿Qué hora es?", "", "What time is it?"],
-  [5, "Son las tres.", "", "It's three o'clock."],
-  [6, "Nos vemos mañana.", "", "See you tomorrow."],
-  [7, "Este texto tiene un err0r\ny abarca múltiples líneas", "", "This text has an error\nand spans multiple lines"],
-  [8, "Está lloviendo a cántaros.", "'Lloviendo a cántaros' (lit. 'raining pitchers') is an idiom for heavy rain. English equivalents: 'raining cats and dogs' or 'pouring'. Chose 'pouring' for subtitle brevity.", "It's pouring."],
-  [9, "Muchas gracias.", "", "Thank you very much."],
-  [10, "De nada.", "", "You're welcome."],
-  [11, "Llevo horas esperando.", "llevar + gerund → present perfect continuous", "I've been waiting for hours."],
-  [12, "¿Ella dijo eso?", "", "Did she say that?"],
-  [13, "No, lo dijo él.", "Emphatic pronoun contrast → 'No, he did.'", "No, he did."],
-  [14, "¡Mucha mierda!", "Theater idiom (good luck) → 'Break a leg!'", "Break a leg!"],
-  [15, "Yo era una mujer de negocios rica, tú eras la madre de una familia feliz.", "Past tense in source but appears to be contrasting current situations between two people → present tense more natural", "I'm a rich businesswoman, you're the mother of a happy family."],
-  [16, "Mi mano se está calentando.", "Idiom: getting better with practice → 'warming up'", "I'm warming up."],
-  [17, "Tampoco quiero eso en absoluto.", "", "I don't want that either."]
-  [18, "Te escucho con toda atención.", "Literal: 'I'm listening with full attention' — natural English uses idiom 'all ears'", "I'm all ears."],
-  [19, "Estás completamente jodido.", "", "You're completely fucked."]
+[1, "¡No puedo creer lo que\nme has hechol", "", "I can't believe what\nyou've done!"],
+[2, "Diego", "", "Diego."],
+[3, "N0 me vengas con | cuentos.", "Idiom 'venir con cuentos' (come with stories) means making excuses/lying. OCR visual error '0' and noise '|'.", "Don't give me that crap."],
+[4, "Estas haciendo una tempestad\nen un vaso de agua.", "Idiom 'tempest in a glass of water' equates to 'mountain out of a molehill'.", "You're making a mountain\nout of a molehill."],
+[5, "¡Es el colmo!", "Idiom 'es el colmo' (it's the overflow) means 'that's the last straw'.", "That is the last straw!"],
+[6, "S1empre t1enes una excusa\npara todo.", "", "You always have an excuse\nfor everything."],
+[7, "Dame un respiro, por favor.", "Idiom 'dame un respiro' (give me a breath) equates to 'give me a break'.", "Give me a break, please."],
+[8, "Esto es rnposible.", "", "This is impossible."],
+[9, "Me tienes frito.", "Idiom 'tener frito' (to have fried) means to be fed up with someone.", "I've had it with you."],
+[10, "Solo qu1ero la verdad.", "", "I just want the truth."],
+[11, ">> Y yo también.", "", "And me too."]
 ]
-```
-
 Subtitles to Translate:
 -----------------------
 START
