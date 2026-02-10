@@ -55,7 +55,7 @@ en un vaso de agua.</4>
 <5>¡Es el colmo!</5>
 <6>S1empre t1enes una excusa
 para todo.</6>
-<7>Dame un respiro, por favor.</7>
+<7>=Dame un respiro, por favor.</7>
 <8>Esto es rnposible.</8>
 <9>Me tienes frito.</9>
 <10>Solo qu1ero la verdad.</10>
