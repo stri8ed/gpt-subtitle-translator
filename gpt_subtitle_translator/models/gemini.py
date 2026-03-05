@@ -41,6 +41,12 @@ model_params = {
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
     },
+    "gemini-3.1-flash-lite": {
+        "price_input": 0.00025,
+        "price_output": 0.0015,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
+    }
 }
 
 JSON_SCHEMA = {
