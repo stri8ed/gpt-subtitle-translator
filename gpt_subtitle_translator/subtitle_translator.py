@@ -96,7 +96,8 @@ class SubtitleTranslator:
 
         if err:
             completed_chunks = {i: t for i, t in enumerate(translations) if t}
-            raise TranslationError(err, stack_trace, result_text, completed_chunks)
+            total_chunks = len(chunks)
+            raise TranslationError(err, stack_trace, result_text, total_chunks, completed_chunks)
 
         return result_text
 
@@ -226,6 +227,7 @@ class TranslationError(Exception):
         original_exception,
         stack_trace,
         partial_translation=None,
+        total_chunks=0,
         completed_chunks: Optional[dict[int, str]] = None
     ):
         super().__init__(str(original_exception))
@@ -233,11 +235,13 @@ class TranslationError(Exception):
         self.partial_translation = partial_translation
         self.stack_trace = stack_trace
         self.completed_chunks = completed_chunks or {}
+        self.total_chunks = total_chunks
 
     def __str__(self):
         return "".join([
             f"An error occurred ({type(self.original_exception).__name__}): {str(self.original_exception)}\n"
             f"Completed chunks: {len(self.completed_chunks)}\n",
+            f"Total chunks: {self.total_chunks}\n",
             f"Partial translation\n: {self.partial_translation[:350]}" if self.partial_translation else ""
         ])
 
