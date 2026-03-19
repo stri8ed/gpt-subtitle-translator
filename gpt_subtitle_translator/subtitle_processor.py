@@ -133,7 +133,7 @@ class SubtitleProcessor:
             return "\n".join(reverted)
 
         except (json.JSONDecodeError, AttributeError):
-            print(f"JSONDecodeError while extracting subtitles response: {response[:1000]}")
+            print(f"JSONDecodeError while extracting subtitles response: {response}")
             return ""
 
     def post_process_text(self, text, original_subtitles):
