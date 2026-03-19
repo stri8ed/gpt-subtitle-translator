@@ -39,7 +39,9 @@ Each subtitle is a tuple: `[id, thoughts, translation]`
 - `thoughts`: Reasoning **only when needed to arrive at** the translation (error correction, idiom selection, disambiguation). Use empty string `""` for straightforward translations.
 - `translation`: Your translation into {target_language}, preserving any line breaks from the original
 
-## Example Translation (Spanish Source -> English Target)
+**All translations MUST be in {target_language}.**
+
+## Example Translation (Spanish Source -> French Target)
 
 **Context:** A heated argument in a reality TV show between two contestants, Sofia and Diego.
 
@@ -64,17 +66,17 @@ END
 
 Output:
 [
-  [1, "", "I can't believe what\nyou've done!"],
+  [1, "", "J'arrive pas à croire ce que\ntu m'as fait !"],
   [2, "", "Diego."],
-  [3, "Idiom 'venir con cuentos' (come with stories) means making excuses/lying. OCR visual error '0' and noise '|'.", "Don't give me that crap."],
-  [4, "Idiom 'tempest in a glass of water' equates to 'mountain out of a molehill'.", "You're making a mountain\nout of a molehill."],
-  [5, "Idiom 'es el colmo' (it's the overflow) means 'that's the last straw'.", "That is the last straw!"],
-  [6, "", "You always have an excuse\nfor everything."],
-  [7, "Idiom 'dame un respiro' (give me a breath) equates to 'give me a break'.", "Give me a break, please."],
-  [8, "", "This is impossible."],
-  [9, "Idiom 'tener frito' (to have fried) means to be fed up with someone.", "I've had it with you."],
-  [10, "", "I just want the truth."],
-  [11, "", "And me too."]
+  [3, "Idiom 'venir con cuentos' (come with stories) means making excuses/lying. OCR visual error '0' and noise '|'.", "Viens pas me raconter\ndes salades."],
+  [4, "Idiom 'tempest in a glass of water' equates to 'mountain out of a molehill'.", "Tu fais une montagne\nd'un rien."],
+  [5, "Idiom 'es el colmo' (it's the overflow) means 'that's the last straw'.", "C'est le comble !"],
+  [6, "", "T'as toujours une excuse\npour tout."],
+  [7, "Idiom 'dame un respiro' (give me a breath) equates to 'give me a break'.", "Lâche-moi, s'il te plaît."],
+  [8, "", "C'est impossible."],
+  [9, "Idiom 'tener frito' (to have fried) means to be fed up with someone.", "Tu me rends dingue."],
+  [10, "", "Je veux juste la vérité."],
+  [11, "", "Et moi aussi."]
 ]
 Subtitles to Translate:
 -----------------------

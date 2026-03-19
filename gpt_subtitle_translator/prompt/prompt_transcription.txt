@@ -45,6 +45,8 @@ Each subtitle is a tuple: `[id, thoughts, translation]`
 - `thoughts`: Reasoning **only when needed to arrive at** the translation (error correction, idiom selection, disambiguation). Use empty string `""` for straightforward translations.
 - `translation`: Your translation into {target_language}, preserving any line breaks from the original
 
+**All translations MUST be in {target_language}.**
+
 ## Example Translation
 
 Input:
