@@ -133,8 +133,8 @@ class SubtitleProcessor:
             reverted.sort(key=lambda x: int(self.TAG_PATTERN.match(x).group(1)))
             return "\n".join(reverted)
 
-        except (json.JSONDecodeError, AttributeError):
-            print(f"JSONDecodeError while extracting subtitles full response: {response}")
+        except (json.JSONDecodeError, AttributeError, KeyError, IndexError) as e:
+            print(f"{type(e).__name__} while extracting subtitles full response: {response}")
             return ""
 
     def post_process_text(self, text, original_subtitles):
