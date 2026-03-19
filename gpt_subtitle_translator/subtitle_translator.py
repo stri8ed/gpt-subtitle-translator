@@ -158,7 +158,7 @@ class SubtitleTranslator:
         prompt = self.prompt_template.replace("{subtitles}", text.strip()) \
             .replace("{target_language}", self.lang)
         logger.info(f"Processing chunk {chunk_number}, with {num_tokens} tokens.")
-        return self.model.generate_completion(prompt, temperature or self.temperature)
+        return self.model.generate_completion(prompt, temperature or self.temperature, target_language=self.lang)
 
     @staticmethod
     def get_compression_ratio(text: str) -> float:

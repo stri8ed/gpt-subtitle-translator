@@ -28,16 +28,20 @@ Task: Translate video subtitles to {target_language}, **originating from OCR ext
 
 ## Output Format
 ```json
-[
-  [1, "", "natural {target_language}"],
-  [2, "reasoning only if needed", "natural {target_language}"]
-]
+{
+  "language": "{target_language}",
+  "subtitles": [
+    [1, "", "natural {target_language}"],
+    [2, "reasoning only if needed", "natural {target_language}"]
+  ]
+}
 ```
 
-Each subtitle is a tuple: `[id, thoughts, translation]`
-- `id`: The subtitle number matching the original
-- `thoughts`: Reasoning **only when needed to arrive at** the translation (error correction, idiom selection, disambiguation). Use empty string `""` for straightforward translations.
-- `translation`: Your translation into {target_language}, preserving any line breaks from the original
+- `language`: The target language name
+- Each subtitle is a tuple: `[id, thoughts, translation]`
+  - `id`: The subtitle number matching the original
+  - `thoughts`: Reasoning **only when needed to arrive at** the translation (error correction, idiom selection, disambiguation). Use empty string `""` for straightforward translations.
+  - `translation`: Your translation into {target_language}, preserving any line breaks from the original
 
 **All translations MUST be in {target_language}.**
 
@@ -65,19 +69,22 @@ para todo.</6>
 END
 
 Output:
-[
-  [1, "", "J'arrive pas à croire ce que\ntu m'as fait !"],
-  [2, "", "Diego."],
-  [3, "Idiom 'venir con cuentos' (come with stories) means making excuses/lying. OCR visual error '0' and noise '|'.", "Viens pas me raconter\ndes salades."],
-  [4, "Idiom 'tempest in a glass of water' equates to 'mountain out of a molehill'.", "Tu fais une montagne\nd'un rien."],
-  [5, "Idiom 'es el colmo' (it's the overflow) means 'that's the last straw'.", "C'est le comble !"],
-  [6, "", "T'as toujours une excuse\npour tout."],
-  [7, "Idiom 'dame un respiro' (give me a breath) equates to 'give me a break'.", "Lâche-moi, s'il te plaît."],
-  [8, "", "C'est impossible."],
-  [9, "Idiom 'tener frito' (to have fried) means to be fed up with someone.", "Tu me rends dingue."],
-  [10, "", "Je veux juste la vérité."],
-  [11, "", "Et moi aussi."]
-]
+{
+  "language": "French",
+  "subtitles": [
+    [1, "", "J'arrive pas à croire ce que\ntu m'as fait !"],
+    [2, "", "Diego."],
+    [3, "Idiom 'venir con cuentos' (come with stories) means making excuses/lying. OCR visual error '0' and noise '|'.", "Viens pas me raconter des salades."],
+    [4, "Idiom 'tempest in a glass of water' equates to 'mountain out of a molehill'.", "Tu fais une montagne\nd'un rien."],
+    [5, "Idiom 'es el colmo' (it's the overflow) means 'that's the last straw'.", "C'est le comble !"],
+    [6, "", "T'as toujours une excuse\npour tout."],
+    [7, "Idiom 'dame un respiro' (give me a breath) equates to 'give me a break'.", "Lâche-moi, s'il te plaît."],
+    [8, "", "C'est impossible."],
+    [9, "Idiom 'tener frito' (to have fried) means to be fed up with someone.", "Tu me rends dingue."],
+    [10, "", "Je veux juste la vérité."],
+    [11, "", "Et moi aussi."]
+  ]
+}
 Subtitles to Translate:
 -----------------------
 START

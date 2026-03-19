@@ -49,19 +49,28 @@ model_params = {
     }
 }
 
-JSON_SCHEMA = {
-    "type": "array",
-    "items": {
-        "type": "array",
-        "prefixItems": [
-            {"type": "integer"},   # id
-            {"type": "string"},    # thoughts
-            {"type": "string"}     # translation
-        ],
-        "minItems": 3,
-        "maxItems": 3
+def build_json_schema(target_language: str = None):
+    language_def = {"type": "string", "enum": [target_language]} if target_language else {"type": "string"}
+    return {
+        "type": "object",
+        "properties": {
+            "language": language_def,
+            "subtitles": {
+                "type": "array",
+                "items": {
+                    "type": "array",
+                    "prefixItems": [
+                        {"type": "integer"},   # id
+                        {"type": "string"},    # thoughts
+                        {"type": "string"}     # translation
+                    ],
+                    "minItems": 3,
+                    "maxItems": 3
+                }
+            }
+        },
+        "required": ["language", "subtitles"]
     }
-}
 
 
 def get_model_params(model_name: str):
@@ -84,7 +93,7 @@ class Gemini(BaseModel):
         self.average_tokens_per_char = None
         self.max_attempts = 3
 
-    def generate_completion(self, prompt: str, temperature: float) -> (str, int):
+    def generate_completion(self, prompt: str, temperature: float, target_language: str = None) -> (str, int):
         message = None
         thinking_config = None
 
@@ -103,7 +112,7 @@ class Gemini(BaseModel):
                     model=self.model_name,
                     config=GenerateContentConfig(
                         temperature=temperature,
-                        response_json_schema=JSON_SCHEMA,
+                        response_json_schema=build_json_schema(target_language),
                         response_mime_type="application/json",
                         max_output_tokens=self.params["max_output_tokens"],
                         http_options=HttpOptions(

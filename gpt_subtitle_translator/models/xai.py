@@ -47,7 +47,7 @@ class XAI(BaseModel):
         self.params = _model_params
         self.average_tokens_per_char = None
 
-    def generate_completion(self, prompt: str, temperature: float) -> (str, int):
+    def generate_completion(self, prompt: str, temperature: float, target_language: str = None) -> (str, int):
         try:
             chat = self.client.chat.create(
                 model=self.model_name,

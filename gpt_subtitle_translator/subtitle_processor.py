@@ -103,7 +103,9 @@ class SubtitleProcessor:
 
     def extract_subtitles(self, response, id_mapping):
         try:
-            if isinstance(response, list):
+            if isinstance(response, dict):
+                subtitles_array = response["subtitles"]
+            elif isinstance(response, list):
                 subtitles_array = response
             else:
                 start = response.find("[")
