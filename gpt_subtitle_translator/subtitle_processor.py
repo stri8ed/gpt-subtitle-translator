@@ -108,12 +108,13 @@ class SubtitleProcessor:
             elif isinstance(response, list):
                 subtitles_array = response
             else:
-                start = response.find("[")
-                end = response.rfind("]")
+                data = response
+                start = data.find("[")
+                end = data.rfind("]")
                 if start != -1 and end != -1:
-                    response = response[start:end + 1]
+                    data = data[start:end + 1]
 
-                subtitles_array = json.loads(response.strip())
+                subtitles_array = json.loads(data.strip())
 
             reverted = []
             for subtitle in subtitles_array:
@@ -133,7 +134,7 @@ class SubtitleProcessor:
             return "\n".join(reverted)
 
         except (json.JSONDecodeError, AttributeError):
-            print(f"JSONDecodeError while extracting subtitles response: {response}")
+            print(f"JSONDecodeError while extracting subtitles full response: {response}")
             return ""
 
     def post_process_text(self, text, original_subtitles):
