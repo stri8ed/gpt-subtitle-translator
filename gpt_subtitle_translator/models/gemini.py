@@ -4,7 +4,7 @@ from typing import Union
 
 from dotenv import load_dotenv
 from google import genai
-from google.genai.errors import ClientError
+from google.genai.errors import ClientError, ServerError
 from google.genai.types import FinishReason, GenerateContentConfig, \
     HttpOptions, SafetySetting, ThinkingConfig, ThinkingLevel
 
@@ -150,6 +150,12 @@ class Gemini(BaseModel):
 
                 if attempt < self.max_attempts - 1:
                     logger.warning(f"Gemini client error: {e}. Retrying in 2 seconds...")
+                    time.sleep(2)
+                    continue
+                raise e
+            except ServerError as e:
+                if attempt < self.max_attempts - 1:
+                    logger.warning(f"Gemini server error: {e}. Retrying in 2 seconds...")
                     time.sleep(2)
                     continue
                 raise e
