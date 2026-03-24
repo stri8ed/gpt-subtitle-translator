@@ -147,7 +147,7 @@ class SubtitleTranslator:
                     f"Retrying chunk {chunk_number}, after error: {e} [attempt {attempt + 1}]"
                 )
                 shuffle_on_retry = isinstance(e, MissingSubtitlesError)
-                temperature = 0.6 if isinstance(e, ResponseRepetitiveError) else None
+                temperature = 0.5 if isinstance(e, ResponseRepetitiveError) else None
                 return self.translate_chunk(chunk, stop_flag, attempt + 1, temperature, shuffle_on_retry, randomize_ids)
             else:
                 raise e
