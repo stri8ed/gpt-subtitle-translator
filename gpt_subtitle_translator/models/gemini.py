@@ -170,18 +170,19 @@ class Gemini(BaseModel):
             block_reason = message.prompt_feedback.block_reason if message.prompt_feedback else None
             raise RefuseToTranslateError(f"Prompt blocked for reason: {block_reason or 'Unknown'}. Prompt: {prompt[-1000:]}")
 
-        finish_reason = message.candidates[0].finish_reason
-        if finish_reason == FinishReason.MAX_TOKENS:
-            raise ResponseTooLongError("Response too long. Might be missing tokens.")
-
         if message.text:
             message_text = message.text
         else:
-            if finish_reason == FinishReason.SAFETY:
-                raise RefuseToTranslateError("Output blocked by content filtering policy")
-            if finish_reason == FinishReason.RECITATION:
-                raise RefuseToTranslateError("Output blocked due to RECITATION policy")
-            message_text = f"finish_reason: {finish_reason}"
+            finish_reason = message.candidates[0].finish_reason
+            match finish_reason:
+                case FinishReason.SAFETY:
+                    raise RefuseToTranslateError("Output blocked by content filtering policy")
+                case FinishReason.RECITATION:
+                    raise RefuseToTranslateError("Output blocked due to RECITATION policy")
+                case FinishReason.MAX_TOKENS:
+                    raise ResponseTooLongError("Response too long and was cut off")
+                case _:
+                    message_text = f"finish_reason: {finish_reason}"
 
         usage = message.usage_metadata
         cached_token_count = (usage.cached_content_token_count or 0 if hasattr(usage, 'cached_content_token_count') else 0)
