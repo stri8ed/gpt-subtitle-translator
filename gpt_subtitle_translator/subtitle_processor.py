@@ -101,7 +101,7 @@ class SubtitleProcessor:
         random.shuffle(items)
         return "\n".join([f"<{id_}>{text}</{id_}>" for id_, text in items])
 
-    def extract_subtitles(self, response, id_mapping):
+    def extract_subtitles(self, response, id_mapping) -> str:
         try:
             if isinstance(response, dict):
                 subtitles_array = response["subtitles"]
@@ -134,7 +134,7 @@ class SubtitleProcessor:
             return "\n".join(reverted)
 
         except (json.JSONDecodeError, AttributeError, KeyError, IndexError) as e:
-            print(f"{type(e).__name__} while extracting subtitles full response: {response}")
+            print(f"{type(e).__name__} while extracting subtitles: {response}")
             return ""
 
     def post_process_text(self, text, original_subtitles):
