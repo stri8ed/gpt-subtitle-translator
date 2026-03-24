@@ -170,10 +170,10 @@ class Gemini(BaseModel):
             block_reason = message.prompt_feedback.block_reason if message.prompt_feedback else None
             raise RefuseToTranslateError(f"Prompt blocked for reason: {block_reason or 'Unknown'}. Prompt: {prompt[-1000:]}")
 
+        finish_reason = message.candidates[0].finish_reason
         if message.text:
             message_text = message.text
         else:
-            finish_reason = message.candidates[0].finish_reason
             match finish_reason:
                 case FinishReason.SAFETY:
                     raise RefuseToTranslateError("Output blocked by content filtering policy")
@@ -192,6 +192,10 @@ class Gemini(BaseModel):
         self.total_input_tokens += input_token_count
         self.total_output_tokens += output_token_count
         self.total_cached_tokens += cached_token_count
+
+        if finish_reason == FinishReason.MAX_TOKENS:
+            output_token_count = self.params["max_output_tokens"]
+
         return message_text, output_token_count
 
     def init_vocab(self, text: str):
