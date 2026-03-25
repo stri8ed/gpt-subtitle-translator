@@ -137,7 +137,7 @@ class SubtitleTranslator:
                 attempt < self.max_retries and
                 not isinstance(e, QuotaExhaustedError) and
                 (
-                    isinstance(e, (MissingSubtitlesError, ResponseRepetitiveError))
+                    isinstance(e, (MissingSubtitlesError, ResponseRepetitiveError, UntranslatedResponseError))
                     or "retry" in str(e)
                     or "Please try again" in str(e)
                     or (isinstance(e, RefuseToTranslateError) and self.retry_on_refusal)
@@ -197,6 +197,11 @@ class SubtitleTranslator:
                 f"expected {original_count}, got {translated_count}."
             )
 
+        if response.strip() == original_text.strip():
+            raise UntranslatedResponseError(
+                f"Chunk {chunk_number} returned the original text verbatim without translating."
+            )
+
         logger.info(f"Got chunk {chunk_number}, length is {num_tokens} tokens.")
 
 
@@ -208,6 +213,9 @@ class ResponseRepetitiveError(Exception):
 
 class MissingSubtitlesError(Exception):
     """Exception raised when subtitles are missing in the response."""
+
+class UntranslatedResponseError(Exception):
+    """Exception raised when the response is identical to the original text (not translated)."""
 
 class RefuseToTranslateError(Exception):
     """Exception raised when the model refuses to translate the text."""
