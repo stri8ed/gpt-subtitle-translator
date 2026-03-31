@@ -106,6 +106,7 @@ class Gemini(BaseModel):
             thinking_config = ThinkingConfig(**kwargs)
 
         for attempt in range(self.max_attempts):
+            retry_sleep_time = 2 * (attempt + 1)
             try:
                 message = self.client.models.generate_content(
                     contents=[prompt],
@@ -149,20 +150,20 @@ class Gemini(BaseModel):
                     raise QuotaExhaustedError(error_str) from e
 
                 if attempt < self.max_attempts - 1:
-                    logger.warning(f"Gemini client error: {e}. Retrying in 2 seconds...")
-                    time.sleep(2)
+                    logger.warning(f"Gemini client error: {e}. Retrying in {retry_sleep_time} seconds...")
+                    time.sleep(retry_sleep_time)
                     continue
                 raise e
             except ServerError as e:
                 if attempt < self.max_attempts - 1:
-                    logger.warning(f"Gemini server error: {e}. Retrying in 2 seconds...")
-                    time.sleep(2)
+                    logger.warning(f"Gemini server error: {e}. Retrying in {retry_sleep_time} seconds...")
+                    time.sleep(retry_sleep_time)
                     continue
                 raise e
             except Exception as e:
                 if attempt < self.max_attempts - 1 and ("Server disconnected" in str(e) or "RemoteProtocolError" in type(e).__name__):
-                    logger.warning(f"Gemini connection error: {e}. Retrying in 2 seconds...")
-                    time.sleep(2)
+                    logger.warning(f"Gemini connection error: {e}. Retrying in {retry_sleep_time} seconds...")
+                    time.sleep(retry_sleep_time)
                     continue
                 raise e
 
