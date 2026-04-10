@@ -161,6 +161,10 @@ class SubtitleTranslator:
         return self.model.generate_completion(prompt, temperature or self.temperature, target_language=self.lang)
 
     @staticmethod
+    def normalize_text(text: str) -> str:
+        return re.sub(r'\W', '', text).strip()
+
+    @staticmethod
     def get_compression_ratio(text: str) -> float:
         text_bytes = text.encode("utf-8")
         return len(text_bytes) / len(zlib.compress(text_bytes))
@@ -197,7 +201,7 @@ class SubtitleTranslator:
                 f"expected {original_count}, got {translated_count}."
             )
 
-        if response.strip() == original_text.strip():
+        if self.normalize_text(response) == self.normalize_text(original_text):
             raise UntranslatedResponseError(
                 f"Chunk {chunk_number} returned the original text verbatim without translating."
             )
