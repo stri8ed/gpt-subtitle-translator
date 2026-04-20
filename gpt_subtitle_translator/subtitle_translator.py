@@ -204,6 +204,7 @@ class SubtitleTranslator:
         if self.normalize_text(response) == self.normalize_text(original_text):
             raise UntranslatedResponseError(
                 f"Chunk {chunk_number} returned the original text verbatim without translating."
+                f"Preview: {response[:1000]}"
             )
 
         logger.info(f"Got chunk {chunk_number}, length is {num_tokens} tokens.")
