@@ -1,5 +1,8 @@
 import os
+import queue
+import threading
 import time
+from types import SimpleNamespace
 from typing import Union
 
 from dotenv import load_dotenv
@@ -73,6 +76,28 @@ def build_json_schema(target_language: str = None):
     }
 
 
+_STREAM_END = object()
+
+
+def _merge_stream_chunks(chunks: list):
+    """Reassemble streamed GenerateContentResponse chunks into an object matching
+    the shape of a non-streaming generate_content response."""
+    first_chunk = chunks[0]
+    if first_chunk.candidates is None:
+        return first_chunk
+
+    text = "".join(chunk.text for chunk in chunks if chunk.text)
+    last_with_candidates = next((c for c in reversed(chunks) if c.candidates), first_chunk)
+    last_with_usage = next((c for c in reversed(chunks) if c.usage_metadata), None)
+
+    return SimpleNamespace(
+        text=text,
+        candidates=last_with_candidates.candidates,
+        usage_metadata=last_with_usage.usage_metadata if last_with_usage else None,
+        prompt_feedback=first_chunk.prompt_feedback,
+    )
+
+
 def get_model_params(model_name: str):
     for key, value in model_params.items():
         if key in model_name:
@@ -92,6 +117,58 @@ class Gemini(BaseModel):
         self.params = _model_params
         self.average_tokens_per_char = None
         self.max_attempts = 3
+        self.stall_timeout = 60
+
+    def _generate_with_stall_detection(self, contents, config):
+        """Stream the response, raising TimeoutError if no chunk arrives within
+        self.stall_timeout seconds. Returns an object shaped like a
+        non-streaming generate_content response."""
+        chunk_queue = queue.Queue()
+
+        def drain_stream():
+            try:
+                for chunk in self.client.models.generate_content_stream(
+                    contents=contents,
+                    model=self.model_name,
+                    config=config,
+                ):
+                    chunk_queue.put(chunk)
+                chunk_queue.put(_STREAM_END)
+            except Exception as e:
+                chunk_queue.put(e)
+
+        threading.Thread(target=drain_stream, daemon=True).start()
+
+        chunks = []
+        while True:
+            try:
+                item = chunk_queue.get(timeout=self.stall_timeout)
+            except queue.Empty:
+                self._record_partial_usage(chunks)
+                raise TimeoutError(f"Stream stalled: no chunk within {self.stall_timeout}s after {len(chunks)} chunks") from None
+            if item is _STREAM_END:
+                break
+            if isinstance(item, Exception):
+                self._record_partial_usage(chunks)
+                raise item
+            chunks.append(item)
+
+        if not chunks:
+            raise ServerError(500, {"message": "Empty response stream"})
+
+        return _merge_stream_chunks(chunks)
+
+    def _record_partial_usage(self, chunks: list):
+        """Best-effort token accounting for a stream aborted before completion.
+        Gemini streams cumulative usage_metadata, so the last chunk carrying it
+        reflects everything generated so far."""
+        usage = next((c.usage_metadata for c in reversed(chunks) if c.usage_metadata), None)
+        if usage is None:
+            return
+        thought_tokens = getattr(usage, 'thoughts_token_count', 0) or 0
+        self.total_input_tokens += usage.prompt_token_count or 0
+        self.total_output_tokens += (usage.candidates_token_count or 0) + thought_tokens
+        self.total_cached_tokens += getattr(usage, 'cached_content_token_count', 0) or 0
 
     def generate_completion(self, prompt: str, temperature: float, target_language: str = None) -> (str, int):
         message = None
@@ -108,9 +185,8 @@ class Gemini(BaseModel):
         for attempt in range(self.max_attempts):
             retry_sleep_time = 2 * (attempt + 1)
             try:
-                message = self.client.models.generate_content(
+                message = self._generate_with_stall_detection(
                     contents=[prompt],
-                    model=self.model_name,
                     config=GenerateContentConfig(
                         temperature=temperature,
                         response_json_schema=build_json_schema(target_language),
@@ -157,6 +233,12 @@ class Gemini(BaseModel):
             except ServerError as e:
                 if attempt < self.max_attempts - 1:
                     logger.warning(f"Gemini server error: {e}. Retrying in {retry_sleep_time} seconds...")
+                    time.sleep(retry_sleep_time)
+                    continue
+                raise e
+            except TimeoutError as e:
+                if attempt < self.max_attempts - 1:
+                    logger.warning(f"Gemini stall detected: {e}. Retrying in {retry_sleep_time} seconds...")
                     time.sleep(retry_sleep_time)
                     continue
                 raise e
