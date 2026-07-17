@@ -141,12 +141,12 @@ class Gemini(BaseModel):
 
         chunks = []
         while True:
+            timeout = self.stall_timeout if not chunks else self.stall_timeout * 2
             try:
-                timeout = self.stall_timeout if not chunks else self.stall_timeout * 2
                 item = chunk_queue.get(timeout=timeout)
             except queue.Empty:
                 self._record_partial_usage(chunks)
-                raise TimeoutError(f"Stream stalled: no chunk within {self.stall_timeout}s after {len(chunks)} chunks") from None
+                raise TimeoutError(f"Stream stalled: no chunk within {timeout}s after {len(chunks)} chunks") from None
             if item is _STREAM_END:
                 break
             if isinstance(item, Exception):
