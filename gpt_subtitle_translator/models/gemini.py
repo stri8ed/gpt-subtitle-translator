@@ -25,22 +25,9 @@ model_params = {
         "max_output_tokens": 8192,
         "thinking_enabled": False,
     },
-    "gemini-2.5-flash": {
-        "price_input": 0.0003,
-        "price_output": 0.0025,
-        "price_cached": 0.000075,
-        "max_output_tokens": 65_536,
-        "thinking_enabled": True,
-    },
     "gemini-3-flash": {
         "price_input": 0.0005,
         "price_output": 0.003,
-        "max_output_tokens": 65_536,
-        "thinking_enabled": True,
-    },
-    "gemini-2.5-flash-lite-preview": {
-        "price_input": 0.0001,
-        "price_output": 0.0004,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
     },
@@ -49,7 +36,36 @@ model_params = {
         "price_output": 0.0015,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
-    }
+    },
+    "gemini-3.5-flash-lite": {
+        "price_input": 0.0003,
+        "price_output": 0.0025,
+        "price_cached": 0.00003,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
+    },
+    "gemini-3.5-flash": {
+        "price_input": 0.0015,
+        "price_output": 0.009,
+        "price_cached": 0.00015,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
+    },
+    # 3.6/3.7 flash prices double on 2027-01-01 (input 0.0015, output 0.0075, cached 0.00015)
+    "gemini-3.6-flash": {
+        "price_input": 0.00075,
+        "price_output": 0.00375,
+        "price_cached": 0.000075,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
+    },
+    "gemini-3.7-flash": {
+        "price_input": 0.00075,
+        "price_output": 0.00375,
+        "price_cached": 0.000075,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
+    },
 }
 
 def build_json_schema(target_language: str = None):
