@@ -28,12 +28,14 @@ model_params = {
     "gemini-3-flash": {
         "price_input": 0.0005,
         "price_output": 0.003,
+        "price_cached": 0.00005,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
     },
     "gemini-3.1-flash-lite": {
         "price_input": 0.00025,
         "price_output": 0.0015,
+        "price_cached": 0.000025,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
     },
@@ -51,7 +53,7 @@ model_params = {
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
     },
-    # 3.6/3.7 flash prices double on 2027-01-01 (input 0.0015, output 0.0075, cached 0.00015)
+    # 3.6/3.7/3.8 flash prices double on 2027-01-01 (input 0.0015, output 0.0075, cached 0.00015)
     "gemini-3.6-flash": {
         "price_input": 0.00075,
         "price_output": 0.00375,
@@ -59,12 +61,22 @@ model_params = {
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
     },
+    # 3.7+ flash rejects ThinkingLevel.MINIMAL; LOW is the lowest supported
     "gemini-3.7-flash": {
         "price_input": 0.00075,
         "price_output": 0.00375,
         "price_cached": 0.000075,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
+        "thinking_level": ThinkingLevel.LOW,
+    },
+    "gemini-3.8-flash": {
+        "price_input": 0.00075,
+        "price_output": 0.00375,
+        "price_cached": 0.000075,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
+        "thinking_level": ThinkingLevel.LOW,
     },
 }
 
@@ -196,7 +208,7 @@ class Gemini(BaseModel):
             if "3" not in self.model_name:
                 kwargs['thinking_budget'] = 0
             else:
-                kwargs['thinking_level'] = ThinkingLevel.MINIMAL
+                kwargs['thinking_level'] = self.params.get('thinking_level', ThinkingLevel.MINIMAL)
             thinking_config = ThinkingConfig(**kwargs)
 
         for attempt in range(self.max_attempts):
