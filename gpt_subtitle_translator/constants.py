@@ -3,3 +3,7 @@ TOKENS_PER_CHUNK = 4000  # Safe value, might be able to increase depending on th
 MAX_RETRIES = 3  # Despite instructions, model sometimes skips/merges subtitles. Retrying helps.
 DEFAULT_TEMPERATURE = 0.1
 COMPRESSION_RATIO_THRESHOLD = 5.0
+
+UNTRANSLATED_MIN_WORDS = 3
+UNTRANSLATED_MIN_CUES = 10
+UNTRANSLATED_SHARE_THRESHOLD = 0.9

@@ -1,0 +1,207 @@
+<1044>Afiyet olsun Kenan Bey.</1044>
+<1045>Teşekkür ederiz.</1045>
+<1046>Kenan Bey, Hanzade Hanım hoş geldiniz.</1046>
+<1047>Ne içersiniz?</1047>
+<1048>Ne alalım?</1048>
+<1049>Sen karar ver</1049>
+<1050>Hasan Bey ne yiyeceğiz, ne yapacaksınız bugün?</1050>
+<1051>Bence yemeklere de Hasan Bey karar versin.</1051>
+<1052>Bakalım bize bugün ne sürprizler hazırlayacak.</1052>
+<1053>Nasıl arzu edersiniz efendim</1053>
+<1054>Sağ olun.</1054>
+<1055>Karşılığında ne istiyorsun?</1055>
+<1056>Hayatımızdan çıkacaksın.</1056>
+<1057>Çocuklar seni yarın havaalanına götürecekler.</1057>
+<1058>Uçağa bindirecekler.</1058>
+<1059>Berlin'e kadar da sana eşlik edecekler.</1059>
+<1060>Bir daha değil Adana.</1060>
+<1061>Türkiye'nin hiçbir</1061>
+<1062>yerine ayak basmayacaksın.</1062>
+<1063>Tatil için Antalya'ya bile gelmeyeceksin.</1063>
+<1064>O şartla.</1064>
+<1065>Anlaşıldı mı?</1065>
+<1066>Ya hayır dersem?</1066>
+<1067>Bence o kadar aptal değilsin.</1067>
+<1068>Akıllı bir kadınsın sen.</1068>
+<1069>Parayı da seviyorsun.</1069>
+<1070>Ben senin o pis paranı istemiyorum tamam mı?</1070>
+<1071>Aşağılık ahlaksız.</1071>
+<1072>Aşağılık sensin.</1072>
+<1073>Ahlaksız sensin.</1073>
+<1074>Bırak.</1074>
+<1075>Şeytansın sen.</1075>
+<1076>Zalimsin.</1076>
+<1077>Bağlayın şunu</1077>
+<1078>Sabaha kadar kıpırdamayacak.</1078>
+<1079>Su bile vermeyeceksin.</1079>
+<1080>Sen yaptın. Sen yaptın gördüm.</1080>
+<1081>Sen yaptın.</1081>
+<1082>İftira attın bana.</1082>
+<1083>Aşağılık.</1083>
+<1084>senin peşini bırakmayacağım kızım.</1084>
+<1085>Senin peşini bırakmayacağım.</1085>
+<1086>Ensende olacağım, senin Berlin'de de.</1086>
+<1087>Sefil edeceğim seni, süründüreceğim.</1087>
+<1088>Bir lokma ekmeğe muhtaç olacaksın, anladın mı?</1088>
+<1089>Alacağım oğlumu, göreceksin.</1089>
+<1090>Oğlum sizin nasıl insanlar olduğunuzu görecek.</1090>
+<1091>Korkmuyorum senden, anladın mı?</1091>
+<1092>Korkmuyorum!</1092>
+<1093>Yeter be, kapa çeneni!</1093>
+<1094>Bırak! Bırak!</1094>
+<1095>Bırak!</1095>
+<1096>Sinirden elim ayağım titriyor.</1096>
+<1097>Bir milyon markı beğenmedi ya.</1097>
+<1098>Ben de çok diyordum.</1098>
+<1099>Derdi para değil Zeki.</1099>
+<1100>Emir'i istiyor.</1100>
+<1101>Verecek misiniz?</1101>
+<1102>Bu soruyu sormadın kabul ediyorum.</1102>
+<1103>Yok yani böyle çok çok mecbur kalırsanız.</1103>
+<1104>Çok çok mecbur kalsam da vermem.</1104>
+<1105>Ölsem vermem.</1105>
+<1106>Hanzadeciğim.</1106>
+<1107>Hayatım.</1107>
+<1108>Tebrikler.</1108>
+<1109>Sağ ol canım.</1109>
+<1110>Kenan Bey, sizinle tanışmadık.</1110>
+<1111>Ben Hazrade'nin liseden arkadaşıyım, Şeyma.</1111>
+<1112>Merhaba</1112>
+<1113>Memnun oldum.</1113>
+<1114>Çok tatsız şeyler olmuş galiba düğünde.</1114>
+<1115>Yarım kalmış düğününüz.</1115>
+<1116>Öyle oldu, evet. Ama detayları merak ediyorsan söyleyeyim.</1116>
+<1117>Kenan'ın ve ailesinin öldü kabul ettikleri eski karısı çıktı geldi.</1117>
+<1118>Fakat gördüğünüz üzere,</1118>
+<1119>mutluluğumuza engel olacak bir durum yok.</1119>
+<1120>Almanların da arasında tek derdi para olan kadınlar varmış demek.</1120>
+<1121>Anladım canım.</1121>
+<1122>İyi akşamlar.</1122>
+<1123>İyi akşamlar tatlım. İyi akşamlar.</1123>
+<1124>Düğüne çağırmadım ya, aklı sıra laf sokacak.</1124>
+<1125>Boş ver.</1125>
+<1126>Bugün olanlar çok canımı sıktı.</1126>
+<1127>Ama seninle evlenerek,</1127>
+<1128>bir kez daha ne kadar doğru karar verdim anladım.</1128>
+<1129>Aklından ne geçiyor bilmiyorum ama sakın bir aptallık etme.</1129>
+<1130>Güzel güzel gidelim.</1130>
+<1131>Siz tuzak durun o zaman da biliyorum.</1131>
+<1132>Canımı acıtıyorsun.</1132>
+<1133>Geç şuraya, pasaportunu da çıkar.</1133>
+<1134>Leyla...</1134>
+<1135>Şu çıkışı tut, sen de bu çıkışı tut.</1135>
+<1136>Nereye gitti bu ya?</1136>
+<1137>Gel gel gel gel gel, kapat kapıyı.</1137>
+<1138>Ceyhun Bey!</1138>
+<1139>Ulan,</1139>
+<1140>Kadını bize vereceğine resmen gitti, aldı götürdü ya.</1140>
+<1141>Nereye götürüyorsun beni?</1141>
+<1142>Sakin ol.</1142>
+<1143>Ben olayı anlamak istiyorum</1143>
+<1144>ve sana yardımcı olmaya çalışıyorum.</1144>
+<1145>Niye?</1145>
+<1146>Niye yardım ediyorsun bana?</1146>
+<1147>Niye yırttın pasaportunu?</1147>
+<1148>Dönmemek için mi?</1148>
+<1149>Sen kimsin?</1149>
+<1150>Bana yardım mı ediyorsun yoksa beni o şeytana mı teslim edeceksin?</1150>
+<1151>Şeytan kim?</1151>
+<1152>Celadet Hanım mı?</1152>
+<1153>Kimsin diyorum.</1153>
+<1154>Ne istiyorsun benden?</1154>
+<1155>Ceyhun benim adım.</1155>
+<1156>Hanzade'nin abisiyim.</1156>
+<1157>Hanzade kim?</1157>
+<1158>Kenan'ın evlendiği kız.</1158>
+<1159>İndir beni.</1159>
+<1160>İndir.</1160>
+<1161>Sakin ol.</1161>
+<1162>Sakin ol seni Celadet Hanımlara götürmüyorum.</1162>
+<1163>Dediğim gibi ne olduğunu öğrenmeye çalışıyorum.</1163>
+<1164>Bize Emir'in annesi doğumda öldü dediler.</1164>
+<1165>Ne?</1165>
+<1166>Benim için öldü mü dediler?</1166>
+<1167>Sadece öldü deseler iyi.</1167>
+<1168>Cenaze namazı bile kaldılar.</1168>
+<1169>Oğlum.</1169>
+<1170>Oğluma da mı öyle söylediler?</1170>
+<1171>Emir beni öyle mi biliyor?</1171>
+<1172>Merhaba.</1172>
+<1173>Hoş geldiniz.</1173>
+<1174>Hoş bulduk.</1174>
+<1175>Tamer abi yok galiba.</1175>
+<1176>Yok. Bir sünnet düğünü var da.</1176>
+<1177>Video çekecek.</1177>
+<1178>Dükkana siz bakıyorsunuz yani.</1178>
+<1179>Aynen.</1179>
+<1180>Hep ben zaten.</1180>
+<1181>Ben düğün fotoğrafları için uğramıştım da.</1181>
+<1182>Hay hay.</1182>
+<1183>Tamer abi sabahtan halletmişti onları.</1183>
+<1184>Bir saniye.</1184>
+<1185>Ödemesi alındı bunun.</1185>
+<1186>Harika.</1186>
+<1187>Siz de çekiyordunuz fotoğraf yani.</1187>
+<1188>Ben düğünde görmüştüm de.</1188>
+<1189>Evet.</1189>
+<1190>Amatör olarak yani.</1190>
+<1191>Bana siz demeseniz olur mu?</1191>
+<1192>Şimdi ben de siz demiş oldum ama.</1192>
+<1193>Munise iyi mi?</1193>
+<1194>Munis de kabulüm.</1194>
+<1195>Peki</1195>
+<1196>Munis olsun.</1196>
+<1197>Anlaştık.</1197>
+<1198>Ben gideyim.</1198>
+<1199>Munis.</1199>
+<1200>Akşam saat 8 gibi işim bitiyor benim dükkanda</1200>
+<1201>Dokuzda da Mavi Göl'de olacağım.</1201>
+<1202>Eğer gelirsen görüşürüz orada.</1202>
+<1203>Bekleyeceğim.</1203>
+<1204>Babaanne bak.</1204>
+<1205>Babaannesinin canı.</1205>
+<1206>Aferin sana çok güzel olmuş.</1206>
+<1207>Ah</1207>
+<1208>Şuncacık çocuk kaldı böyle.</1208>
+<1209>Annesi var mı yok mu belli değil.</1209>
+<1210>Ne bahtsızmış yavrucak.</1210>
+<1211>Ne diyorsun sen Gül?</1211>
+<1212>Koskoca Kozan ailesinin tek varisinin ne bahtsızlığıymış.</1212>
+<1213>Bahtı da tahtı da bana emanet bizzat.</1213>
+<1214>Doğru diyorsun anne</1214>
+<1215>Benim bahtsızlığımmış diyelim ne diyelim.</1215>
+<1216>Ay ay...</1216>
+<1217>Medet</1217>
+<1218>dede.</1218>
+<1219>Heyt!</1219>
+<1220>Dokunma delerim kellene ha!</1220>
+<1221>Bırak diyorum sana</1221>
+<1222>Sen Emir’i de al içeri geç</1222>
+<1223>Acıkmıştır.</1223>
+<1224>Ahsen doyursun.</1224>
+<1225>Tamam.</1225>
+<1226>Emir.</1226>
+<1227>Gel aslanım. Gel yavrum.</1227>
+<1228>Gel kuzum.</1228>
+<1229>Hayırdır Zeki?</1229>
+<1230>Niye gitmedin sen?</1230>
+<1231>Hanım ağam.</1231>
+<1232>Kıvranıp durma.</1232>
+<1233>Söyle. Niye gitmedin?</1233>
+<1234>Kız gitmedi mi yoksa?</1234>
+<1235>Hanım ağam.</1235>
+<1236>Kızı Ceyhun Bey aldı.</1236>
+<1237>Ne demek kızı Ceyhun Bey aldı?</1237>
+<1238>Hadi Nazlı.</1238>
+<1239>Bitmedi mi daha?</1239>
+<1240>Bitti. Bitti İhsan ağam.</1240>
+<1241>Buyur İhsan Bey.</1241>
+<1242>turşu koydun değil mi?</1242>
+<1243>Koydum koydum.</1243>
+<1244>Eline sağlık.</1244>
+<1245>Öyle olmadı İhsan Bey'im kuru kuru ya.</1245>
+<1246>Yemek pişmek üzere.</1246>
+<1247>Ahsen, bu altlık</1247>
+<1248>Yemek sonra.</1248>
+<1249>Mahalle yanıyor.</1249>
+<1250>Bey'imiz homini gırtlak. Amca tıkın sen.</1250>

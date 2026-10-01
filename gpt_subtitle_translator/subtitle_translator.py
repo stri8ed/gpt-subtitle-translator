@@ -7,7 +7,12 @@ from concurrent.futures import ThreadPoolExecutor
 import concurrent
 from typing import Callable, Optional, Literal
 
-from gpt_subtitle_translator.constants import COMPRESSION_RATIO_THRESHOLD
+from gpt_subtitle_translator.constants import (
+    COMPRESSION_RATIO_THRESHOLD,
+    UNTRANSLATED_MIN_WORDS,
+    UNTRANSLATED_MIN_CUES,
+    UNTRANSLATED_SHARE_THRESHOLD,
+)
 from gpt_subtitle_translator.models.base_model import BaseModel
 from gpt_subtitle_translator.logger import logger
 from gpt_subtitle_translator.subtitle_processor import SubtitleProcessor, Chunk
@@ -169,6 +174,33 @@ class SubtitleTranslator:
         text_bytes = text.encode("utf-8")
         return len(text_bytes) / len(zlib.compress(text_bytes))
 
+    def find_untranslated_subtitles(self, response: str, original_text: str) -> tuple[int, list[str]]:
+        original = {id_: text for id_, text in self.processor.TAG_PATTERN.findall(original_text.strip())}
+        translated = {id_: text for id_, text in self.processor.TAG_PATTERN.findall(response.strip())}
+
+        eligible = 0
+        untranslated = []
+        for id_, source in original.items():
+            if id_ not in translated or len(re.findall(r'\w+', source)) < UNTRANSLATED_MIN_WORDS:
+                continue
+            eligible += 1
+            if self.normalize_text(source).lower() == self.normalize_text(translated[id_]).lower():
+                untranslated.append(source)
+
+        return eligible, untranslated
+
+    def check_untranslated_subtitles(self, response: str, original_text: str, chunk_number: int):
+        eligible, untranslated = self.find_untranslated_subtitles(response, original_text)
+        if eligible < UNTRANSLATED_MIN_CUES:
+            return
+        share = len(untranslated) / eligible
+        if share >= UNTRANSLATED_SHARE_THRESHOLD:
+            examples = " | ".join(t.strip() for t in untranslated[:5])
+            raise UntranslatedResponseError(
+                f"Chunk {chunk_number} returned {len(untranslated)}/{eligible} subtitles ({share:.0%}) "
+                f"verbatim without translating. Examples: {examples[:1000]}"
+            )
+
     def validate_response(self, response: str, original_text: str, chunk_number: int, raw_response: str, num_tokens: int):
         if num_tokens >= self.model.max_output_tokens():
             if self.get_compression_ratio(raw_response) >= COMPRESSION_RATIO_THRESHOLD:
@@ -206,6 +238,8 @@ class SubtitleTranslator:
                 f"Chunk {chunk_number} returned the original text verbatim without translating."
                 f"Preview: {response[:1000]}"
             )
+
+        self.check_untranslated_subtitles(response, original_text, chunk_number)
 
         logger.info(f"Got chunk {chunk_number}, length is {num_tokens} tokens.")
 

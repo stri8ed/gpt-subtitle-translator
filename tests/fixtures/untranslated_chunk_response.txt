@@ -1,0 +1,206 @@
+<838>Aklına takılan başka bir şey var mı?</838>
+<839>Var.</839>
+<840>Biz o cenaze töreninde kimi gömdük?</840>
+<841>Bir kimsesizi.</841>
+<842>Niye haber vermediniz?</842>
+<843>Ne demek öldü?</843>
+<844>Sizin ihmaliniz yüzünden</844>
+<845>ne duruma düştüğümüzü biliyor musunuz?</845>
+<846>Hayır efendim,</846>
+<847>Sizin kabahatiniz.</847>
+<848>Haber vermiş olsaydınız</848>
+<849>daha İstanbul'a indiğinde alırdık tedbirimizi.</849>
+<850>Bana masal anlatma, sizin suçunuz.</850>
+<851>Ne olmuş anne?</851>
+<852>Kim ölmüş?</852>
+<853>Avukat mı?</853>
+<854>Evet. Hem de üç ay önce.</854>
+<855>Ha bürosunu aramasam kimsenin haber vereceği yok.</855>
+<856>Layla'yı hapisten çıkarmasın diye biz bu adama çuvalla para döktük.</856>
+<857>Ne oldu?</857>
+<858>Boşa çıktı.</858>
+<859>Parayı falan boş ver anne.</859>
+<860>Para mühim değil.</860>
+<861>Leyla nasıl çıkmış?</861>
+<862>Dişli bir avukat tutmuş.</862>
+<863>Davanın yeniden görülmesi falan filan.</863>
+<864>Sonuçta çıkmış işte.</864>
+<865>Zeki nereye götürdü?</865>
+<866>Üçpınar’a</866>
+<867>Al açlıktan ölme.</867>
+<868>Benim bu işi halletmem lazım.</868>
+<869>Leyla'nın bir an evvel</869>
+<870>Berlin’e dönmesi gerek.</870>
+<871>Ben hallederim.</871>
+<872>Bana bırak.</872>
+<873>Sen neden halledeceksin anne?</873>
+<874>Oğlum sen daha yeni evlendin.</874>
+<875>Bununla mı uğraşacaksın?</875>
+<876>Ben hallederim.</876>
+<877>Paraya bakar bu işler.</877>
+<878>Sen karınla ilgilen. Neye uğradığını şaşırdı kız.</878>
+<879>Hanzade'nin gönlünü aldın değil mi?</879>
+<880>Her şeyi anlatmadın ona.</880>
+<881>O iğrenç yeri falan.</881>
+<882>Adana’lıların yüzüne nasıl bakacağız ben onu düşünüyorum anne</882>
+<883>Niye bakamayacakmışız?</883>
+<884>Bir kadını ne mal olduğunu</884>
+<885>bilmeden iyi niyetle sevmişsin, evlenmişsin.</885>
+<886>Ahlaksızın teki çıkmış.</886>
+<887>Olabilir.</887>
+<888>Suç mu?</888>
+<889>Sahte cenaze töreni düzenledik anne.</889>
+<890>Bunu nasıl anlatacağız insanlara?</890>
+<891>Nasıl açıklayacağız?</891>
+<892>Biz kimseye bir şey açıklamak mecburiyetinde değiliz Kenan.</892>
+<893>Senin tek yapman gereken</893>
+<894>Adana'ya alnının ak olduğunu göstermek.</894>
+<895>Onun için tak karını koluna,</895>
+<896>göğsünü gere gere yemeğinize gidin.</896>
+<897>Millet konuşacakmış.</897>
+<898>Konuşsunlar.</898>
+<899>Bizim alnımız ak.</899>
+<900>düşünüyorum da</900>
+<901>mesela</901>
+<902>Devran Ceyhun için</902>
+<903>böyle bir şey yapmış olsaydı,</903>
+<904>ben şahsen çok takdir ederdim.</904>
+<905>Helal olsun.</905>
+<906>Oğlunun itibarını korumak için neler yapmış derdim.</906>
+<907>Şunları da yiyemedik ya.</907>
+<908>Yanarım yanarım ona yanarım.</908>
+<909>Yanacak başka bir şey bul.</909>
+<910>Şuna bak ocağımıza ateş düşmüş ne diyor.</910>
+<911>Çok doğru dedin anne.</911>
+<912>Ocağımıza düşen ateşten bana</912>
+<913>da bir ara bahsedeceksin değil mi anne?</913>
+<914>Medet!</914>
+<915>Emret hanımım.</915>
+<916>Şu yemekleri kamyonete yükleyin,</916>
+<917>Teneke mahallesindekilere dağıtın.</917>
+<918>Sebeplensin garibanlar.</918>
+<919>Başım gözümün üstüne hanım ağam.</919>
+<920>İhsan, annen bir şey demedi değil mi?</920>
+<921>Tabii bize açıklama yapmasına gerek yok.</921>
+<922>Biz dış kapının mandalıyız çünkü.</922>
+<923>Gül bak çok sinirliyim, başlama yine.</923>
+<924>Sakın!</924>
+<925>Çok şaşırdınız değil mi?</925>
+<926>Yani.</926>
+<927>Emir'in annesini öldü biliyordunuz.</927>
+<928>Evet öldü biliyorduk anne.</928>
+<929>Kenan'ın böyle bir kadınla</929>
+<930>evlendiğini kimse bilsin istemedik.</930>
+<931>Daha önemlisi Emir'in annesinin</931>
+<932>hayatta olduğunu bilmesini istemedik.</932>
+<933>Onun için de kimseye bir şey söylemedi.</933>
+<934>Anne biz dış kapının mandalı mıydık ya?</934>
+<935>Bizden niye gizlediniz ki?</935>
+<936>Şoke olduk resmen.</936>
+<937>Ne kadar az insan bilirse</937>
+<938>o kadar iyi olur diye düşünük Gül.</938>
+<939>Bir Kenan biliyordu.</939>
+<940>Bir de ben.</940>
+<941>Bir de Zeki.</941>
+<942>Munise bile bilmiyordu.</942>
+<943>Ölmemiş bir kadın helvasını yedirdiler bize Adil abi.</943>
+<944>Mümkün değil bunlarla ortaklık yapamam.</944>
+<945>Kenan'a bir daha güvenemem.</945>
+<946>Ne gerekiyorsa yap.</946>
+<947>Bitirelim bu ortaklığı.</947>
+<948>Oğlum ne diyorsun sen?</948>
+<949>Ne demek bitirelim ortaklığı?</949>
+<950>Ya hemen köprüleri yakma Ceyhun ya.</950>
+<951>Bir müsaade et şöyle bir kafamızı toplayalım.</951>
+<952>Güvenmiyorum abi. Kenan Kozan'a güvenmiyorum artık.</952>
+<953>Tamam, anladım.</953>
+<954>Doğru.</954>
+<955>Ama meseleye bir de onun gözünden bak.</955>
+<956>Baktım.</956>
+<957>Onun gözünden de baktım.</957>
+<958>Kendi gözümden de baktım, sonuç aynı.</958>
+<959>Bize söyleselerdi ne yapacaktık?</959>
+<960>Adana'da teller mi gezdirecektik?</960>
+<961>Ey ahali Kenan Kozan'ın evlendiği kadın keşmiş diye.</961>
+<962>Bak hele ya.</962>
+<963>Benim Kozanların hiçbirine zerre güvenim kalmadı artık.</963>
+<964>Bitti bu iş.</964>
+<965>Anne, kaş göz etme boşuna.</965>
+<966>Acaba sen kardeşini hiç düşünüyor musun?</966>
+<967>Ne olacak?</967>
+<968>Kardeşin ne olacak acaba?</968>
+<969>Vallahi kardeşin bizi değil.</969>
+<970>İki saatlik kocasını seçti.</970>
+<971>Ayağı suya erince gelir.</971>
+<972>Baba evinin kapısı her zaman açık.</972>
+<973>Adil bir şey söyle.</973>
+<974>Allah'ını seviyorsan bir şey söyle.</974>
+<975>Ya anne.</975>
+<976>Gözünü seveyim görmedin mi?</976>
+<977>Kadının kucağından bağırta bağırta kopardılar çocuğu.</977>
+<978>Benim bir erkek olarak içim parçalandı.</978>
+<979>Sen anne olarak etkilenmedin mi ya?</979>
+<980>Öyle anne olmaz olsun.</980>
+<981>Ya anlattılar kadının ne olduğunu sen duymadın mı?</981>
+<982>Allah Allah.</982>
+<983>Bizden saklanmayacaklardı.</983>
+<984>Geçmiş olsun.</984>
+<985>Çıkmışsın hapisten.</985>
+<986>Haksız yere yattım ben.</986>
+<987>Bir suçum yoktu.</987>
+<988>Hep de öyle derler.</988>
+<989>Ne istiyorsun?</989>
+<990>Niye geldin buraya?</990>
+<991>Oğlumu istiyorum.</991>
+<992>Annesiyim ben onun.</992>
+<993>Doğurmakla anne olunsaydı keşke.</993>
+<994>Gördün kızım. Emir iyi.</994>
+<995>Babasının kucağında aslanlar gibi büyüyor.</995>
+<996>Sevgi, ihtimam, hiçbir eksiği yok.</996>
+<997>Annesi yok.</997>
+<998>Annesine ihtiyacı yok.</998>
+<999>Babası var.</999>
+<1000>Babaannesi var.</1000>
+<1001>Emir için ölecek bir sürü insan var.</1001>
+<1002>Sevgi dolu bir ortamda büyüyor.</1002>
+<1003>Senin elinde heba olmayacak benim torunum.</1003>
+<1004>oğlum o benim</1004>
+<1005>sen de bir annesin anla beni yalvarırım</1005>
+<1006>Emir’i senin eline bırakmayacağım</1006>
+<1007>Bunu o kafana sok</1007>
+<1008>Emir’in annesine ihtiyacı var</1008>
+<1009>yok ihtiyacı yok</1009>
+<1010>Ama senin buna ihtiyacın var.</1010>
+<1011>hapisten yeni çıktın</1011>
+<1012>Sabıkalısın.</1012>
+<1013>Değil bir çocuğa bakmak.</1013>
+<1014>Kendine bakacak halde değilsin.</1014>
+<1015>Onun için aklını kullan.</1015>
+<1016>Burada bir milyon mark var.</1016>
+<1017>Bununla Berlin'de kendine ev alırsın.</1017>
+<1018>Araba da alırsın.</1018>
+<1019>Kendi memleketinde</1019>
+<1020>bir elin yağda bir elin balda yaşarsın.</1020>
+<1021>Kenan'cığım. Hayırlı olsun.</1021>
+<1022>Sağ olun.</1022>
+<1023>Allah bir yastıkla kocatsın.</1023>
+<1024>Sağ olun. İyi akşamlar.</1024>
+<1025>Kenan Bey, Hanzade Hanım, hoş geldiniz.</1025>
+<1026>Hoş bulduk.</1026>
+<1027>Kutlarım efendim.</1027>
+<1028>Allah mutlu, mesut etsin.</1028>
+<1029>Saadetiniz daim olsun.</1029>
+<1030>Sağ olun.</1030>
+<1031>Balayı suitiniz hazır.</1031>
+<1032>Dilerseniz geçebilirsiniz.</1032>
+<1033>Hayır, hayır.</1033>
+<1034>Sen bize terasta bir masa hazırla.</1034>
+<1035>Biz bir yemek yiyeceğiz.</1035>
+<1036>Hay hay, nasıl arzu ederseniz.</1036>
+<1037>Her zamanki masanız mı olsun?</1037>
+<1038>Her zamanki masa olsun.</1038>
+<1039>Buyurun, yardımcı olayım.</1039>
+<1040>Bizi konuşuyorlar.</1040>
+<1041>Bırak konuşsunlar.</1041>
+<1042>Buyurun efendim.</1042>
+<1043>Sağ olun Akın Bey.</1043>

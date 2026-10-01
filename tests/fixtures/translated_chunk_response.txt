@@ -1,0 +1,207 @@
+<1044>Jó étvágyat, Kenan úr!</1044>
+<1045>Köszönjük szépen.</1045>
+<1046>Kenan úr, Hanzade asszony, Isten hozta önöket!</1046>
+<1047>Mit tetszenek inni?</1047>
+<1048>Mit rendeljünk?</1048>
+<1049>Döntsd el te.</1049>
+<1050>Hasan úr, mit fogunk enni, mit készítenek ma?</1050>
+<1051>Szerintem az ételekről is Hasan úr döntse el.</1051>
+<1052>Lássuk, milyen meglepetésekkel készül nekünk ma.</1052>
+<1053>Hogyan tetszik parancsolni, uram?</1053>
+<1054>Köszönöm.</1054>
+<1055>Mit akarsz cserébe?</1055>
+<1056>Eltűnsz az életünkből.</1056>
+<1057>A gyerekek holnap elvisznek a repülőtérre.</1057>
+<1058>Feltesznek a gépre.</1058>
+<1059>Berlinig fognak kísérni.</1059>
+<1060>Soha többé Adana.</1060>
+<1061>Törökország egyik</1061>
+<1062>szegletébe sem teszed be a lábad.</1062>
+<1063>Még Antalyába sem jössz el nyaralni.</1063>
+<1064>Ez a feltétel.</1064>
+<1065>Világos?</1065>
+<1066>És ha nemet mondok?</1066>
+<1067>Szerintem nem vagy ennyire buta.</1067>
+<1068>Okos nő vagy te.</1068>
+<1069>A pénzt meg szereted.</1069>
+<1070>Nem kell nekem a te piszkos pénzed, világos?</1070>
+<1071>Hitvány, erkölcstelen.</1071>
+<1072>Hitvány vagy te.</1072>
+<1073>Erkölcstelen vagy te.</1073>
+<1074>Hagyj el.</1074>
+<1075>Ördög vagy te.</1075>
+<1076>Gonosz vagy.</1076>
+<1077>Kötözzétek meg ezt</1077>
+<1078>Reggelig nem fog megmozdulni.</1078>
+<1079>Még vizet sem adtok neki.</1079>
+<1080>Te csináltad. Te csináltad, láttam.</1080>
+<1081>Te csináltad.</1081>
+<1082>Alaptalanul rágalmazol.</1082>
+<1083>Hitvány.</1083>
+<1084>Nem foglak békén hagyni, lányom.</1084>
+<1085>Nem foglak békén hagyni.</1085>
+<1086>A nyomodban leszek, Berlinben is.</1086>
+<1087>Tönkreteszlek, porba tiporlak.</1087>
+<1088>Egy falat kenyérre fogsz koldulni, értetted?</1088>
+<1089>Elhozom a fiamat, meglátod.</1089>
+<1090>A fiam látni fogja, milyen emberek vagytok.</1090>
+<1091>Nem félek tőled, érted?</1091>
+<1092>Nem félek!</1092>
+<1093>Elég már, fogd be a szádat!</1093>
+<1094>Engedj el! Engedj el!</1094>
+<1095>Engedj el!</1095>
+<1096>Idegességemben a kezem-lábam remeg.</1096>
+<1097>Még az egymillió márkát sem méltóztatott elfogadni.</1097>
+<1098>Én meg azt hittem, sok.</1098>
+<1099>Nem a pénz a baja, Zeki.</1099>
+<1100>Emírt akarja.</1100>
+<1101>Odaadjátok neki?</1101>
+<1102>Úgy teszek, mintha meg sem kérdezted volna ezt.</1102>
+<1103>Csak úgy... ha nagyon-nagyon rákényszerülnétek.</1103>
+<1104>Akkor sem adnám oda, ha nagyon-nagyon rákényszerülnék.</1104>
+<1105>Ha belehalok sem.</1105>
+<1106>Hanzadecském.</1106>
+<1107>Életem.</1107>
+<1108>Gratulálok.</1108>
+<1109>Köszönöm, drágám.</1109>
+<1110>Kenan úr, még nem ismerjük egymást.</1110>
+<1111>Hanzade középiskolás barátnője vagyok, Şeyma.</1111>
+<1112>Helló.</1112>
+<1113>Örülök.</1113>
+<1114>Úgy tűnik, nagyon kellemetlen dolgok történtek az esküvőn.</1114>
+<1115>Félbeszakadt az esküvőtök.</1115>
+<1116>Úgy alakult, igen. De ha kíváncsi vagy a részletekre, elmesélem.</1116>
+<1117>Előkerült Kenan és a családja által halottnak hitt volt felesége.</1117>
+<1118>Ám mint láthatjátok,</1118>
+<1119>nincs olyan helyzet, ami gátját szabhatná a boldogsgunknak.</1119>
+<1120>Úgy látszik, a németek között is élnek olyan nők, akiknek csak a pénz számít.</1120>
+<1121>Értem, drágám.</1121>
+<1122>Jó estét.</1122>
+<1123>Jó estét, kedvesem. Jó estét.</1123>
+<1124>Nem hívtam meg az esküvőre, azt hiszi, beszólhat.</1124>
+<1125>Hagyd csak.</1125>
+<1126>Nagyon felkavart, ami ma történt.</1126>
+<1127>De azzal, hogy feleségül vettelek,</1127>
+<1128>még egyszer megértettem, milyen helyes döntést hoztam.</1128>
+<1129>Nem tudom, mi jár a fejedben, de meg ne próbálj valami butaságot csinálni.</1129>
+<1130>Menjünk csak szépen.</1130>
+<1131>Akkor ti is álljatok meg, tudom én.</1131>
+<1132>Fájtod a kezem.</1132>
+<1133>Gyerünk ide, vedd elő az útleveled is.</1133>
+<1134>Leyla...</1134>
+<1135>Fogd ezt a kijáratot, te meg fogd azt a kijáratot.</1135>
+<1136>Hová tűnt ez a nő?</1136>
+<1137>Gyertek, gyertek, gyertek, csukjátok be az ajtót.</1137>
+<1138>Ceyhun úr!</1138>
+<1139>A fene egy meg</1139>
+<1140>Ahelyett, hogy átadta volna nekünk a nőt, egyszerűen elvitte.</1140>
+<1141>Hová viszel engem?</1141>
+<1142>Nyugodj meg.</1142>
+<1143>Meg akarom érteni a történteket</1143>
+<1144>és próbálok segíteni neked.</1144>
+<1145>Miért?</1145>
+<1146>Miért segítesz nekem?</1146>
+<1147>Miért tépted szét az útleveledet?</1147>
+<1148>Azért, hogy ne kelljen visszamenned?</1148>
+<1149>Ki vagy te?</1149>
+<1150>Segítesz nekem, vagy átadsz annak az ördögnek?</1150>
+<1151>Ki az az ördög?</1151>
+<1152>Celadet asszony?</1152>
+<1153>Azt kérdezem, ki vagy.</1153>
+<1154>Mit akarsz tőlem?</1154>
+<1155>Ceyhun a nevem.</1155>
+<1156>Hanzade bátyja vagyok.</1156>
+<1157>Ki az a Hanzade?</1157>
+<1158>A lány, akit Kenan elvett feleségül.</1158>
+<1159>Engedj le.</1159>
+<1160>Engedj le.</1160>
+<1161>Nyugodj meg.</1161>
+<1162>Nyugodj meg, nem vislek Celadet asszonyékhoz.</1162>
+<1163>Ahogy mondtam, próbálom kideríteni, mi történt.</1163>
+<1164>Azt mondták nekünk, hogy Emír édesanyja meghalt szülés közben.</1164>
+<1165>Mi?</1165>
+<1166>Azt mondták, hogy meghaltam?</1166>
+<1167>Bár csak annyit mondtak volna, hogy meghalt.</1167>
+<1168>Még halotti imát is mondattak értem.</1168>
+<1169>A fiam.</1169>
+<1170>A fiamnak is ezt mondták?</1170>
+<1171>Emír így ismer engem?</1171>
+<1172>Jó napot kívánok.</1172>
+<1173>Isten hozta.</1173>
+<1174>Köszönjük.</1174>
+<1175>Tamer bátyó nincs itt, úgy látszik.</1175>
+<1176>Nincs. Elment egy körülszűrésre.</1176>
+<1177>Videózni fog.</1177>
+<1178>Te viszed az üzletet, amíg nincs ott.</1178>
+<1179>Úgy van.</1179>
+<1180>Mindig én.</1180>
+<1181>Csak az esküvői fotókért ugrottam be.</1181>
+<1182>Rendben van.</1182>
+<1183>Tamer bátyó már reggel elintézte őket.</1183>
+<1184>Egy pillanat.</1184>
+<1185>Ennek ki lett fizetve az ára.</1185>
+<1186>Remek.</1186>
+<1187>Szóval te is fotózol.</1187>
+<1188>Láttalak az esküvőn.</1188>
+<1189>Igen.</1189>
+<1190>Amatőr szinten.</1190>
+<1191>Nem szólíthatnál tegezve?</1191>
+<1192>Hát, most én is magáztalak.</1192>
+<1193>Hogy van Munise?</1193>
+<1194>A Munis is megfelel.</1194>
+<1195>Akkor</1195>
+<1196>legyen Munis.</1196>
+<1197>Megállapodtunk.</1197>
+<1198>Akkor elmegyek.</1198>
+<1199>Munis.</1199>
+<1200>Este 8 körül végzem az üzletben.</1200>
+<1201>Kilenckor pedig a Kék-tónál leszek.</1201>
+<1202>Ha eljössz, találkozunk ott.</1202>
+<1203>Ott várlak.</1203>
+<1204>Nagymama, nézd.</1204>
+<1205>A nagymama drágája.</1205>
+<1206>Ügyes vagy, nagyon szép lett.</1206>
+<1207>Ó</1207>
+<1208>Ilyen kisgyerek maradt itt.</1208>
+<1209>Nem is tudni, van-e édesanyja, vagy sincs.</1209>
+<1210>Milyen szerencsétlen ez a kisgyerek.</1210>
+<1211>Mit beszélsz te, Gül?</1211>
+<1212>Milyen szerencsétlenségről beszélsz a hatalmas Kozan család egyetlen örökösénél?</1212>
+<1213>A sorsa is, a vagyona is közvetlenül énkezemre van bízva.</1213>
+<1214>Ilyeneket beszélsz, anyám</1214>
+<1215>Mondjuk, hogy az én szerencsétlenségem, mit is mondhatnék.</1215>
+<1216>Jaj, jaj...</1216>
+<1217>Medet</1217>
+<1218>nagyapa.</1218>
+<1219>Hé!</1219>
+<1220>Ne nyúlj hozzá, mert átlyukasztom a koponyádat!</1220>
+<1221>Mondom, hogy hagyd békén</1221>
+<1222>Vidd be Emírt is be</1222>
+<1223>Biztosan éhes.</1223>
+<1224>Ahsen adja neki az ennivalót.</1224>
+<1225>Rendben.</1225>
+<1226>Emír.</1226>
+<1227>Gyere, kisoroszlánom. Gyere, kicsim.</1227>
+<1228>Gyere, galambom.</1228>
+<1229>Mi újság, Zeki?</1229>
+<1230>Miért nem mentél el?</1230>
+<1231>Asszonyom.</1231>
+<1232>Ne rágódj itt.</1232>
+<1233>Mondd. Miért nem mentél el?</1233>
+<1234>Nem ment el a lány?</1234>
+<1235>Asszonyom.</1235>
+<1236>Ceyhun úr elvitte a lányt.</1236>
+<1237>Mit jelent az, hogy Ceyhun úr elvitte a lányt?</1237>
+<1238>Na, Nazlı.</1238>
+<1239>Még nem végeztél?</1239>
+<1240>Kész. Kész, İhsan úr.</1240>
+<1241>Parancsoljon, İhsan úr.</1241>
+<1242>Elraktad a savanyúságot, ugye?</1242>
+<1243>Elraktam, elraktam.</1243>
+<1244>Egészségedre.</1244>
+<1245>Nem megy az úgy, İhsan uram, szárazon.</1245>
+<1246>Mindjárt kész az ebéd.</1246>
+<1247>Ahsen, ezt az alátétet</1247>
+<1248>Az ebéd majd később.</1248>
+<1249>Lángokban áll a környék.</1249>
+<1250>A mi urunk csak tömi a hasát. Nagybácsi, te csak egyél.</1250>
