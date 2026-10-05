@@ -16,12 +16,13 @@ API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 # Cost is taken from OpenRouter's reported usage.cost, so no price table is kept here.
 model_params = {
-    # Reasoning is mandatory for Muse Spark; "minimal" is the lowest effort supported.
+    # Reasoning is mandatory for Muse Spark. In evals, "medium" passed clearly more checks than "minimal"
+    # (mostly recovering OCR/slang from context) at ~2x the cost and time; "high" was no better.
     # The contributor tier lets Meta train on prompts, so the OpenRouter account must allow
     # "paid model training" endpoints (https://openrouter.ai/settings/privacy).
     "meta/muse-spark-1.3": {
         "max_output_tokens": 65_536,
-        "reasoning_effort": "minimal",
+        "reasoning_effort": "medium",
     },
 }
 
