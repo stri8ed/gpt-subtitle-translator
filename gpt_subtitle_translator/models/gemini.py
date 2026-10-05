@@ -111,7 +111,14 @@ def get_model_params(model_name: str):
 
 
 class Gemini(BaseModel):
-    def __init__(self, model_name: str = "gemini-2.0-flash-001", api_key: Union[str, None] = None):
+    def __init__(
+        self,
+        model_name: str = "gemini-2.0-flash-001",
+        api_key: Union[str, None] = None,
+        max_output_tokens: Union[int, None] = None
+    ):
+        """max_output_tokens lowers the model's output cap (thinking included). A runaway, looping response
+        otherwise streams for minutes until the HTTP deadline instead of failing fast as too long."""
         super().__init__(model_name)
         _model_params = get_model_params(model_name)
         assert _model_params is not None, f"Model {model_name} info not found."
@@ -119,7 +126,9 @@ class Gemini(BaseModel):
         self.total_input_tokens = 0
         self.total_output_tokens = 0
         self.total_cached_tokens = 0
-        self.params = _model_params
+        self.params = dict(_model_params)
+        if max_output_tokens:
+            self.params["max_output_tokens"] = min(max_output_tokens, self.params["max_output_tokens"])
         self.average_tokens_per_char = None
         self.max_attempts = 3
         self.stall_timeout = 60
