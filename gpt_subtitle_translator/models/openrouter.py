@@ -24,6 +24,14 @@ model_params = {
         "max_output_tokens": 65_536,
         "reasoning_effort": "medium",
     },
+    # OpenAI rejects temperature on this model, and its strict mode can't express the [id, thoughts, translation]
+    # tuple (no prefixItems), so the schema is sent non-strict.
+    "openai/gpt-6-luna": {
+        "max_output_tokens": 65_536,
+        "reasoning_effort": "medium",
+        "supports_temperature": False,
+        "strict_schema": False,
+    },
 }
 
 
@@ -114,15 +122,20 @@ class OpenRouter(BaseModel):
         body = {
             "model": self.model_name,
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": temperature,
             "max_tokens": self.params["max_output_tokens"],
             "reasoning": {"effort": self.params["reasoning_effort"], "exclude": True},
             "response_format": {
                 "type": "json_schema",
-                "json_schema": {"name": "translation", "strict": True, "schema": build_json_schema(target_language)},
+                "json_schema": {
+                    "name": "translation",
+                    "strict": self.params.get("strict_schema", True),
+                    "schema": build_json_schema(target_language),
+                },
             },
             "provider": {"require_parameters": True},
         }
+        if self.params.get("supports_temperature", True):
+            body["temperature"] = temperature
 
         data = self._post_with_retries(body)
         output_token_count = self._record_usage(data.get("usage") or {})
