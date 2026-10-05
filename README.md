@@ -6,7 +6,7 @@ Translate subtitles with LLMs.
 - Strips the timestamps from the subtitles before translating, to reduce input tokens.
 - Runs multiple chunks in parallel to speed up the translation process.
 - Tries to ensure model does not skip or merge subtitles while translating.
-- Supports Claude, OpenAI, Gemini models.
+- Supports Claude, OpenAI, Gemini models, and OpenRouter models (e.g. `meta/muse-spark-1.3-contributor`).
 
 ## Installation
 

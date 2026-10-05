@@ -3,6 +3,7 @@ import os
 import time
 from gpt_subtitle_translator.constants import TOKENS_PER_CHUNK, DEFAULT_MODEL, MAX_RETRIES, DEFAULT_TEMPERATURE
 from gpt_subtitle_translator.models.gemini import Gemini
+from gpt_subtitle_translator.models.openrouter import OpenRouter
 from gpt_subtitle_translator.models.xai import XAI
 from gpt_subtitle_translator.subtitle_translator import SubtitleTranslator, TranslationError
 from gpt_subtitle_translator.logger import logger
@@ -18,6 +19,8 @@ def get_model(model_name):
         return Gemini(model_name)
     elif model_name.startswith("grok"):
         return XAI(model_name)
+    elif "/" in model_name:  # OpenRouter ids are "vendor/model", e.g. meta/muse-spark-1.3-contributor
+        return OpenRouter(model_name)
 
     raise ValueError(f"Unsupported model: {model_name}.")
 

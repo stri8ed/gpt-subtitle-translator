@@ -13,6 +13,7 @@ from google.genai.types import FinishReason, GenerateContentConfig, \
 
 from gpt_subtitle_translator.logger import logger
 from gpt_subtitle_translator.models.base_model import BaseModel
+from gpt_subtitle_translator.models.schema import build_json_schema
 from gpt_subtitle_translator.subtitle_translator import RefuseToTranslateError, ResponseTooLongError, QuotaExhaustedError
 
 load_dotenv()
@@ -79,30 +80,6 @@ model_params = {
         "thinking_level": ThinkingLevel.LOW,
     },
 }
-
-def build_json_schema(target_language: str = None):
-    language_def = {"type": "string", "enum": [target_language]} if target_language else {"type": "string"}
-    return {
-        "type": "object",
-        "properties": {
-            "language": language_def,
-            "subtitles": {
-                "type": "array",
-                "items": {
-                    "type": "array",
-                    "prefixItems": [
-                        {"type": "integer"},   # id
-                        {"type": "string"},    # thoughts
-                        {"type": "string"}     # translation
-                    ],
-                    "minItems": 3,
-                    "maxItems": 3
-                }
-            }
-        },
-        "required": ["language", "subtitles"]
-    }
-
 
 _STREAM_END = object()
 
