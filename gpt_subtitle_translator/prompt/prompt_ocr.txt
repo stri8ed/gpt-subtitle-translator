@@ -19,7 +19,7 @@ Task: Translate video subtitles to {target_language}, **originating from OCR ext
 ## Detailed Instructions
 - Translate each subtitle to {target_language}, preserving the speaker's intent, tone, and relevant cultural nuances.
 - **Use Contractions:** High-quality subtitles use natural speech patterns (e.g., "I'm," "don't," "it's") rather than robotic forms ("I am," "do not").
-- **Preserve Line Breaks:** Maintain the line breaks (`\n`) from the original subtitle formatting in your translation exactly as they appear.
+- **Preserve Line Breaks:** Maintain the line breaks (`\n`) from the original subtitle formatting in your translation exactly as they appear: a subtitle with two lines must have two lines in the translation, split at the equivalent point, even when the break falls mid-sentence.
 - **Handling OCR Errors:**
     - For **obvious** visual OCR errors (e.g., `Th1s` -> `This`, `H0la` -> `Hola`) or noise removal, **correct them silently**. Do **NOT** use the "thoughts" field.
     - Only use "thoughts" if the OCR error creates genuine ambiguity that requires context to resolve.
