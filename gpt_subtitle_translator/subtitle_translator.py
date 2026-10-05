@@ -138,6 +138,10 @@ class SubtitleTranslator:
                 response, chunk.text, chunk_number, raw_response, num_tokens
             )
         except Exception as e:
+            if isinstance(e, EmptySubtitlesError) and attempt >= self.max_retries:
+                logger.warning(f"Accepting chunk {chunk_number} after {attempt} retries despite: {e}")
+                logger.info(f"Got chunk {chunk_number}, length is {num_tokens} tokens.")
+                return chunk.idx, response, raw_response
             if (
                 attempt < self.max_retries and
                 not isinstance(e, QuotaExhaustedError) and
@@ -217,14 +221,15 @@ class SubtitleTranslator:
 
         original_count = len(self.processor.split_on_tags(original_text))
         missing_subtitles = self.processor.get_missing_subtitles(response, original_text)
+        empty_subtitles = self.processor.get_empty_subtitles(response, original_text)
+
+        if len(missing_subtitles) + len(empty_subtitles) == original_count and len(raw_response) > 0:
+            raise MissingSubtitlesError(f"Chunk {chunk_number} is missing all subtitles.")
 
         if missing_subtitles:
-            if len(missing_subtitles) == original_count and len(raw_response) > 0:
-                raise MissingSubtitlesError(f"Chunk {chunk_number} is missing all subtitles.")
-            else:
-                raise MissingSubtitlesError(
-                    f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
-                )
+            raise MissingSubtitlesError(
+                f"Chunk {chunk_number} is missing {len(missing_subtitles)} subtitles. Try a smaller chunk size."
+            )
 
         translated_count = len(re.findall(r'^<(\d+)>', response.strip(), flags=re.MULTILINE))
         if translated_count > original_count:
@@ -241,6 +246,14 @@ class SubtitleTranslator:
 
         self.check_untranslated_subtitles(response, original_text, chunk_number)
 
+        # Checked last, so a response that only has empty cues has passed every other check
+        # and can be accepted once retries run out (see translate_chunk).
+        if empty_subtitles:
+            raise EmptySubtitlesError(
+                f"Chunk {chunk_number} returned {len(empty_subtitles)} empty subtitles, "
+                f"probably merged into a neighbour: {', '.join(t.strip() for t in empty_subtitles.values())[:300]}"
+            )
+
         logger.info(f"Got chunk {chunk_number}, length is {num_tokens} tokens.")
 
 
@@ -252,6 +265,10 @@ class ResponseRepetitiveError(Exception):
 
 class MissingSubtitlesError(Exception):
     """Exception raised when subtitles are missing in the response."""
+
+class EmptySubtitlesError(MissingSubtitlesError):
+    """Exception raised when some subtitles came back empty. Retried, but accepted once retries run out,
+    since models also legitimately drop OCR garbage."""
 
 class UntranslatedResponseError(Exception):
     """Exception raised when the response is identical to the original text (not translated)."""

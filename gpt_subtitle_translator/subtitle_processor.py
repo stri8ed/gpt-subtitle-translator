@@ -164,7 +164,25 @@ class SubtitleProcessor:
             return f'\n{subtitle_id}\n{parsed_subtitles[subtitle_id]["timestamp"]}\n{match.group(2)}'
         return re.sub(r'^<(\d+)>(.*?)</\1>$', replacement, content, flags=re.DOTALL | re.MULTILINE)
 
+    @staticmethod
+    def strip_markup(text: str) -> str:
+        return re.sub(r"<[^>]+>|\{\\an\d}", "", text)
+
+    def is_empty_translation(self, source: str, translation: str) -> bool:
+        """Source has words (not just junk like '////' or '.88') but the translation has no letters or digits."""
+        return bool(re.search(r"[^\W\d_]", self.strip_markup(source))) and not re.search(r"[^\W_]", self.strip_markup(translation))
+
     def get_missing_subtitles(self, translated, original_text):
         translated_ids = set(re.findall(r'^<(\d+)>', translated.strip(), flags=re.MULTILINE))
         original_entries = {id_: text for id_, text in self.TAG_PATTERN.findall(original_text.strip())}
         return {key: value for key, value in original_entries.items() if key not in translated_ids}
+
+    def get_empty_subtitles(self, translated, original_text):
+        """Ids present in the translation but empty although the source has text. Usually the model merged
+        the cue into a neighbour, but it may also have dropped OCR garbage on purpose."""
+        translated_entries = {id_: text for id_, text in self.TAG_PATTERN.findall(translated.strip())}
+        original_entries = {id_: text for id_, text in self.TAG_PATTERN.findall(original_text.strip())}
+        return {
+            key: value for key, value in original_entries.items()
+            if key in translated_entries and self.is_empty_translation(value, translated_entries[key])
+        }
