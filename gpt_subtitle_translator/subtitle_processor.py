@@ -145,7 +145,14 @@ class SubtitleProcessor:
 
     @staticmethod
     def clean_text(text: str) -> str:
-        output_string = re.sub(r'[<>]\s*$', "", text, flags=re.MULTILINE)  # breaks subtitle parsing on Plex
+        # Stray < or > at a line end breaks subtitle parsing on Plex. Keep complete tags such as </i>,
+        # and only strip horizontal whitespace so the blank line between cues survives.
+        output_string = re.sub(
+            r'(<[^<>\n]*>|[<>])[ \t]*$',
+            lambda m: m.group(0) if len(m.group(1)) > 1 else "",
+            text,
+            flags=re.MULTILINE,
+        )
         return output_string
 
     @staticmethod
