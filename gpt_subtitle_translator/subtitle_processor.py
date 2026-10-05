@@ -133,7 +133,9 @@ class SubtitleProcessor:
             reverted.sort(key=lambda x: int(self.TAG_PATTERN.match(x).group(1)))
             return "\n".join(reverted)
 
-        except (json.JSONDecodeError, AttributeError, KeyError, IndexError) as e:
+        # TypeError/ValueError: malformed items (a bare string, a non-numeric id, a null translation), which
+        # models without strictly enforced schemas can return. Returning "" lets validation retry the chunk.
+        except (json.JSONDecodeError, AttributeError, KeyError, IndexError, TypeError, ValueError) as e:
             print(f"{type(e).__name__} while extracting subtitles: {response}")
             return ""
 
