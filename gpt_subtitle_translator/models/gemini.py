@@ -61,6 +61,7 @@ model_params = {
         "price_cached": 0.000075,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
+        "supports_temperature": False,
     },
     # 3.7+ flash rejects ThinkingLevel.MINIMAL; LOW is the lowest supported
     "gemini-3.7-flash": {
@@ -69,6 +70,7 @@ model_params = {
         "price_cached": 0.000075,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
+        "supports_temperature": False,
         "thinking_level": ThinkingLevel.LOW,
     },
     "gemini-3.8-flash": {
@@ -77,6 +79,7 @@ model_params = {
         "price_cached": 0.000075,
         "max_output_tokens": 65_536,
         "thinking_enabled": True,
+        "supports_temperature": False,
         "thinking_level": ThinkingLevel.LOW,
     },
 }
@@ -190,12 +193,7 @@ class Gemini(BaseModel):
         thinking_config = None
 
         if self.params['thinking_enabled']:
-            kwargs = {}
-            if "3" not in self.model_name:
-                kwargs['thinking_budget'] = 0
-            else:
-                kwargs['thinking_level'] = self.params.get('thinking_level', ThinkingLevel.MINIMAL)
-            thinking_config = ThinkingConfig(**kwargs)
+            thinking_config = ThinkingConfig(thinking_level=self.params.get('thinking_level', ThinkingLevel.MINIMAL))
 
         for attempt in range(self.max_attempts):
             retry_sleep_time = 2 * (attempt + 1)
@@ -203,7 +201,7 @@ class Gemini(BaseModel):
                 message = self._generate_with_stall_detection(
                     contents=[prompt],
                     config=GenerateContentConfig(
-                        temperature=temperature,
+                        temperature=temperature if self.params.get("supports_temperature", True) else None,
                         response_json_schema=build_json_schema(target_language),
                         response_mime_type="application/json",
                         max_output_tokens=self.params["max_output_tokens"],
