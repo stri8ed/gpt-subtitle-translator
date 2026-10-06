@@ -16,6 +16,7 @@ def make_translator():
     translator = SubtitleTranslator.__new__(SubtitleTranslator)
     translator.model = StubModel()
     translator.processor = SubtitleProcessor(translator.model)
+    translator.check_untranslated = True
     return translator
 
 
@@ -39,6 +40,12 @@ class UntranslatedDetectionTest(unittest.TestCase):
         self.assertNotEqual(self.translator.normalize_text(source), self.translator.normalize_text(response))
         with self.assertRaisesRegex(UntranslatedResponseError, "verbatim without translating"):
             self.translator.validate_response(response, source, 7, response, 1000)
+
+    def test_verbatim_chunk_passes_when_check_disabled(self):
+        """Croatian -> Serbian job whose source was mostly Serbian already, so cues legitimately came back unchanged."""
+        source = load("untranslated_chunk_source.txt")
+        self.translator.check_untranslated = False
+        self.translator.validate_response(source, source, 7, source, 1000)
 
     def test_real_translation_passes(self):
         source = load("translated_chunk_source.txt")

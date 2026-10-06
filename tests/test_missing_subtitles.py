@@ -26,6 +26,7 @@ def make_translator(model=None, max_retries=0):
     translator = SubtitleTranslator.__new__(SubtitleTranslator)
     translator.model = model or StubModel()
     translator.processor = SubtitleProcessor(translator.model)
+    translator.check_untranslated = True
     translator.max_retries = max_retries
     translator.retry_on_refusal = False
     translator.temperature = 0.1

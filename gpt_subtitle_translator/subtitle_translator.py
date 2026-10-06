@@ -28,7 +28,8 @@ class SubtitleTranslator:
         max_retries: int = 1,
         retry_on_refusal: bool = False,
         temperature: float = 0.5,
-        source_type: Literal["ocr", "transcription"] = "ocr"
+        source_type: Literal["ocr", "transcription"] = "ocr",
+        check_untranslated: bool = True
     ):
         self.model = model
         self.lang = lang
@@ -37,6 +38,8 @@ class SubtitleTranslator:
         self.tokens_per_chunk = tokens_per_chunk
         self.max_retries = max_retries
         self.retry_on_refusal = retry_on_refusal
+        # Off for near-identical language pairs (e.g. Croatian -> Serbian), where many cues are legitimately unchanged
+        self.check_untranslated = check_untranslated
         self.processor = SubtitleProcessor(model)
         self.prompt_template = self.load_prompt(source_type)
 
@@ -238,13 +241,14 @@ class SubtitleTranslator:
                 f"expected {original_count}, got {translated_count}."
             )
 
-        if self.normalize_text(response) == self.normalize_text(original_text):
-            raise UntranslatedResponseError(
-                f"Chunk {chunk_number} returned the original text verbatim without translating."
-                f"Preview: {response[:1000]}"
-            )
+        if self.check_untranslated:
+            if self.normalize_text(response) == self.normalize_text(original_text):
+                raise UntranslatedResponseError(
+                    f"Chunk {chunk_number} returned the original text verbatim without translating."
+                    f"Preview: {response[:1000]}"
+                )
 
-        self.check_untranslated_subtitles(response, original_text, chunk_number)
+            self.check_untranslated_subtitles(response, original_text, chunk_number)
 
         # Checked last, so a response that only has empty cues has passed every other check
         # and can be accepted once retries run out (see translate_chunk).
