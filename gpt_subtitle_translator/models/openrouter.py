@@ -1,4 +1,5 @@
 import os
+import random
 import time
 from typing import Union
 
@@ -65,7 +66,8 @@ class OpenRouter(BaseModel):
         self.total_cost = 0.0
         self.params = _model_params
         self.average_tokens_per_char = None
-        self.max_attempts = 3
+        self.retry_delays = [3, 6, 12]
+        self.max_attempts = len(self.retry_delays) + 1
 
     def _post(self, body: dict) -> dict:
         response = self.client.post(API_URL, json=body)
@@ -87,7 +89,7 @@ class OpenRouter(BaseModel):
 
     def _post_with_retries(self, body: dict) -> dict:
         for attempt in range(self.max_attempts):
-            retry_sleep_time = 2 * (attempt + 1)
+            retry_sleep_time = round(self.retry_delays[min(attempt, len(self.retry_delays) - 1)] * random.uniform(0.75, 1.25), 1)
             try:
                 return self._post(body)
             except OpenRouterError as e:
