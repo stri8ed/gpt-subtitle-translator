@@ -15,9 +15,14 @@ load_dotenv()
 
 API_URL = "https://api.openai.com/v1"
 
-# No price table: these run on the free data-sharing credits, so get_total_cost reports 0.
+# Prices per 1K tokens at short context (<=272K input). Prompt caching is automatic and
+# first-time cache writes cost more than plain input.
 model_params = {
     "gpt-5.6-terra": {
+        "price_input": 0.002,
+        "price_output": 0.012,
+        "price_cached": 0.0002,
+        "price_cache_write": 0.0025,
         "max_output_tokens": 128_000,
         "reasoning_effort": "medium",
     },
@@ -50,6 +55,7 @@ class OpenAI(BaseModel):
         self.total_input_tokens = 0
         self.total_output_tokens = 0
         self.total_cached_tokens = 0
+        self.total_cache_write_tokens = 0
         self.params = _model_params
         self.average_tokens_per_char = None
         self.retry_delays = [3, 6, 12]
@@ -107,7 +113,9 @@ class OpenAI(BaseModel):
         output_token_count = usage.get("completion_tokens") or 0
         self.total_input_tokens += usage.get("prompt_tokens") or 0
         self.total_output_tokens += output_token_count
-        self.total_cached_tokens += (usage.get("prompt_tokens_details") or {}).get("cached_tokens") or 0
+        prompt_details = usage.get("prompt_tokens_details") or {}
+        self.total_cached_tokens += prompt_details.get("cached_tokens") or 0
+        self.total_cache_write_tokens += prompt_details.get("cache_write_tokens") or 0
 
         choice = data["choices"][0]
         finish_reason = choice.get("finish_reason")
@@ -130,7 +138,12 @@ class OpenAI(BaseModel):
         self.average_tokens_per_char = max(data.get("input_tokens") or 0, 1) / len(text)
 
     def get_total_cost(self) -> float:
-        return 0.0
+        # cached and cache-write tokens are both counted within total_input_tokens
+        uncached = self.total_input_tokens - self.total_cached_tokens - self.total_cache_write_tokens
+        return (uncached * self.params["price_input"]
+                + self.total_cached_tokens * self.params["price_cached"]
+                + self.total_cache_write_tokens * self.params["price_cache_write"]
+                + self.total_output_tokens * self.params["price_output"]) / 1000
 
     def num_tokens_from_string(self, string: str) -> int:
         return int(len(string) * self.average_tokens_per_char)
