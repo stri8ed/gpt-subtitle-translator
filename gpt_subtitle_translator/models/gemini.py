@@ -82,6 +82,15 @@ model_params = {
         "supports_temperature": False,
         "thinking_level": ThinkingLevel.LOW,
     },
+    "gemini-4-hydrogen": {
+        "price_input": 0.0015,
+        "price_output": 0.0075,
+        "price_cached": 0.000075,
+        "max_output_tokens": 65_536,
+        "thinking_enabled": True,
+        "supports_temperature": False,
+        "thinking_level": ThinkingLevel.LOW,
+    },
 }
 
 _STREAM_END = object()
