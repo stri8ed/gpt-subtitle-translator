@@ -143,7 +143,7 @@ class Gemini(BaseModel):
             self.params["max_output_tokens"] = min(max_output_tokens, self.params["max_output_tokens"])
         self.average_tokens_per_char = None
         self.max_attempts = 3
-        self.stall_timeout = 60
+        self.stall_timeout = 35
 
     def _generate_with_stall_detection(self, contents, config):
         """Stream the response, raising TimeoutError if no chunk arrives within
@@ -167,12 +167,11 @@ class Gemini(BaseModel):
 
         chunks = []
         while True:
-            timeout = self.stall_timeout if not chunks else self.stall_timeout * 2
             try:
-                item = chunk_queue.get(timeout=timeout)
+                item = chunk_queue.get(timeout=self.stall_timeout)
             except queue.Empty:
                 self._record_partial_usage(chunks)
-                raise TimeoutError(f"Stream stalled: no chunk within {timeout}s after {len(chunks)} chunks") from None
+                raise TimeoutError(f"Stream stalled: no chunk within {self.stall_timeout}s after {len(chunks)} chunks") from None
             if item is _STREAM_END:
                 break
             if isinstance(item, Exception):
@@ -202,7 +201,11 @@ class Gemini(BaseModel):
         thinking_config = None
 
         if self.params['thinking_enabled']:
-            thinking_config = ThinkingConfig(thinking_level=self.params.get('thinking_level', ThinkingLevel.MINIMAL))
+            # Streamed thought summaries keep the stall detector alive while the model thinks
+            thinking_config = ThinkingConfig(
+                thinking_level=self.params.get('thinking_level', ThinkingLevel.MINIMAL),
+                include_thoughts=True,
+            )
 
         for attempt in range(self.max_attempts):
             retry_sleep_time = 2 * (attempt + 1)
