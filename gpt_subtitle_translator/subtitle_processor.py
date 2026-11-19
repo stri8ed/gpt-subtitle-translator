@@ -35,24 +35,27 @@ class SubtitleProcessor:
     def preprocess(self, srt_data):
         return "\n".join(f"<{key}>{value['text']}</{key}>" for key, value in srt_data.items())
 
-    def make_chunks(self, text: str, max_tokens_per_chunk: int) -> list[Chunk]:
-        items = self.split_on_tags(text)
+    def make_chunks(
+        self, text: str, max_tokens_per_chunk: int, break_before: frozenset[int] = frozenset()
+    ) -> list[Chunk]:
         chunks = []
         current_piece = ""
         current_token_count = 0
 
         self.model.init_vocab(text)
 
-        for text in items:
+        for match in self.TAG_PATTERN.finditer(text):
+            text = match.group(0)
             text_token_count = self.model.num_tokens_from_string(text)
             candidate_length = current_token_count + text_token_count + 1
-            if candidate_length <= max_tokens_per_chunk:
+            if candidate_length <= max_tokens_per_chunk and int(match.group(1)) not in break_before:
                 current_piece += ("\n" + text)
                 current_token_count = candidate_length
             else:
-                chunks.append(
-                    Chunk(text=current_piece, num_tokens=current_token_count, idx=len(chunks))
-                )
+                if current_piece:
+                    chunks.append(
+                        Chunk(text=current_piece, num_tokens=current_token_count, idx=len(chunks))
+                    )
                 current_piece = text
                 current_token_count = text_token_count
 

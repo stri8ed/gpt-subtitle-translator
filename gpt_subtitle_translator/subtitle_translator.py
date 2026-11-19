@@ -56,37 +56,54 @@ class SubtitleTranslator:
         srt_data: str,
         progress_callback: Optional[Callable[[float], None]] = None,
         on_complete_chunk: Optional[Callable[[int, str], None]] = None,
-        completed_chunks: Optional[dict[int, str]] = None,
+        completed_chunks: Optional[list[str]] = None,
         timeout: Optional[float] = None
     ) -> str:
         parsed_srt = self.processor.parse_srt(srt_data)
-        preprocessed_text = self.processor.preprocess(parsed_srt)
-        chunks = self.processor.make_chunks(preprocessed_text, self.tokens_per_chunk)
-        logger.info(f"Split into {len(chunks)} chunks.")
+        completed_chunks = list(completed_chunks or [])
 
-        completed_chunks = completed_chunks or {}
+        # Carried-over chunks may come from a model whose tokenizer drew different chunk boundaries,
+        # so skip the subtitle ids they hold rather than chunk indexes, and chunk only what is left.
+        # A chunk never spans translated cues, so the model never sees dialogue jump mid-chunk.
+        translated_ids = {
+            int(id_) for translation in completed_chunks
+            for id_, _ in self.processor.TAG_PATTERN.findall(translation)
+        }
+        remaining = {id_: sub for id_, sub in parsed_srt.items() if id_ not in translated_ids}
+        ids = list(parsed_srt)
+        resume_points = frozenset(
+            id_ for previous, id_ in zip(ids, ids[1:]) if previous in translated_ids and id_ not in translated_ids
+        )
+        chunks = self.processor.make_chunks(
+            self.processor.preprocess(remaining), self.tokens_per_chunk, resume_points
+        ) if remaining else []
+        total_chunks = len(completed_chunks) + len(chunks)
+        if completed_chunks:
+            logger.info(
+                f"Carried over {len(translated_ids)} subtitles from {len(completed_chunks)} completed chunks, "
+                f"split the remaining {len(remaining)} into {len(chunks)} chunks."
+            )
+        else:
+            logger.info(f"Split into {len(chunks)} chunks.")
+
         translations = [""] * len(chunks)
         futures = []
         err = None
         stop_flag = threading.Event()
 
-        for idx, translation in completed_chunks.items():
-            translations[idx] = translation
-            logger.info(f"Skipping chunk {idx + 1} (already completed)")
-
         executor = ThreadPoolExecutor(max_workers=self.num_threads)
         try:
-            for i, chunk in enumerate(chunks):
-                if i not in completed_chunks:
-                    future = executor.submit(self.translate_chunk, chunk, stop_flag, 0)
-                    futures.append(future)
+            for chunk in chunks:
+                future = executor.submit(self.translate_chunk, chunk, stop_flag, 0)
+                futures.append(future)
 
             try:
                 for future in concurrent.futures.as_completed(futures, timeout=timeout):
                     index, response, raw_response = future.result()
                     translations[index] = response
                     if progress_callback:
-                        progress_callback(len([t for t in translations if t]) / len(chunks))
+                        done = len(completed_chunks) + len([t for t in translations if t])
+                        progress_callback(done / total_chunks)
                     if on_complete_chunk:
                         on_complete_chunk(index, raw_response)
             except Exception as e:
@@ -99,12 +116,12 @@ class SubtitleTranslator:
         finally:
             executor.shutdown(wait=False, cancel_futures=True)
 
-        joined_text = "\n\n".join(translations)
-        result_text = self.processor.post_process_text(joined_text, parsed_srt)
+        completed_chunks += [t for t in translations if t]
+        tagged = [tag for translation in completed_chunks for tag in self.processor.split_on_tags(translation)]
+        tagged.sort(key=lambda tag: int(self.processor.TAG_PATTERN.match(tag).group(1)))
+        result_text = self.processor.post_process_text("\n".join(tagged), parsed_srt)
 
         if err:
-            completed_chunks = {i: t for i, t in enumerate(translations) if t}
-            total_chunks = len(chunks)
             raise TranslationError(err, stack_trace, result_text, total_chunks, completed_chunks)
 
         return result_text
@@ -296,13 +313,13 @@ class TranslationError(Exception):
         stack_trace,
         partial_translation=None,
         total_chunks=0,
-        completed_chunks: Optional[dict[int, str]] = None
+        completed_chunks: Optional[list[str]] = None
     ):
         super().__init__(str(original_exception))
         self.original_exception = original_exception
         self.partial_translation = partial_translation
         self.stack_trace = stack_trace
-        self.completed_chunks = completed_chunks or {}
+        self.completed_chunks = completed_chunks or []
         self.total_chunks = total_chunks
 
     def __str__(self):
